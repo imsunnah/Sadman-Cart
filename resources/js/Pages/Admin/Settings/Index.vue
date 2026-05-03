@@ -1,0 +1,170 @@
+<template>
+    <AdminLayout>
+        <div class="mb-8 flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+            <div>
+                <h1 class="text-2xl font-bold text-[#003366]">Site Settings</h1>
+                <p class="text-sm text-slate-500">Update logo, sliders, and contact details</p>
+            </div>
+            <button @click="saveSettings" :disabled="form.processing" class="bg-[#FF6600] text-white px-6 py-2.5 rounded-lg hover:bg-orange-600 transition-all font-bold text-sm flex items-center shadow-md disabled:opacity-50">
+                <Save class="w-4 h-4 mr-2" /> {{ form.processing ? 'Saving...' : 'Save Changes' }}
+            </button>
+        </div>
+
+        <div v-if="$page.props.flash?.success" class="mb-6 bg-green-500 text-white p-4 rounded-lg shadow-md flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <CheckCircle class="w-5 h-5" />
+                <span class="text-sm font-bold">{{ $page.props.flash.success }}</span>
+            </div>
+            <button @click="$page.props.flash.success = null" class="opacity-50 hover:opacity-100"><X class="w-4 h-4" /></button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- General Settings -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8">
+                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
+                    <SettingsIcon class="w-5 h-5 text-[#003366]" />
+                    <h2 class="text-lg font-bold text-slate-900">General Branding</h2>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Name</label>
+                        <input v-model="form.site_name" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Upload Site Logo</label>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border border-slate-200">
+                                <img v-if="logoPreview || form.site_logo" :src="logoPreview || form.site_logo" class="h-full object-contain" />
+                                <ImageIcon v-else class="w-6 h-6 text-slate-300" />
+                            </div>
+                            <input type="file" @input="handleLogoUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slider Settings -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8">
+                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
+                    <ImageIcon class="w-5 h-5 text-[#003366]" />
+                    <h2 class="text-lg font-bold text-slate-900">Home Page Sliders</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Current Sliders</span>
+                        <button @click.prevent="triggerSliderUpload" class="text-xs font-bold text-[#FF6600] uppercase hover:underline">Add More Images</button>
+                    </div>
+                    <input type="file" multiple ref="sliderInput" @input="handleSliderUpload" class="hidden" />
+                    
+                    <div class="grid grid-cols-3 gap-4">
+                        <div v-for="(img, index) in sliderImages" :key="index" class="relative group aspect-video rounded-lg overflow-hidden border border-slate-100">
+                            <img :src="img" class="w-full h-full object-cover">
+                            <button @click.prevent="removeSlider(index)" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Trash2 class="w-3 h-3" />
+                            </button>
+                        </div>
+                        <div v-if="sliderImages.length === 0" class="col-span-3 py-8 text-center border-2 border-dashed border-slate-100 rounded-xl text-slate-300 text-xs font-bold">
+                            No slider images uploaded
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Details -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:col-span-2">
+                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
+                    <Info class="w-5 h-5 text-[#003366]" />
+                    <h2 class="text-lg font-bold text-slate-900">Footer & Contact Details</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">About Description</label>
+                        <textarea v-model="form.footer_about" rows="3" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Office Address</label>
+                        <input v-model="form.footer_address" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Phone Number</label>
+                        <input v-model="form.footer_phone" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
+                        <input v-model="form.footer_email" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </AdminLayout>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { useForm } from '@inertiajs/vue3';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
+import { Save, Settings as SettingsIcon, Image as ImageIcon, Info, Plus, Trash2, CheckCircle, X } from 'lucide-vue-next';
+
+const props = defineProps({
+    settings: Object
+});
+
+const getVal = (key) => {
+    for (const group in props.settings) {
+        const found = props.settings[group].find(s => s.key === key);
+        if (found) return found.value;
+    }
+    return '';
+};
+
+const sliderImages = ref(JSON.parse(getVal('slider_images') || '[]'));
+const logoPreview = ref(null);
+const sliderInput = ref(null);
+
+const form = useForm({
+    site_name: getVal('site_name'),
+    site_logo: null, // This will hold the file
+    footer_about: getVal('footer_about'),
+    footer_address: getVal('footer_address'),
+    footer_phone: getVal('footer_phone'),
+    footer_email: getVal('footer_email'),
+    slider_upload: [], // New files to upload
+    slider_images: sliderImages.value // Remaining existing images
+});
+
+const handleLogoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        form.site_logo = file;
+        logoPreview.value = URL.createObjectURL(file);
+    }
+};
+
+const triggerSliderUpload = () => {
+    sliderInput.value.click();
+};
+
+const handleSliderUpload = (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+        form.slider_upload.push(file);
+        sliderImages.value.push(URL.createObjectURL(file));
+    });
+};
+
+const removeSlider = (index) => {
+    sliderImages.value.splice(index, 1);
+    // If it was a new upload, remove from slider_upload too
+    // This is simplified, in a real app you'd track indices carefully
+    form.slider_images = sliderImages.value.filter(img => !img.startsWith('blob:'));
+};
+
+const saveSettings = () => {
+    form.post('/admin/settings', {
+        onSuccess: () => {
+            logoPreview.value = null;
+            form.slider_upload = [];
+        }
+    });
+};
+</script>

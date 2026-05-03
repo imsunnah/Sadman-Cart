@@ -1,0 +1,88 @@
+<template>
+    <AdminLayout>
+        <div class="mb-10 flex items-center justify-between bg-white p-8 rounded-xl shadow-sm border border-slate-100">
+            <div>
+                <h1 class="text-2xl font-bold text-[#003366]">Edit Category</h1>
+                <p class="text-xs text-slate-500 mt-1">Updating details for <span class="text-[#003366] font-bold">{{ category.name }}</span></p>
+            </div>
+            <Link href="/admin/categories" class="text-xs font-bold text-slate-500 hover:text-[#003366] flex items-center transition-all">
+                <ArrowLeft class="w-4 h-4 mr-2" />
+                Back to List
+            </Link>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden max-w-2xl">
+            <form @submit.prevent="submit" class="p-8 space-y-8">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category Name</label>
+                    <input v-model="form.name" type="text" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
+                    <p v-if="form.errors.name" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.name }}</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category Image</label>
+                    <div class="mt-2 flex items-center space-x-6">
+                        <div class="shrink-0 w-24 h-24 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden border border-slate-200">
+                            <img v-if="previewUrl || category.image" :src="previewUrl || category.image" class="w-full h-full object-cover" />
+                            <ImageIcon v-else class="w-8 h-8 text-slate-300" />
+                        </div>
+                        <input type="file" @input="handleFileUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white hover:file:bg-slate-800" />
+                    </div>
+                    <p v-if="form.errors.image" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.image }}</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description</label>
+                    <textarea v-model="form.description" rows="4" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium"></textarea>
+                    <p v-if="form.errors.description" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description }}</p>
+                </div>
+
+                <div>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input v-model="form.is_active" type="checkbox" class="w-5 h-5 text-[#003366] rounded border-slate-300 focus:ring-[#003366]">
+                        <span class="text-sm font-bold text-slate-700">Active (Visible on Store)</span>
+                    </label>
+                </div>
+
+                <div class="pt-6 border-t border-slate-100">
+                    <button type="submit" :disabled="form.processing" class="w-full bg-[#003366] text-white px-8 py-4 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-50">
+                        {{ form.processing ? 'Updating...' : 'Update Category' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </AdminLayout>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { Link, useForm } from '@inertiajs/vue3';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
+import { ArrowLeft, Image as ImageIcon } from 'lucide-vue-next';
+
+const props = defineProps({
+    category: Object
+});
+
+const previewUrl = ref(null);
+
+const form = useForm({
+    _method: 'PUT',
+    name: props.category.name,
+    description: props.category.description,
+    is_active: props.category.is_active ? true : false,
+    image: null,
+});
+
+const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        form.image = file;
+        previewUrl.value = URL.createObjectURL(file);
+    }
+};
+
+const submit = () => {
+    form.post(`/admin/categories/${props.category.id}`);
+};
+</script>
