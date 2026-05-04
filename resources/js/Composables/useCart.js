@@ -1,5 +1,6 @@
-import { ref, computed } from 'vue';
-import axios from 'axios';
+import { ref, computed } from "vue";
+import axios from "axios";
+import { useToast } from "@/Composables/useToast";
 
 const cartData = ref({ items: [] });
 const isLoading = ref(false);
@@ -8,10 +9,10 @@ const isLoading = ref(false);
 const fetchCart = async () => {
     try {
         isLoading.value = true;
-        const response = await axios.get('/api/cart');
+        const response = await axios.get("/api/cart");
         cartData.value = response.data;
     } catch (error) {
-        console.error('Error fetching cart:', error);
+        console.error("Error fetching cart:", error);
     } finally {
         isLoading.value = false;
     }
@@ -21,16 +22,20 @@ const fetchCart = async () => {
 fetchCart();
 
 export function useCart() {
+    const { success, error: toastError } = useToast();
+
     const addToCart = async (product, quantity = 1) => {
         try {
             isLoading.value = true;
-            const response = await axios.post('/api/cart/add', {
+            const response = await axios.post("/api/cart/add", {
                 product_id: product.id,
-                quantity: quantity
+                quantity: quantity,
             });
             cartData.value = response.data.cart;
-        } catch (error) {
-            console.error('Error adding to cart:', error);
+            success(`"${product.name}" added to cart!`);
+        } catch (err) {
+            console.error("Error adding to cart:", err);
+            toastError("Failed to add item to cart. Please try again.");
         } finally {
             isLoading.value = false;
         }
@@ -41,8 +46,9 @@ export function useCart() {
             isLoading.value = true;
             const response = await axios.delete(`/api/cart/remove/${itemId}`);
             cartData.value = response.data.cart;
-        } catch (error) {
-            console.error('Error removing from cart:', error);
+        } catch (err) {
+            console.error("Error removing from cart:", err);
+            toastError("Failed to remove item.");
         } finally {
             isLoading.value = false;
         }
@@ -53,11 +59,12 @@ export function useCart() {
         try {
             isLoading.value = true;
             const response = await axios.put(`/api/cart/update/${itemId}`, {
-                quantity: quantity
+                quantity: quantity,
             });
             cartData.value = response.data.cart;
-        } catch (error) {
-            console.error('Error updating cart:', error);
+        } catch (err) {
+            console.error("Error updating cart:", err);
+            toastError("Failed to update quantity.");
         } finally {
             isLoading.value = false;
         }
@@ -72,7 +79,7 @@ export function useCart() {
     const cartTotal = computed(() => {
         return cart.value.reduce((total, item) => {
             const price = item.product ? parseFloat(item.product.price) : 0;
-            return total + (price * item.quantity);
+            return total + price * item.quantity;
         }, 0);
     });
 
@@ -89,6 +96,6 @@ export function useCart() {
         cartTotal,
         cartCount,
         isLoading,
-        fetchCart
+        fetchCart,
     };
 }

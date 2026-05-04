@@ -9,7 +9,9 @@ Route::get('/', [StoreController::class, 'home'])->name('home');
 Route::get('/shop', [StoreController::class, 'shop'])->name('shop');
 Route::get('/categories', [StoreController::class, 'categories'])->name('categories');
 Route::get('/products/{product:slug}', [StoreController::class, 'product'])->name('product.show');
-Route::get('/cart', function () { return Inertia::render('Cart'); })->name('cart');
+Route::get('/cart', function () {
+    return Inertia::render('Cart');
+})->name('cart');
 
 // Cart API Routes
 Route::get('/api/cart', [\App\Http\Controllers\CartController::class, 'getCart']);
@@ -24,12 +26,10 @@ Route::get('/register', [\App\Http\Controllers\AuthController::class, 'showRegis
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
-// Protected Storefront routes
-Route::middleware('auth')->group(function () {
-    Route::get('/checkout', [StoreController::class, 'checkout'])->name('checkout');
-    Route::post('/checkout', [StoreController::class, 'processCheckout'])->name('checkout.process');
-    Route::get('/thank-you/{order}', [StoreController::class, 'thankYou'])->name('thank-you');
-});
+// Checkout routes (no login required — works for both guests and logged-in users)
+Route::get('/checkout', [StoreController::class, 'checkout'])->name('checkout');
+Route::post('/checkout', [StoreController::class, 'processCheckout'])->name('checkout.process');
+Route::get('/thank-you/{order}', [StoreController::class, 'thankYou'])->name('thank-you');
 
 // Admin Auth Routes
 Route::get('/admin/login', [\App\Http\Controllers\Admin\AdminAuthController::class, 'showLogin'])->name('admin.login');
@@ -47,11 +47,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         $totalRevenue = \App\Models\Order::where('status', '!=', 'cancelled')->sum('total_amount');
         $totalProducts = \App\Models\Product::count();
         $totalCustomers = \App\Models\User::where('role', 'user')->count();
-        
+
         // Calculate Total Profit
         $totalProfit = \App\Models\OrderItem::whereHas('order', fn($q) => $q->where('status', '!=', 'cancelled'))
             ->get()
-            ->sum(function($item) {
+            ->sum(function ($item) {
                 return ($item->price - $item->buying_price - $item->package_cost) * $item->quantity;
             });
 
@@ -63,14 +63,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
                 ->whereMonth('created_at', $month->month)
                 ->whereYear('created_at', $month->year)
                 ->sum('total_amount');
-            
-            $profit = \App\Models\OrderItem::whereHas('order', fn($q) => 
-                    $q->where('status', '!=', 'cancelled')
-                      ->whereMonth('created_at', $month->month)
-                      ->whereYear('created_at', $month->year)
-                )
+
+            $profit = \App\Models\OrderItem::whereHas(
+                'order',
+                fn($q) =>
+                $q->where('status', '!=', 'cancelled')
+                    ->whereMonth('created_at', $month->month)
+                    ->whereYear('created_at', $month->year)
+            )
                 ->get()
-                ->sum(function($item) {
+                ->sum(function ($item) {
                     return ($item->price - $item->buying_price - $item->package_cost) * $item->quantity;
                 });
 
@@ -95,16 +97,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
             'recentOrders' => $recentOrders,
         ]);
     })->name('dashboard');
-    
+
     Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('subcategories', \App\Http\Controllers\Admin\SubCategoryController::class);
-    Route::get('/customers', function() {
+    Route::get('/customers', function () {
         $customers = \App\Models\User::where('role', 'user')->latest()->paginate(15);
         return Inertia::render('Admin/Customer/Index', ['customers' => $customers]);
     })->name('customers.index');
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
     Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class);
-    
+
     Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
 });

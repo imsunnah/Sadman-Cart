@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
 class StoreController extends Controller
@@ -14,11 +17,13 @@ class StoreController extends Controller
         $topSelling = Product::with('category')->where('is_active', true)->inRandomOrder()->take(8)->get();
         $justForYou = Product::with('category')->where('is_active', true)->latest()->take(12)->get();
         $featuredCategories = Category::withCount('products')->orderBy('products_count', 'desc')->take(6)->get();
-        
+
         // Fetch 2 specific categories with their products for "category-wise data"
-        $categorySections = Category::with(['products' => function($query) {
-            $query->where('is_active', true)->take(4);
-        }])->has('products', '>=', 4)->inRandomOrder()->take(2)->get();
+        $categorySections = Category::with([
+            'products' => function ($query) {
+                $query->where('is_active', true)->take(4);
+            }
+        ])->has('products', '>=', 4)->inRandomOrder()->take(2)->get();
 
         return Inertia::render('Home', [
             'topSelling' => $topSelling,
@@ -28,18 +33,19 @@ class StoreController extends Controller
         ]);
     }
 
+
     public function shop(Request $request)
     {
         $query = Product::with('category')->where('is_active', true);
 
         if ($request->has('category')) {
-            $query->whereHas('category', function($q) use ($request) {
+            $query->whereHas('category', function ($q) use ($request) {
                 $q->where('slug', $request->category);
             });
         }
 
         if ($request->has('subcategory')) {
-            $query->whereHas('subCategory', function($q) use ($request) {
+            $query->whereHas('subCategory', function ($q) use ($request) {
                 $q->where('slug', $request->subcategory);
             });
         }
@@ -67,7 +73,7 @@ class StoreController extends Controller
     public function product(Product $product)
     {
         abort_if(!$product->is_active, 404);
-        
+
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('is_active', true)
@@ -82,8 +88,8 @@ class StoreController extends Controller
 
     public function checkout()
     {
-        $cart = \App\Models\Cart::where('user_id', auth()->id())->with('items.product')->first();
-        
+        $cart = $this->getCart();
+
         if (!$cart || $cart->items->count() === 0) {
             return redirect()->route('cart');
         }
@@ -105,8 +111,8 @@ class StoreController extends Controller
             'village' => 'required|string|max:255',
         ]);
 
-        $cart = \App\Models\Cart::where('user_id', auth()->id())->with('items.product')->first();
-        
+        $cart = $this->getCart();
+
         if (!$cart || $cart->items->count() === 0) {
             return redirect()->route('cart')->with('error', 'Your cart is empty.');
         }
@@ -117,7 +123,7 @@ class StoreController extends Controller
         }
 
         $order = \App\Models\Order::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(), // null for guests — column is nullable
             'customer_name' => $validated['customer_name'],
             'customer_email' => $validated['customer_email'],
             'customer_phone' => $validated['customer_phone'],
@@ -140,14 +146,14 @@ class StoreController extends Controller
                 'package_cost' => $item->product->package_cost,
                 'quantity' => $item->quantity
             ]);
-            
+
             // Reduce stock
             if ($item->product->stock >= $item->quantity) {
                 $item->product->decrement('stock', $item->quantity);
             }
         }
 
-        // Clear the database cart
+        // Clear the cart
         $cart->items()->delete();
         $cart->delete();
 
@@ -159,5 +165,18 @@ class StoreController extends Controller
         return Inertia::render('ThankYou', [
             'order' => $order->load('items')
         ]);
+    }
+
+    /**
+     * Retrieve the cart for the current user or guest session.
+     */
+    private function getCart(): ?Cart
+    {
+        if (Auth::check()) {
+            return Cart::where('user_id', Auth::id())->with('items.product')->first();
+        }
+
+        $sessionId = Session::getId();
+        return Cart::where('session_id', $sessionId)->whereNull('user_id')->with('items.product')->first();
     }
 }
