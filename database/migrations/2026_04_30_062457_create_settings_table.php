@@ -26,7 +26,7 @@ return new class extends Migration
             ['key' => 'footer_about', 'value' => 'Bangladesh\'s leading destination for pure, natural, and premium organic products.', 'group' => 'footer'],
             ['key' => 'footer_address', 'value' => 'Rampura, Dhaka, Bangladesh', 'group' => 'footer'],
             ['key' => 'footer_phone', 'value' => '0123456789', 'group' => 'footer'],
-            ['key' => 'footer_email', 'value' => 'support@sadmancart.com', 'group' => 'footer'],
+            ['key' => 'footer_email', 'value' => 'admin@sadmancart.com', 'group' => 'footer'],
             ['key' => 'slider_images', 'value' => json_encode(['/images/slider1.jpg', '/images/slider2.jpg']), 'group' => 'slider'],
         ]);
     }
