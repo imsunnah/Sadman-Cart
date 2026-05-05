@@ -57,11 +57,13 @@
                         :alt="$page.props.settings.site_name"
                         class="h-10 w-auto"
                     />
-                    <span
-                        v-else
-                        class="text-2xl font-black text-[#003366] tracking-tight"
-                        >{{ $page.props.settings.site_name }}</span
-                    >
+                    <div v-else class="flex items-center">
+                        <ShoppingBag class="w-8 h-8 text-[#003366] mr-2" />
+                        <span
+                            class="text-2xl font-black text-[#003366] tracking-tight"
+                            >{{ $page.props.settings.site_name }}</span
+                        >
+                    </div>
                 </Link>
 
                 <!-- Search -->
@@ -283,9 +285,12 @@
                             :src="$page.props.settings.site_logo"
                             class="h-8 w-auto"
                         />
-                        <span class="ml-2 text-xl font-bold text-[#003366]">{{
-                            $page.props.settings.site_name
-                        }}</span>
+                        <div v-else class="flex items-center">
+                            <ShoppingBag class="w-6 h-6 text-[#003366] mr-2" />
+                            <span class="text-xl font-bold text-[#003366]">{{
+                                $page.props.settings.site_name
+                            }}</span>
+                        </div>
                     </div>
                     <p class="text-sm text-slate-500 leading-relaxed font-bold">
                         {{ $page.props.settings.footer_about }}
@@ -394,6 +399,7 @@ import {
     CheckCircle,
     XCircle,
     Info,
+    ShoppingBag,
 } from "lucide-vue-next";
 import { useCart } from "@/Composables/useCart";
 import { useToast } from "@/Composables/useToast";

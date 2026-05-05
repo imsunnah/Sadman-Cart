@@ -25,7 +25,7 @@ export default defineConfig({
         },
     },
     server: {
-        host: 'https://sadmancart.com/',
+        host: 'localhost',
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },

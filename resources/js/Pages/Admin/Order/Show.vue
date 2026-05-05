@@ -2,101 +2,147 @@
     <AdminLayout>
         <div class="mb-8 flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-[#003366]">Order Details</h1>
-                <p class="text-sm text-slate-500 mt-1">Reference: <span class="font-mono font-bold text-[#FF6600]">#ORD-{{ String(order.id).padStart(5, '0') }}</span></p>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight uppercase">Order Details</h1>
+                <p class="text-sm font-bold text-slate-500 mt-1">Order ID: <span class="font-mono text-[#003366]">#{{ String(order.id).padStart(5, '0') }}</span></p>
             </div>
-            <Link href="/admin/orders" class="flex items-center text-sm font-bold text-slate-400 hover:text-[#003366] transition-colors">
-                <ArrowLeft class="w-4 h-4 mr-2" /> Return to List
+            <Link href="/admin/orders" class="flex items-center text-sm font-bold text-slate-500 hover:text-[#003366] transition-colors bg-white px-4 py-2 rounded-lg border shadow-sm">
+                <ArrowLeft class="w-4 h-4 mr-2" /> Back to Orders
             </Link>
+        </div>
+
+        <!-- Notification -->
+        <div v-if="$page.props.flash?.success" class="mb-8 bg-green-50 border border-green-200 text-green-700 p-4 rounded-xl flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <CheckCircle class="w-5 h-5" />
+                <span class="text-sm font-bold">{{ $page.props.flash.success }}</span>
+            </div>
+            <button @click="$page.props.flash.success = null" class="opacity-50 hover:opacity-100 transition-opacity"><XCircle class="w-5 h-5" /></button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left Side: Order Info & Items -->
             <div class="lg:col-span-2 space-y-8">
-                <!-- Items Manifest -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div class="p-6 border-b border-slate-50 flex items-center space-x-2">
-                        <Package class="w-5 h-5 text-[#0099FF]" />
-                        <h2 class="font-bold text-[#003366]">Inventory Manifest</h2>
+                <!-- Ordered Items -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 flex items-center space-x-3 bg-slate-50">
+                        <Package class="w-5 h-5 text-[#003366]" />
+                        <h2 class="font-black text-[#003366] uppercase tracking-wider text-sm">Ordered Items</h2>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead>
-                                <tr class="bg-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
-                                    <th class="py-4 px-8">Product Designation</th>
-                                    <th class="py-4 px-8 text-center">Volume</th>
-                                    <th class="py-4 px-8 text-right">Valuation</th>
+                                <tr class="bg-white text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                    <th class="py-4 px-6">Product Name</th>
+                                    <th class="py-4 px-6 text-center">Quantity</th>
+                                    <th class="py-4 px-6 text-right">Total Price</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50">
-                                <tr v-for="item in order.items" :key="item.id">
-                                    <td class="py-5 px-8">
-                                        <div class="text-sm font-bold text-slate-900">{{ item.product_name }}</div>
+                                <tr v-for="item in order.items" :key="item.id" class="hover:bg-slate-50 transition-colors">
+                                    <td class="py-5 px-6">
+                                        <div class="text-sm font-bold text-slate-800">{{ item.product_name }}</div>
+                                        <div class="text-xs text-slate-400 mt-1">Unit Price: ৳{{ parseFloat(item.price).toLocaleString() }}</div>
                                     </td>
-                                    <td class="py-5 px-8 text-center text-sm text-slate-500 font-bold">x{{ item.quantity }}</td>
-                                    <td class="py-5 px-8 text-right text-sm font-bold text-slate-900">৳{{ parseFloat(item.price * item.quantity).toLocaleString() }}</td>
+                                    <td class="py-5 px-6 text-center text-sm text-slate-600 font-bold">x{{ item.quantity }}</td>
+                                    <td class="py-5 px-6 text-right text-sm font-black text-slate-900">৳{{ parseFloat(item.price * item.quantity).toLocaleString() }}</td>
                                 </tr>
                             </tbody>
-                            <tfoot class="bg-[#003366] text-white">
+                            <tfoot class="bg-slate-50 text-slate-900 border-t border-slate-200">
                                 <tr>
-                                    <td colspan="2" class="py-6 px-8 text-xs font-bold uppercase tracking-widest">Aggregate Total</td>
-                                    <td class="py-6 px-8 text-right text-xl font-bold">৳{{ parseFloat(order.total_amount).toLocaleString() }}</td>
+                                    <td colspan="2" class="py-6 px-6 text-sm font-black uppercase tracking-wider text-right">Grand Total:</td>
+                                    <td class="py-6 px-6 text-right text-xl font-black text-[#003366]">৳{{ parseFloat(order.total_amount).toLocaleString() }}</td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
                 </div>
 
-                <!-- Logistics Log -->
-                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 space-y-6">
-                    <div class="flex items-center space-x-2">
+                <!-- Shipping Address -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 space-y-6">
+                    <div class="flex items-center space-x-3">
                         <Truck class="w-5 h-5 text-[#FF6600]" />
-                        <h2 class="font-bold text-[#003366]">Logistics Destination</h2>
+                        <h2 class="font-black text-[#003366] uppercase tracking-wider text-sm">Shipping Address</h2>
                     </div>
-                    <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
-                        <p class="text-sm text-slate-600 leading-relaxed font-medium">{{ order.shipping_address }}</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">District</span>
+                            <span class="text-sm font-bold text-slate-800">{{ order.district || 'N/A' }}</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Upazila</span>
+                            <span class="text-sm font-bold text-slate-800">{{ order.upazila || 'N/A' }}</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 md:col-span-2">
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Village / Area</span>
+                            <span class="text-sm font-bold text-slate-800">{{ order.village || 'N/A' }}</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 md:col-span-2">
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Full Detailed Address</span>
+                            <span class="text-sm font-medium text-slate-700 leading-relaxed">{{ order.shipping_address }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Right Side: Status & Customer -->
             <div class="space-y-8">
-                <!-- Operational Status -->
-                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 space-y-6">
-                    <div class="flex items-center space-x-2">
+                <!-- Status & Payment -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 space-y-6">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4">
                         <ShieldCheck class="w-5 h-5 text-[#0099FF]" />
-                        <h2 class="font-bold text-[#003366]">Operational Control</h2>
+                        <h2 class="font-black text-[#003366] uppercase tracking-wider text-sm">Order Status</h2>
                     </div>
+                    
                     <div class="space-y-4">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Synchronization Status</label>
-                        <select @change="updateStatus($event.target.value)" :value="order.status" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none focus:ring-2 focus:ring-[#0099FF]/10 outline-none transition-all font-bold text-sm" :class="getStatusClass(order.status)">
-                            <option value="pending">PENDING</option>
-                            <option value="processing">PROCESSING</option>
-                            <option value="completed">COMPLETED</option>
-                            <option value="cancelled">CANCELLED</option>
-                        </select>
-                        <p class="text-[10px] text-slate-400 font-medium px-1">Updating status will dispatch an automated notification to the customer entity.</p>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Payment Method</label>
+                            <div class="px-4 py-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2">
+                                <Banknote class="w-4 h-4 text-slate-500" />
+                                <span class="text-sm font-bold text-slate-800 uppercase">{{ order.payment_method }}</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 mt-4">Current Status</label>
+                            <select @change="updateStatus($event.target.value)" :value="order.status" class="w-full px-4 py-3 rounded-xl border outline-none font-bold text-sm uppercase transition-all cursor-pointer" :class="getStatusClass(order.status)">
+                                <option value="pending">Pending</option>
+                                <option value="processing">Processing</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <p class="text-[10px] text-slate-400 font-medium mt-2">Changing the status may notify the customer via email.</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Customer Entity -->
-                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 space-y-6">
-                    <div class="flex items-center space-x-2">
+                <!-- Customer Info -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 space-y-6">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4">
                         <User class="w-5 h-5 text-[#FFCC00]" />
-                        <h2 class="font-bold text-[#003366]">Customer Profile</h2>
+                        <h2 class="font-black text-[#003366] uppercase tracking-wider text-sm">Customer Info</h2>
                     </div>
                     <div class="space-y-4">
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Entity Name</span>
-                            <span class="text-sm font-bold text-slate-900">{{ order.customer_name }}</span>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
+                            <User class="w-4 h-4 text-slate-400" />
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Name</span>
+                                <span class="text-sm font-bold text-slate-900">{{ order.customer_name }}</span>
+                            </div>
                         </div>
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Electronic Mail</span>
-                            <span class="text-sm font-bold text-slate-900">{{ order.customer_email }}</span>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
+                            <Phone class="w-4 h-4 text-slate-400" />
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Phone</span>
+                                <span class="text-sm font-bold text-slate-900">{{ order.customer_phone }}</span>
+                            </div>
                         </div>
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Telecom Line</span>
-                            <span class="text-sm font-bold text-slate-900">{{ order.customer_phone }}</span>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
+                            <Mail class="w-4 h-4 text-slate-400" />
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email</span>
+                                <span class="text-sm font-bold text-slate-900">{{ order.customer_email || 'Not Provided' }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,7 +154,7 @@
 <script setup>
 import { Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { ArrowLeft, Package, Truck, ShieldCheck, User } from 'lucide-vue-next';
+import { ArrowLeft, Package, Truck, ShieldCheck, User, CheckCircle, XCircle, Banknote, Phone, Mail } from 'lucide-vue-next';
 
 const props = defineProps({
     order: Object
@@ -117,16 +163,18 @@ const props = defineProps({
 const updateStatus = (status) => {
     router.put(`/admin/orders/${props.order.id}`, {
         status: status
+    }, {
+        preserveScroll: true
     });
 };
 
 const getStatusClass = (status) => {
     switch (status) {
-        case 'pending': return 'text-yellow-600';
-        case 'processing': return 'text-blue-600';
-        case 'completed': return 'text-green-600';
-        case 'cancelled': return 'text-red-600';
-        default: return 'text-slate-600';
+        case 'pending': return 'text-yellow-700 bg-yellow-50 border-yellow-200';
+        case 'processing': return 'text-blue-700 bg-blue-50 border-blue-200';
+        case 'completed': return 'text-green-700 bg-green-50 border-green-200';
+        case 'cancelled': return 'text-red-700 bg-red-50 border-red-200';
+        default: return 'text-slate-700 bg-slate-50 border-slate-200';
     }
 };
 </script>
