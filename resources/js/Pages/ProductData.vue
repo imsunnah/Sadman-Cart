@@ -31,11 +31,11 @@
 
                         <!-- Right: Product Info -->
                         <div class="lg:col-span-7 mt-10 lg:mt-0">
-                            <h1 class="text-3xl font-black text-slate-800 mb-2 italic uppercase tracking-tight">{{ product.name }}</h1>
+                            <h1 class="text-2xl sm:text-3xl font-black text-slate-800 mb-2 italic uppercase tracking-tight">{{ product.name }}</h1>
                             
                             <!-- Pricing Section -->
-                            <div class="flex items-center space-x-4 mb-6">
-                                <span class="text-3xl font-black text-[#FF6600]">৳{{ parseFloat(product.price).toLocaleString() }}</span>
+                            <div class="flex flex-wrap items-center gap-2 sm:space-x-4 mb-6">
+                                <span class="text-2xl sm:text-3xl font-black text-[#FF6600]">৳{{ parseFloat(product.price).toLocaleString() }}</span>
                                 <span class="text-lg text-slate-400 line-through font-bold">৳{{ (parseFloat(product.price) * 1.2).toFixed(0) }}</span>
                                 <span class="bg-[#FF6600] text-white text-[10px] font-black px-2 py-1 rounded">SAVE 20%</span>
                             </div>
@@ -115,7 +115,7 @@
                         </button>
                     </div>
 
-                    <div class="p-8">
+                    <div class="p-5 sm:p-8">
                         <div v-if="activeTab === 'description'" class="prose prose-slate max-w-none">
                             <h3 class="text-sm font-black text-slate-800 mb-4 uppercase tracking-widest">Product Details</h3>
                             <p class="text-slate-600 leading-relaxed font-bold">

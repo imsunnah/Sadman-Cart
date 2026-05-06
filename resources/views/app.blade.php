@@ -9,6 +9,11 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
+    @php
+        $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value') ?? '/favicon.ico';
+    @endphp
+    <link rel="icon" href="{{ asset($siteLogo) }}">
+
     @routes
     @vite(['resources/js/app.js', 'resources/css/app.css'])
     @inertiaHead

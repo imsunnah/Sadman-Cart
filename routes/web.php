@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StoreController;
 use Inertia\Inertia;
+use App\Http\Controllers\LanguageController;
+
+Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
 
 // Storefront routes
 Route::get('/', [StoreController::class, 'home'])->name('home');

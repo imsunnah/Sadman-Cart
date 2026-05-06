@@ -12,11 +12,11 @@
                         </div>
                     </div>
                     <!-- Controls -->
-                    <button @click="prevSlide" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100">
-                        <ChevronLeft class="w-6 h-6 text-[#003366]" />
+                    <button @click="prevSlide" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                        <ChevronLeft class="w-5 h-5 md:w-6 md:h-6 text-[#003366]" />
                     </button>
-                    <button @click="nextSlide" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100">
-                        <ChevronRight class="w-6 h-6 text-[#003366]" />
+                    <button @click="nextSlide" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                        <ChevronRight class="w-5 h-5 md:w-6 md:h-6 text-[#003366]" />
                     </button>
                 </div>
             </div>

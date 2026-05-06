@@ -84,7 +84,7 @@
                                 <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">{{ order.payment_method }}</div>
                             </td>
                             <td class="py-5 px-6 text-center">
-                                <select @change="updateStatus(order, $event.target.value)" :value="order.status" class="text-xs font-bold uppercase px-3 py-2 rounded-lg border outline-none cursor-pointer w-full text-center transition-all appearance-none" :class="getStatusClass(order.status)">
+                                <select @change="initiateStatusUpdate(order, $event.target.value, $event)" :value="order.status" class="text-xs font-bold uppercase px-3 py-2 rounded-lg border outline-none cursor-pointer w-full text-center transition-all appearance-none" :class="getStatusClass(order.status)">
                                     <option value="pending">Pending</option>
                                     <option value="processing">Processing</option>
                                     <option value="completed">Completed</option>
@@ -122,10 +122,27 @@
                 ></Link>
             </div>
         </div>
+
+        <!-- Confirm Status Update Modal -->
+        <transition enter-active-class="transition duration-300 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-200 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+            <div v-if="showStatusModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                <div class="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl">
+                    <h3 class="text-xl font-bold text-slate-900 text-center mb-4">Are you sure?</h3>
+                    <p class="text-sm text-slate-500 text-center mb-8">
+                        Do you really want to change the status of Order <span class="font-bold text-[#003366]">#{{ String(orderToUpdate?.id).padStart(5, '0') }}</span> to <span class="font-bold text-[#003366] uppercase">{{ newStatus }}</span>?
+                    </p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button @click="showStatusModal = false" class="px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-all">Cancel</button>
+                        <button @click="confirmStatusUpdate" class="px-4 py-3 rounded-xl bg-[#003366] text-white font-bold hover:bg-slate-800 transition-all shadow-lg">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
     </AdminLayout>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Eye, CheckCircle, XCircle, ShoppingBag, Phone } from 'lucide-vue-next';
@@ -143,11 +160,25 @@ const tabs = [
     { label: 'Cancelled', value: 'cancelled' },
 ];
 
-const updateStatus = (order, status) => {
-    router.put(`/admin/orders/${order.id}`, {
-        status: status
+const showStatusModal = ref(false);
+const orderToUpdate = ref(null);
+const newStatus = ref('');
+
+const initiateStatusUpdate = (order, status, event) => {
+    event.target.value = order.status; // Revert visually until confirmed
+    orderToUpdate.value = order;
+    newStatus.value = status;
+    showStatusModal.value = true;
+};
+
+const confirmStatusUpdate = () => {
+    router.put(`/admin/orders/${orderToUpdate.value.id}`, {
+        status: newStatus.value
     }, {
-        preserveScroll: true
+        preserveScroll: true,
+        onSuccess: () => {
+            showStatusModal.value = false;
+        }
     });
 };
 

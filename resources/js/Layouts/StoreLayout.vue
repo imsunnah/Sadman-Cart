@@ -3,7 +3,7 @@
         <!-- Header -->
         <header class="bg-white sticky top-0 z-50 shadow-sm">
             <!-- Top bar -->
-            <div class="bg-[#003366] text-white py-2 text-xs font-medium">
+            <div class="bg-[#003366] text-white py-3 md:py-4 text-sm font-medium">
                 <div
                     class="max-w-[1600px] mx-auto px-4 flex justify-between items-center"
                 >
@@ -18,29 +18,34 @@
                         >
                     </div>
                     <div class="flex items-center space-x-6">
+                        <div class="flex items-center space-x-2 mr-2">
+                            <a href="/language/en" :class="$page.props.locale === 'en' ? 'text-white font-bold' : 'text-slate-300 hover:text-white'" class="transition-colors">EN</a>
+                            <span class="text-slate-400">|</span>
+                            <a href="/language/bn" :class="$page.props.locale === 'bn' ? 'text-white font-bold' : 'text-slate-300 hover:text-white'" class="transition-colors">BN</a>
+                        </div>
                         <Link
                             v-if="!$page.props.auth.user"
                             href="/login"
                             class="hover:text-[#FF6600]"
-                            >Login / Register</Link
+                            >{{ $t('Login / Register') }}</Link
                         >
                         <div v-else class="flex items-center space-x-4">
                             <span class="text-slate-300"
-                                >Welcome, {{ $page.props.auth.user.name }}</span
+                                >{{ $t('Welcome') }}, {{ $page.props.auth.user.name }}</span
                             >
                             <Link
                                 href="/logout"
                                 method="post"
                                 as="button"
                                 class="hover:text-[#FF6600]"
-                                >Logout</Link
+                                >{{ $t('Logout') }}</Link
                             >
                         </div>
                         <Link
                             v-if="$page.props.auth.user?.role === 'admin'"
                             href="/admin/dashboard"
                             class="text-[#FF6600] font-bold"
-                            >Admin Panel</Link
+                            >{{ $t('Admin Panel') }}</Link
                         >
                     </div>
                 </div>
@@ -48,48 +53,51 @@
 
             <!-- Main Header -->
             <div
-                class="max-w-[1600px] mx-auto px-4 py-5 flex justify-between items-center gap-10"
+                class="max-w-[1600px] mx-auto px-4 py-3 md:py-5 flex flex-wrap md:flex-nowrap justify-between items-center gap-3 md:gap-10"
             >
-                <Link href="/" class="flex items-center flex-shrink-0">
-                    <img
-                        v-if="$page.props.settings.site_logo"
-                        :src="$page.props.settings.site_logo"
-                        :alt="$page.props.settings.site_name"
-                        class="h-10 w-auto"
-                    />
+                <Link href="/" class="flex items-center flex-shrink-0 order-1">
+                    <div v-if="$page.props.settings.site_logo" class="flex items-center">
+                        <img
+                            :src="$page.props.settings.site_logo"
+                            :alt="$page.props.settings.site_name"
+                            class="h-16 md:h-24 w-auto object-contain mr-2 md:mr-4"
+                        />
+                        <span class="text-xl md:text-3xl font-black text-[#003366] tracking-tight">
+                            {{ $page.props.settings.site_name }}
+                        </span>
+                    </div>
                     <div v-else class="flex items-center">
-                        <ShoppingBag class="w-8 h-8 text-[#003366] mr-2" />
-                        <span
-                            class="text-2xl font-black text-[#003366] tracking-tight"
-                            >{{ $page.props.settings.site_name }}</span
-                        >
+                        <ShoppingBag class="w-7 h-7 md:w-10 md:h-10 text-[#003366] mr-2 md:mr-3" />
+                        <span class="text-xl md:text-3xl font-black text-[#003366] tracking-tight">
+                            {{ $page.props.settings.site_name }}
+                        </span>
                     </div>
                 </Link>
 
                 <!-- Search -->
-                <div class="flex-grow max-w-xl">
+                <div class="w-full md:w-auto md:flex-grow md:max-w-xl order-3 md:order-2 mt-2 md:mt-0">
                     <form @submit.prevent="handleSearch" class="relative group">
                         <input
                             v-model="searchQuery"
                             type="text"
                             placeholder="Search for products..."
-                            class="w-full pl-12 pr-4 py-3 bg-slate-100 border-none rounded-full text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all"
+                            class="w-full pl-12 pr-4 py-2.5 md:py-3 bg-slate-100 border-none rounded-full text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all"
                         />
                         <Search
-                            class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#003366] transition-colors"
+                            class="w-4 h-4 md:w-5 md:h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#003366] transition-colors"
                         />
                     </form>
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center space-x-6">
+                <div class="flex items-center space-x-2 md:space-x-6 order-2 md:order-3">
                     <Link href="/cart" class="relative p-2 group">
                         <ShoppingCart
-                            class="w-7 h-7 text-[#003366] group-hover:text-[#FF6600] transition-colors"
+                            class="w-6 h-6 md:w-7 md:h-7 text-[#003366] group-hover:text-[#FF6600] transition-colors"
                         />
                         <span
                             v-if="cartCount > 0"
-                            class="absolute -top-1 -right-1 bg-[#FF6600] text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-lg border-2 border-white"
+                            class="absolute -top-1 -right-1 bg-[#FF6600] text-white text-[10px] font-bold w-4 h-4 md:w-5 md:h-5 flex items-center justify-center rounded-full shadow-lg border-2 border-white"
                         >
                             {{ cartCount }}
                         </span>
@@ -98,7 +106,7 @@
                         @click="isMobileMenuOpen = !isMobileMenuOpen"
                         class="md:hidden p-2"
                     >
-                        <Menu class="w-7 h-7 text-[#003366]" />
+                        <Menu class="w-6 h-6 text-[#003366]" />
                     </button>
                 </div>
             </div>
@@ -115,7 +123,7 @@
                                 ? 'text-[#FF6600]'
                                 : 'text-slate-600 hover:text-[#FF6600]',
                         ]"
-                        >Home</Link
+                        >{{ $t('Home') }}</Link
                     >
                     <Link
                         href="/shop"
@@ -124,7 +132,7 @@
                                 ? 'text-[#FF6600]'
                                 : 'text-slate-600 hover:text-[#FF6600]',
                         ]"
-                        >Shop All</Link
+                        >{{ $t('Shop All') }}</Link
                     >
                     <Link
                         v-for="category in $page.props.categories"
@@ -161,13 +169,13 @@
                     href="/"
                     class="block text-lg font-bold text-slate-800"
                     @click="isMobileMenuOpen = false"
-                    >Home</Link
+                    >{{ $t('Home') }}</Link
                 >
                 <Link
                     href="/shop"
                     class="block text-lg font-bold text-slate-800"
                     @click="isMobileMenuOpen = false"
-                    >Shop All</Link
+                    >{{ $t('Shop All') }}</Link
                 >
                 <div
                     v-for="category in $page.props.categories"
@@ -185,7 +193,7 @@
                     href="/cart"
                     class="block text-lg font-bold text-[#FF6600]"
                     @click="isMobileMenuOpen = false"
-                    >View Cart</Link
+                    >{{ $t('View Cart') }}</Link
                 >
             </div>
         </div>
@@ -279,18 +287,20 @@
                 class="max-w-[1600px] mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12"
             >
                 <div class="space-y-6">
-                    <div class="flex items-center">
+                    <div v-if="$page.props.settings.site_logo" class="flex items-center">
                         <img
-                            v-if="$page.props.settings.site_logo"
                             :src="$page.props.settings.site_logo"
-                            class="h-8 w-auto"
+                            class="h-16 md:h-24 w-auto object-contain mr-3"
                         />
-                        <div v-else class="flex items-center">
-                            <ShoppingBag class="w-6 h-6 text-[#003366] mr-2" />
-                            <span class="text-xl font-bold text-[#003366]">{{
-                                $page.props.settings.site_name
-                            }}</span>
-                        </div>
+                        <span class="text-3xl font-black tracking-tight text-[#003366]">{{
+                            $page.props.settings.site_name
+                        }}</span>
+                    </div>
+                    <div v-else class="flex items-center">
+                        <ShoppingBag class="w-8 h-8 text-[#003366] mr-2" />
+                        <span class="text-2xl font-bold text-[#003366]">{{
+                            $page.props.settings.site_name
+                        }}</span>
                     </div>
                     <p class="text-sm text-slate-500 leading-relaxed font-bold">
                         {{ $page.props.settings.footer_about }}

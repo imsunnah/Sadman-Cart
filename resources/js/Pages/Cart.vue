@@ -34,10 +34,10 @@
                                 <li
                                     v-for="item in cart"
                                     :key="item.id"
-                                    class="flex p-8 group transition-colors hover:bg-slate-50/50"
+                                    class="flex p-4 sm:p-8 group transition-colors hover:bg-slate-50/50"
                                 >
                                     <div
-                                        class="flex-shrink-0 w-24 h-24 sm:w-40 sm:h-40 bg-slate-100 rounded-2xl overflow-hidden relative border border-slate-100"
+                                        class="flex-shrink-0 w-20 h-20 sm:w-40 sm:h-40 bg-slate-100 rounded-2xl overflow-hidden relative border border-slate-100"
                                     >
                                         <img
                                             v-if="item.product?.image"
@@ -49,13 +49,13 @@
                                             v-else
                                             class="w-full h-full flex items-center justify-center text-slate-300"
                                         >
-                                            <Package class="w-12 h-12" />
+                                            <Package class="w-8 h-8 sm:w-12 sm:h-12" />
                                         </div>
                                     </div>
 
-                                    <div class="ml-8 flex-1 flex flex-col">
+                                    <div class="ml-4 sm:ml-8 flex-1 flex flex-col">
                                         <div
-                                            class="flex items-start justify-between"
+                                            class="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-0"
                                         >
                                             <div>
                                                 <h3
@@ -87,10 +87,10 @@
                                             </p>
                                         </div>
                                         <div
-                                            class="mt-auto flex items-end justify-between"
+                                            class="mt-4 sm:mt-auto flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 sm:gap-0"
                                         >
                                             <div
-                                                class="flex items-center space-x-4 bg-slate-100 p-1.5 rounded-xl"
+                                                class="flex items-center space-x-2 sm:space-x-4 bg-slate-100 p-1.5 rounded-xl"
                                             >
                                                 <button
                                                     @click="
@@ -137,7 +137,7 @@
                         </div>
                         <div
                             v-else
-                            class="bg-white shadow-2xl shadow-slate-200/50 rounded-3xl border border-slate-100 p-20 text-center flex flex-col items-center"
+                            class="bg-white shadow-2xl shadow-slate-200/50 rounded-3xl border border-slate-100 p-8 sm:p-20 text-center flex flex-col items-center"
                         >
                             <div
                                 class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6"
@@ -167,7 +167,7 @@
 
                     <div class="lg:col-span-4" v-if="cart.length > 0">
                         <div
-                            class="bg-[#003366] text-white rounded-3xl p-10 sticky top-24 shadow-2xl shadow-[#003366]/30 overflow-hidden relative"
+                            class="bg-[#003366] text-white rounded-3xl p-6 sm:p-10 sticky top-24 shadow-2xl shadow-[#003366]/30 overflow-hidden relative"
                         >
                             <div
                                 class="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none"

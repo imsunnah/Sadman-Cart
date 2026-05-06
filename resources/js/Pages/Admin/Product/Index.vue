@@ -68,6 +68,9 @@
                             </td>
                             <td class="py-4 px-6 text-right">
                                 <div class="flex justify-end gap-2">
+                                    <button @click="viewProduct(product)" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition-colors" title="View Product">
+                                        <Eye class="w-4 h-4" />
+                                    </button>
                                     <Link :href="`/admin/products/${product.id}/edit`" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-[#003366] hover:text-white transition-colors" title="Edit Product">
                                         <Edit2 class="w-4 h-4" />
                                     </Link>
@@ -116,6 +119,81 @@
                 </div>
             </div>
         </transition>
+
+        <!-- View Product Modal -->
+        <transition enter-active-class="transition duration-300 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-200 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+            <div v-if="showViewModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                <div class="bg-white rounded-2xl p-8 max-w-3xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-start mb-6 border-b pb-4">
+                        <div>
+                            <h3 class="text-2xl font-black text-slate-900 uppercase tracking-tight">{{ productToView?.name }}</h3>
+                            <p class="text-sm text-slate-500 font-bold mt-1">SKU: {{ productToView?.sku }}</p>
+                        </div>
+                        <button @click="showViewModal = false" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"><X class="w-5 h-5 text-slate-600" /></button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                        <div>
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Product Images</h4>
+                            <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden mb-3 border">
+                                <img v-if="productToView?.image" :src="productToView.image" class="w-full h-full object-cover" />
+                                <div v-else class="w-full h-full flex items-center justify-center text-slate-400"><Package class="w-12 h-12" /></div>
+                            </div>
+                            <div v-if="productToView?.gallery && productToView.gallery.length > 0" class="grid grid-cols-4 gap-2">
+                                <div v-for="img in productToView.gallery" :key="img.id" class="aspect-square rounded-lg bg-slate-100 overflow-hidden border">
+                                    <img :src="img.image" class="w-full h-full object-cover" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Details</h4>
+                            <div class="space-y-4">
+                                <div class="flex justify-between border-b pb-2">
+                                    <span class="text-sm font-bold text-slate-500">Category</span>
+                                    <span class="text-sm font-black text-[#003366]">{{ productToView?.category?.name || 'N/A' }}</span>
+                                </div>
+                                <div class="flex justify-between border-b pb-2">
+                                    <span class="text-sm font-bold text-slate-500">Subcategory</span>
+                                    <span class="text-sm font-black text-[#FF6600]">{{ productToView?.sub_category?.name || 'N/A' }}</span>
+                                </div>
+                                <div class="flex justify-between border-b pb-2">
+                                    <span class="text-sm font-bold text-slate-500">Selling Price</span>
+                                    <span class="text-sm font-black text-green-600">৳{{ parseFloat(productToView?.price || 0).toLocaleString() }}</span>
+                                </div>
+                                <div class="flex justify-between border-b pb-2">
+                                    <span class="text-sm font-bold text-slate-500">Buying Price</span>
+                                    <span class="text-sm font-black text-slate-900">৳{{ parseFloat(productToView?.buying_price || 0).toLocaleString() }}</span>
+                                </div>
+                                <div class="flex justify-between border-b pb-2">
+                                    <span class="text-sm font-bold text-slate-500">Package Cost</span>
+                                    <span class="text-sm font-black text-slate-900">৳{{ parseFloat(productToView?.package_cost || 0).toLocaleString() }}</span>
+                                </div>
+                                <div class="flex justify-between border-b pb-2">
+                                    <span class="text-sm font-bold text-slate-500">Stock</span>
+                                    <span class="text-sm font-black text-slate-900">{{ productToView?.stock }} Units</span>
+                                </div>
+                                <div class="flex justify-between border-b pb-2">
+                                    <span class="text-sm font-bold text-slate-500">Status</span>
+                                    <span :class="productToView?.is_active ? 'text-green-600' : 'text-slate-400'" class="text-sm font-black uppercase tracking-widest">{{ productToView?.is_active ? 'Active' : 'Archived' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Description</h4>
+                        <div class="p-4 bg-slate-50 rounded-xl border text-sm text-slate-600 whitespace-pre-wrap font-bold">
+                            {{ productToView?.description }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 flex justify-end">
+                        <button @click="showViewModal = false" class="px-6 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all">Close</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
     </AdminLayout>
 </template>
 
@@ -123,7 +201,7 @@
 import { ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Plus, Edit2, Trash2, CheckCircle, XCircle, Package } from 'lucide-vue-next';
+import { Plus, Edit2, Trash2, CheckCircle, XCircle, Package, Eye, X } from 'lucide-vue-next';
 
 defineProps({
     products: Object
@@ -131,6 +209,14 @@ defineProps({
 
 const showDeleteModal = ref(false);
 const productToDelete = ref(null);
+
+const showViewModal = ref(false);
+const productToView = ref(null);
+
+const viewProduct = (product) => {
+    productToView.value = product;
+    showViewModal.value = true;
+};
 
 const confirmDelete = (id) => {
     productToDelete.value = id;

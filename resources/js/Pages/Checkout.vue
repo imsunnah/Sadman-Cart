@@ -21,9 +21,9 @@
                 <div v-if="showConfirmModal" class="fixed inset-0 z-[90] flex items-center justify-center px-4">
                     <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" @click="showConfirmModal = false"></div>
                     <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg relative overflow-hidden border border-slate-100">
-                        <div class="p-10">
-                            <div class="w-16 h-16 bg-[#003366]/5 rounded-2xl flex items-center justify-center mb-6">
-                                <ShoppingCart class="w-8 h-8 text-[#003366]" />
+                        <div class="p-6 sm:p-10">
+                            <div class="w-12 h-12 sm:w-16 sm:h-16 bg-[#003366]/5 rounded-2xl flex items-center justify-center mb-6">
+                                <ShoppingCart class="w-6 h-6 sm:w-8 sm:h-8 text-[#003366]" />
                             </div>
                             
                             <h2 class="text-2xl font-black text-slate-900 tracking-tight uppercase mb-3">Place Your Order?</h2>
@@ -43,11 +43,11 @@
                                 </div>
                             </div>
 
-                            <div class="flex gap-3">
-                                <button @click="showConfirmModal = false" class="flex-1 py-4 rounded-xl text-[11px] font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all border border-slate-200">
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button @click="showConfirmModal = false" class="flex-1 py-3 sm:py-4 rounded-xl text-[11px] font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all border border-slate-200">
                                     Cancel
                                 </button>
-                                <button @click="confirmAndSubmit" class="flex-[2] py-4 bg-[#003366] rounded-xl text-[11px] font-black text-white uppercase tracking-[0.2em] shadow-lg shadow-[#003366]/20 hover:bg-slate-800 transition-all transform active:scale-95 flex items-center justify-center">
+                                <button @click="confirmAndSubmit" class="flex-[2] py-3 sm:py-4 bg-[#003366] rounded-xl text-[11px] font-black text-white uppercase tracking-[0.2em] shadow-lg shadow-[#003366]/20 hover:bg-slate-800 transition-all transform active:scale-95 flex items-center justify-center">
                                     Confirm Order <ArrowRight class="w-4 h-4 ml-2" />
                                 </button>
                             </div>
@@ -57,9 +57,9 @@
             </Transition>
 
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="mb-10">
-                    <h1 class="text-3xl font-black text-slate-900 tracking-tight flex items-center uppercase">
-                        <ShoppingBag class="w-8 h-8 mr-3 text-[#003366]" />
+                <div class="mb-6 sm:mb-10">
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center uppercase">
+                        <ShoppingBag class="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-[#003366]" />
                         Checkout
                     </h1>
                     <div class="h-1 w-20 bg-[#003366] mt-4 rounded-full"></div>
@@ -68,7 +68,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     <!-- Checkout Form -->
                     <div class="lg:col-span-7">
-                        <div class="bg-white shadow-xl shadow-slate-200/50 rounded-3xl border border-slate-100 p-8 sm:p-10">
+                        <div class="bg-white shadow-xl shadow-slate-200/50 rounded-3xl border border-slate-100 p-5 sm:p-10">
                             <form @submit.prevent="showConfirmModal = true">
                                 <!-- Section 1: Contact -->
                                 <div class="mb-12">
@@ -184,8 +184,8 @@
                                 </div>
                             </div>
                             
-                            <div class="bg-[#003366] text-white rounded-3xl p-6 flex items-center space-x-4 shadow-xl shadow-[#003366]/10">
-                                <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                            <div class="bg-[#003366] text-white rounded-3xl p-5 sm:p-6 flex items-center space-x-4 shadow-xl shadow-[#003366]/10">
+                                <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
                                     <Truck class="w-5 h-5 text-white" />
                                 </div>
                                 <div class="flex-1">
