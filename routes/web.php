@@ -10,13 +10,29 @@ Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('l
 // Setup route for Hostinger/Shared Hosting (Run this once on live server to fix images)
 Route::get('/setup-production', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        $target = storage_path('app/public');
+        $link = public_path('storage');
+        
+        if (file_exists($link)) {
+            @unlink($link);
+        }
+        symlink($target, $link);
+        
         \Illuminate\Support\Facades\Artisan::call('optimize:clear');
         return 'Production setup completed: Storage linked and cache cleared successfully!';
     } catch (\Exception $e) {
         return 'Error during setup: ' . $e->getMessage();
     }
 });
+
+// Fallback Route for Hostinger Images (Fixes broken symlink issues)
+Route::get('/storage/{path}', function ($path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    return response()->file($filePath);
+})->where('path', '.*');
 
 // Storefront routes
 Route::get('/', [StoreController::class, 'home'])->name('home');
