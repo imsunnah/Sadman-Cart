@@ -7,6 +7,17 @@ use App\Http\Controllers\LanguageController;
 
 Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
 
+// Setup route for Hostinger/Shared Hosting (Run this once on live server to fix images)
+Route::get('/setup-production', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        return 'Production setup completed: Storage linked and cache cleared successfully!';
+    } catch (\Exception $e) {
+        return 'Error during setup: ' . $e->getMessage();
+    }
+});
+
 // Storefront routes
 Route::get('/', [StoreController::class, 'home'])->name('home');
 Route::get('/shop', [StoreController::class, 'shop'])->name('shop');
