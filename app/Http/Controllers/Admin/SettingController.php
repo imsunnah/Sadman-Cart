@@ -37,7 +37,7 @@ class SettingController extends Controller
         }
 
         // Handle other settings
-        $settings = ['site_name', 'footer_about', 'footer_address', 'footer_phone', 'footer_email'];
+        $settings = ['site_name', 'footer_about', 'footer_address', 'footer_phone', 'footer_email', 'delivery_charge_inside_dhaka', 'delivery_charge_outside_dhaka'];
         foreach ($settings as $key) {
             if ($request->has($key)) {
                 Setting::where('key', $key)->update(['value' => $request->get($key)]);

@@ -68,13 +68,16 @@
                             </td>
                             <td class="py-4 px-6 text-right">
                                 <div class="flex justify-end gap-2">
-                                    <button @click="viewProduct(product)" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition-colors" title="View Product">
+                                    <button @click="openQuickEdit(product)" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-[#FF6600] hover:text-white transition-all transform active:scale-95" title="Quick Edit">
+                                        <Zap class="w-4 h-4" />
+                                    </button>
+                                    <button @click="viewProduct(product)" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition-all transform active:scale-95" title="View Product">
                                         <Eye class="w-4 h-4" />
                                     </button>
-                                    <Link :href="`/admin/products/${product.id}/edit`" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-[#003366] hover:text-white transition-colors" title="Edit Product">
+                                    <Link :href="`/admin/products/${product.id}/edit`" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-[#003366] hover:text-white transition-all transform active:scale-95" title="Full Edit">
                                         <Edit2 class="w-4 h-4" />
                                     </Link>
-                                    <button @click="confirmDelete(product.id)" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition-colors" title="Delete Product">
+                                    <button @click="confirmDelete(product.id)" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition-all transform active:scale-95" title="Delete Product">
                                         <Trash2 class="w-4 h-4" />
                                     </button>
                                 </div>
@@ -123,74 +126,135 @@
         <!-- View Product Modal -->
         <transition enter-active-class="transition duration-300 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-200 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
             <div v-if="showViewModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-                <div class="bg-white rounded-2xl p-8 max-w-3xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
-                    <div class="flex justify-between items-start mb-6 border-b pb-4">
-                        <div>
-                            <h3 class="text-2xl font-black text-slate-900 uppercase tracking-tight">{{ productToView?.name }}</h3>
-                            <p class="text-sm text-slate-500 font-bold mt-1">SKU: {{ productToView?.sku }}</p>
+                <div class="bg-white rounded-[2.5rem] p-8 sm:p-10 max-w-3xl w-full shadow-2xl max-h-[90vh] overflow-y-auto relative">
+                    <div class="absolute top-8 right-8">
+                        <button @click="showViewModal = false" class="p-3 bg-slate-100 rounded-2xl hover:bg-slate-200 transition-colors"><X class="w-5 h-5 text-slate-600" /></button>
+                    </div>
+
+                    <div class="mb-10">
+                        <h3 class="text-3xl font-black text-slate-900 uppercase tracking-tight italic mb-2">{{ productToView?.name }}</h3>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">SKU: {{ productToView?.sku }}</span>
+                            <span :class="productToView?.is_active ? 'bg-green-50 text-green-600 border-green-100' : 'bg-slate-50 text-slate-400 border-slate-100'" class="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border">
+                                {{ productToView?.is_active ? 'Active' : 'Archived' }}
+                            </span>
                         </div>
-                        <button @click="showViewModal = false" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"><X class="w-5 h-5 text-slate-600" /></button>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
                         <div>
-                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Product Images</h4>
-                            <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden mb-3 border">
-                                <img v-if="productToView?.image" :src="productToView.image" class="w-full h-full object-cover" />
-                                <div v-else class="w-full h-full flex items-center justify-center text-slate-400"><Package class="w-12 h-12" /></div>
+                            <h4 class="text-[10px] font-black text-[#003366] uppercase tracking-[0.2em] mb-4">Visual Identity</h4>
+                            <div class="aspect-square bg-slate-50 rounded-[2rem] overflow-hidden mb-4 border-2 border-slate-100 flex items-center justify-center p-4">
+                                <img v-if="productToView?.image" :src="productToView.image" class="max-w-full max-h-full object-contain mix-blend-multiply" />
+                                <div v-else class="flex flex-col items-center text-slate-300">
+                                    <Package class="w-12 h-12 mb-2" />
+                                    <span class="text-[10px] font-bold uppercase tracking-widest">No Primary Image</span>
+                                </div>
                             </div>
-                            <div v-if="productToView?.gallery && productToView.gallery.length > 0" class="grid grid-cols-4 gap-2">
-                                <div v-for="img in productToView.gallery" :key="img.id" class="aspect-square rounded-lg bg-slate-100 overflow-hidden border">
-                                    <img :src="img.image" class="w-full h-full object-cover" />
+                            <div v-if="productToView?.gallery && productToView.gallery.length > 0" class="grid grid-cols-4 gap-3">
+                                <div v-for="img in productToView.gallery" :key="img.id" class="aspect-square rounded-xl bg-slate-50 overflow-hidden border border-slate-100 p-1">
+                                    <img :src="img.image" class="w-full h-full object-cover rounded-lg" />
                                 </div>
                             </div>
                         </div>
                         
-                        <div>
-                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Details</h4>
-                            <div class="space-y-4">
-                                <div class="flex justify-between border-b pb-2">
-                                    <span class="text-sm font-bold text-slate-500">Category</span>
-                                    <span class="text-sm font-black text-[#003366]">{{ productToView?.category?.name || 'N/A' }}</span>
+                        <div class="space-y-8">
+                            <div>
+                                <h4 class="text-[10px] font-black text-[#003366] uppercase tracking-[0.2em] mb-4">Economics</h4>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div class="flex justify-between items-center p-4 bg-green-50 rounded-2xl border border-green-100">
+                                        <span class="text-[10px] font-bold text-green-600 uppercase tracking-widest">Selling Price</span>
+                                        <span class="text-xl font-black text-green-700">৳{{ parseFloat(productToView?.price || 0).toLocaleString() }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Buying Price</span>
+                                        <span class="text-sm font-black text-slate-900">৳{{ parseFloat(productToView?.buying_price || 0).toLocaleString() }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Packaging Cost</span>
+                                        <span class="text-sm font-black text-slate-900">৳{{ parseFloat(productToView?.package_cost || 0).toLocaleString() }}</span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between border-b pb-2">
-                                    <span class="text-sm font-bold text-slate-500">Subcategory</span>
-                                    <span class="text-sm font-black text-[#FF6600]">{{ productToView?.sub_category?.name || 'N/A' }}</span>
-                                </div>
-                                <div class="flex justify-between border-b pb-2">
-                                    <span class="text-sm font-bold text-slate-500">Selling Price</span>
-                                    <span class="text-sm font-black text-green-600">৳{{ parseFloat(productToView?.price || 0).toLocaleString() }}</span>
-                                </div>
-                                <div class="flex justify-between border-b pb-2">
-                                    <span class="text-sm font-bold text-slate-500">Buying Price</span>
-                                    <span class="text-sm font-black text-slate-900">৳{{ parseFloat(productToView?.buying_price || 0).toLocaleString() }}</span>
-                                </div>
-                                <div class="flex justify-between border-b pb-2">
-                                    <span class="text-sm font-bold text-slate-500">Package Cost</span>
-                                    <span class="text-sm font-black text-slate-900">৳{{ parseFloat(productToView?.package_cost || 0).toLocaleString() }}</span>
-                                </div>
-                                <div class="flex justify-between border-b pb-2">
-                                    <span class="text-sm font-bold text-slate-500">Stock</span>
-                                    <span class="text-sm font-black text-slate-900">{{ productToView?.stock }} Units</span>
-                                </div>
-                                <div class="flex justify-between border-b pb-2">
-                                    <span class="text-sm font-bold text-slate-500">Status</span>
-                                    <span :class="productToView?.is_active ? 'text-green-600' : 'text-slate-400'" class="text-sm font-black uppercase tracking-widest">{{ productToView?.is_active ? 'Active' : 'Archived' }}</span>
+                            </div>
+
+                            <div>
+                                <h4 class="text-[10px] font-black text-[#003366] uppercase tracking-[0.2em] mb-4">Logistics</h4>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">In Stock</span>
+                                        <span :class="productToView?.stock <= 5 ? 'text-red-600' : 'text-slate-900'" class="text-sm font-black">{{ productToView?.stock }} Units</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Classification</span>
+                                        <span class="text-[10px] font-black text-[#003366] uppercase tracking-widest bg-[#003366]/5 px-3 py-1 rounded-lg">
+                                            {{ productToView?.category?.name }}
+                                            <span v-if="productToView?.sub_category" class="text-slate-300 mx-1">/</span>
+                                            {{ productToView?.sub_category?.name }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div>
-                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Description</h4>
-                        <div class="p-4 bg-slate-50 rounded-xl border text-sm text-slate-600 whitespace-pre-wrap font-bold">
-                            {{ productToView?.description }}
+                        <h4 class="text-[10px] font-black text-[#003366] uppercase tracking-[0.2em] mb-4">Description</h4>
+                        <div class="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 text-sm text-slate-600 leading-relaxed font-bold italic shadow-inner">
+                            {{ productToView?.description || 'No description provided.' }}
                         </div>
                     </div>
-                    
-                    <div class="mt-8 flex justify-end">
-                        <button @click="showViewModal = false" class="px-6 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all">Close</button>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Quick Edit Modal -->
+        <transition enter-active-class="transition duration-300 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-200 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+            <div v-if="showQuickEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                <div class="bg-white rounded-[2.5rem] p-8 sm:p-10 max-w-md w-full shadow-2xl relative overflow-hidden">
+                    <div class="mb-8 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-[#FF6600]/10 rounded-xl flex items-center justify-center text-[#FF6600]">
+                                <Zap class="w-5 h-5" />
+                            </div>
+                            <h3 class="text-xl font-black text-slate-900 uppercase tracking-tight italic">Quick Edit</h3>
+                        </div>
+                        <button @click="showQuickEditModal = false" class="p-2 bg-slate-50 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all"><X class="w-4 h-4" /></button>
                     </div>
+
+                    <form @submit.prevent="updateProductQuick" class="space-y-6">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Product Designation</label>
+                            <input v-model="quickEditForm.name" type="text" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold text-sm">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Selling Price (৳)</label>
+                                <input v-model="quickEditForm.price" type="number" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Stock Units</label>
+                                <input v-model="quickEditForm.stock" type="number" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold text-sm">
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <div class="relative w-12 h-6 bg-slate-200 rounded-full transition-colors" :class="quickEditForm.is_active ? 'bg-green-500' : 'bg-slate-200'">
+                                    <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform" :class="quickEditForm.is_active ? 'translate-x-6' : 'translate-x-0'"></div>
+                                    <input v-model="quickEditForm.is_active" type="checkbox" class="hidden">
+                                </div>
+                                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-slate-900 transition-colors">Visible in Storefront</span>
+                            </label>
+                        </div>
+
+                        <div class="pt-4 grid grid-cols-2 gap-4">
+                            <button type="button" @click="showQuickEditModal = false" class="px-6 py-4 rounded-2xl border border-slate-100 text-slate-400 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-slate-50 transition-all">Cancel</button>
+                            <button type="submit" :disabled="quickEditForm.processing" class="px-6 py-4 rounded-2xl bg-[#FF6600] text-white font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 transition-all shadow-xl shadow-orange-500/20 active:scale-95 disabled:opacity-50">
+                                {{ quickEditForm.processing ? 'Saving...' : 'Update Product' }}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </transition>
@@ -199,9 +263,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import { Link, router, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Plus, Edit2, Trash2, CheckCircle, XCircle, Package, Eye, X } from 'lucide-vue-next';
+import { Plus, Edit2, Trash2, CheckCircle, XCircle, Package, Eye, X, Zap } from 'lucide-vue-next';
 
 defineProps({
     products: Object
@@ -213,9 +277,48 @@ const productToDelete = ref(null);
 const showViewModal = ref(false);
 const productToView = ref(null);
 
+const showQuickEditModal = ref(false);
+const quickEditForm = useForm({
+    id: null,
+    name: '',
+    price: '',
+    stock: '',
+    is_active: true,
+    // Keep these as they are required by the update method but not edited here
+    category_id: null,
+    description: '',
+    buying_price: 0,
+    package_cost: 0,
+});
+
 const viewProduct = (product) => {
     productToView.value = product;
     showViewModal.value = true;
+};
+
+const openQuickEdit = (product) => {
+    quickEditForm.id = product.id;
+    quickEditForm.name = product.name;
+    quickEditForm.price = product.price;
+    quickEditForm.stock = product.stock;
+    quickEditForm.is_active = product.is_active ? true : false;
+    
+    // Populate hidden fields needed for validation
+    quickEditForm.category_id = product.category_id;
+    quickEditForm.description = product.description;
+    quickEditForm.buying_price = product.buying_price;
+    quickEditForm.package_cost = product.package_cost;
+    
+    showQuickEditModal.value = true;
+};
+
+const updateProductQuick = () => {
+    quickEditForm.put(`/admin/products/${quickEditForm.id}`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            showQuickEditModal.value = false;
+        }
+    });
 };
 
 const confirmDelete = (id) => {

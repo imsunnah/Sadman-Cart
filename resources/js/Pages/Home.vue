@@ -43,7 +43,7 @@
                     <Link href="/shop" class="text-sm font-bold text-[#FF6600] hover:underline">View All</Link>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <ProductCard v-for="product in topSelling.slice(0, 4)" :key="product.id" :product="product" layout="horizontal" />
+                    <ProductCard v-for="product in topSelling.slice(0, 4)" :key="product.id" :product="product" layout="horizontal" @view-image="openLightbox" />
                 </div>
             </div>
         </div>
@@ -75,6 +75,7 @@
                             v-for="product in justForYou.slice((pageIndex - 1) * 4, pageIndex * 4)" 
                             :key="product.id" 
                             :product="product" 
+                            @view-image="openLightbox"
                         />
                     </div>
                 </div>
@@ -92,6 +93,55 @@
         </div>
     </div>
 
+        <!-- Why Choose Us -->
+        <div class="py-24 bg-[#003366] relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
+                <div class="absolute bottom-0 right-0 w-96 h-96 bg-[#FF6600] rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"></div>
+            </div>
+            
+            <div class="max-w-[1600px] mx-auto px-4 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-black text-white uppercase tracking-tighter italic mb-4">Why Sadman Cart?</h2>
+                    <div class="w-24 h-1 bg-[#FF6600] mx-auto rounded-full"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-white/5 backdrop-blur-lg p-10 rounded-[2.5rem] border border-white/10 text-center group hover:bg-white/10 transition-all duration-500">
+                        <div class="w-16 h-16 bg-[#FF6600] rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:rotate-12 transition-transform">
+                            <Truck class="w-8 h-8 text-white" />
+                        </div>
+                        <h3 class="text-lg font-black text-white uppercase tracking-widest mb-4 italic">Ultra Fast Delivery</h3>
+                        <p class="text-slate-400 text-xs font-bold leading-relaxed uppercase">Same day delivery inside Dhaka and 48 hours nationwide.</p>
+                    </div>
+                    
+                    <div class="bg-white/5 backdrop-blur-lg p-10 rounded-[2.5rem] border border-white/10 text-center group hover:bg-white/10 transition-all duration-500">
+                        <div class="w-16 h-16 bg-[#0099FF] rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:-rotate-12 transition-transform">
+                            <ShieldCheck class="w-8 h-8 text-white" />
+                        </div>
+                        <h3 class="text-lg font-black text-white uppercase tracking-widest mb-4 italic">Guaranteed Quality</h3>
+                        <p class="text-slate-400 text-xs font-bold leading-relaxed uppercase">100% authentic organic products sourced directly from growers.</p>
+                    </div>
+                    
+                    <div class="bg-white/5 backdrop-blur-lg p-10 rounded-[2.5rem] border border-white/10 text-center group hover:bg-white/10 transition-all duration-500">
+                        <div class="w-16 h-16 bg-[#FF3366] rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:rotate-12 transition-transform">
+                            <RotateCcw class="w-8 h-8 text-white" />
+                        </div>
+                        <h3 class="text-lg font-black text-white uppercase tracking-widest mb-4 italic">Easy Returns</h3>
+                        <p class="text-slate-400 text-xs font-bold leading-relaxed uppercase">No questions asked 7-day return policy for your peace of mind.</p>
+                    </div>
+                    
+                    <div class="bg-white/5 backdrop-blur-lg p-10 rounded-[2.5rem] border border-white/10 text-center group hover:bg-white/10 transition-all duration-500">
+                        <div class="w-16 h-16 bg-[#00CC66] rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:-rotate-12 transition-transform">
+                            <ShoppingCart class="w-8 h-8 text-white" />
+                        </div>
+                        <h3 class="text-lg font-black text-white uppercase tracking-widest mb-4 italic">Secure Checkout</h3>
+                        <p class="text-slate-400 text-xs font-bold leading-relaxed uppercase">Multiple payment options including cash on delivery.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Dynamic Categories -->
         <div v-for="(section, idx) in categorySections" :key="section.id" :class="[idx % 2 === 0 ? 'bg-slate-50' : 'bg-white']" class="py-20 border-t border-slate-100">
             <div class="max-w-[1600px] mx-auto px-4">
@@ -100,10 +150,17 @@
                     <Link :href="`/shop?category=${section.slug}`" class="text-sm font-bold text-[#FF6600] hover:underline">Explore Category</Link>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                    <ProductCard v-for="product in section.products" :key="product.id" :product="product" />
+                    <ProductCard v-for="product in section.products" :key="product.id" :product="product" @view-image="openLightbox" />
                 </div>
             </div>
         </div>
+
+        <!-- High-End Image Lightbox Modal -->
+        <ImageLightbox 
+            :show="showLightbox" 
+            :product="lightboxProduct" 
+            @close="showLightbox = false" 
+        />
     </StoreLayout>
 </template>
 
@@ -111,8 +168,9 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight, Truck, ShieldCheck, RotateCcw, ShoppingCart } from 'lucide-vue-next';
 import ProductCard from '@/Components/ProductCard.vue';
+import ImageLightbox from '@/Components/ImageLightbox.vue';
 
 const props = defineProps({
     topSelling: Array,
@@ -125,6 +183,13 @@ const page = usePage();
 const sliderImages = ref(JSON.parse(page.props.settings.slider_images || '[]'));
 const currentSlide = ref(0);
 const currentDealPage = ref(0);
+const showLightbox = ref(false);
+const lightboxProduct = ref(null);
+
+const openLightbox = (product) => {
+    lightboxProduct.value = product;
+    showLightbox.value = true;
+};
 
 const nextDeal = () => {
     const totalPages = Math.ceil(props.justForYou.length / 4);

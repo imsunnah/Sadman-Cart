@@ -34,7 +34,7 @@
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Upload Site Logo</label>
                         <div class="flex items-center space-x-4">
                             <div class="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border border-slate-200">
-                                <img v-if="logoPreview || form.site_logo" :src="logoPreview || form.site_logo" class="h-full object-contain" />
+                                <img v-if="logoPreview || form.existing_site_logo" :src="logoPreview || form.existing_site_logo" class="h-full object-contain" />
                                 <ImageIcon v-else class="w-6 h-6 text-slate-300" />
                             </div>
                             <input type="file" @input="handleLogoUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white" />
@@ -95,6 +95,24 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Delivery Settings -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:col-span-2">
+                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
+                    <Truck class="w-5 h-5 text-[#003366]" />
+                    <h2 class="text-lg font-bold text-slate-900">Delivery Settings</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Inside Dhaka Charge (৳)</label>
+                        <input v-model="form.delivery_charge_inside_dhaka" type="number" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Outside Dhaka Charge (৳)</label>
+                        <input v-model="form.delivery_charge_outside_dhaka" type="number" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                    </div>
+                </div>
+            </div>
         </div>
     </AdminLayout>
 </template>
@@ -103,7 +121,7 @@
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Save, Settings as SettingsIcon, Image as ImageIcon, Info, Plus, Trash2, CheckCircle, X } from 'lucide-vue-next';
+import { Save, Settings as SettingsIcon, Image as ImageIcon, Info, Plus, Trash2, CheckCircle, X, Truck } from 'lucide-vue-next';
 
 const props = defineProps({
     settings: Object
@@ -123,11 +141,14 @@ const sliderInput = ref(null);
 
 const form = useForm({
     site_name: getVal('site_name'),
-    site_logo: null, // This will hold the file
+    site_logo: null, // This will hold the file for upload
+    existing_site_logo: getVal('site_logo'), // Store existing for preview
     footer_about: getVal('footer_about'),
     footer_address: getVal('footer_address'),
     footer_phone: getVal('footer_phone'),
     footer_email: getVal('footer_email'),
+    delivery_charge_inside_dhaka: getVal('delivery_charge_inside_dhaka'),
+    delivery_charge_outside_dhaka: getVal('delivery_charge_outside_dhaka'),
     slider_upload: [], // New files to upload
     slider_images: sliderImages.value // Remaining existing images
 });

@@ -99,13 +99,21 @@
                                         Shipping Address
                                     </h2>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                        <div>
+                                        <div class="relative">
                                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">District</label>
-                                            <input v-model="form.district" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="Enter District">
+                                            <select v-model="form.district" @change="handleDistrictChange" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all appearance-none pr-10">
+                                                <option value="" disabled>Select District</option>
+                                                <option v-for="d in districts" :key="d.district" :value="d.district">{{ d.district }}</option>
+                                            </select>
+                                            <ChevronDown class="absolute right-4 bottom-4 w-4 h-4 text-slate-400 pointer-events-none" />
                                         </div>
-                                        <div>
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Upazila</label>
-                                            <input v-model="form.upazila" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="Enter Upazila">
+                                        <div class="relative">
+                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Area / Thana / Upazila</label>
+                                            <select v-model="form.upazila" :disabled="!form.district || loadingUpazilas" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all appearance-none pr-10 disabled:opacity-50">
+                                                <option value="" disabled>{{ loadingUpazilas ? 'Loading...' : 'Select Area' }}</option>
+                                                <option v-for="u in upazilas" :key="u" :value="u">{{ u }}</option>
+                                            </select>
+                                            <ChevronDown class="absolute right-4 bottom-4 w-4 h-4 text-slate-400 pointer-events-none" />
                                         </div>
                                     </div>
                                     <div class="mb-6">
@@ -118,10 +126,51 @@
                                     </div>
                                 </div>
 
-                                <!-- Section 3: Payment -->
+                                <!-- Section 3: Delivery Location -->
                                 <div class="mb-12">
                                     <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
                                         <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">3</span>
+                                        Delivery Location
+                                    </h2>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <label 
+                                            class="relative flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all"
+                                            :class="form.delivery_location === 'Inside Dhaka' ? 'border-[#003366] bg-slate-50' : 'border-slate-100 hover:border-slate-200'"
+                                        >
+                                            <input type="radio" v-model="form.delivery_location" value="Inside Dhaka" class="hidden">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" :class="form.delivery_location === 'Inside Dhaka' ? 'border-[#003366]' : 'border-slate-300'">
+                                                    <div v-if="form.delivery_location === 'Inside Dhaka'" class="w-2.5 h-2.5 rounded-full bg-[#003366]"></div>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-black text-slate-900 uppercase">Inside Dhaka</p>
+                                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">৳{{ delivery_charges.inside_dhaka }} Delivery Charge</p>
+                                                </div>
+                                            </div>
+                                        </label>
+
+                                        <label 
+                                            class="relative flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all"
+                                            :class="form.delivery_location === 'Outside Dhaka' ? 'border-[#003366] bg-slate-50' : 'border-slate-100 hover:border-slate-200'"
+                                        >
+                                            <input type="radio" v-model="form.delivery_location" value="Outside Dhaka" class="hidden">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" :class="form.delivery_location === 'Outside Dhaka' ? 'border-[#003366]' : 'border-slate-300'">
+                                                    <div v-if="form.delivery_location === 'Outside Dhaka'" class="w-2.5 h-2.5 rounded-full bg-[#003366]"></div>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-black text-slate-900 uppercase">Outside Dhaka</p>
+                                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">৳{{ delivery_charges.outside_dhaka }} Delivery Charge</p>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Section 4: Payment -->
+                                <div class="mb-12">
+                                    <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
+                                        <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">4</span>
                                         Payment Method
                                     </h2>
                                     <div class="bg-slate-50 border-2 border-[#003366] rounded-2xl p-6 flex items-center justify-between">
@@ -173,12 +222,12 @@
                                             <p>৳{{ subtotal.toLocaleString() }}</p>
                                         </div>
                                         <div class="flex justify-between text-[11px] font-bold text-slate-500">
-                                            <p>Shipping</p>
-                                            <p class="text-green-600">FREE</p>
+                                            <p>Shipping ({{ form.delivery_location }})</p>
+                                            <p>৳{{ currentDeliveryCharge.toLocaleString() }}</p>
                                         </div>
                                         <div class="flex justify-between border-t border-slate-100 pt-5 mt-3">
                                             <p class="text-sm font-black text-slate-900 uppercase italic">Total to pay</p>
-                                            <p class="text-2xl font-black text-[#003366]">৳{{ subtotal.toLocaleString() }}</p>
+                                            <p class="text-2xl font-black text-[#003366]">৳{{ total.toLocaleString() }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -198,18 +247,67 @@
                 </div>
             </div>
         </div>
+
+        <!-- Confirmation Modal -->
+        <transition name="fade">
+            <div v-if="showConfirmModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                <transition name="modal">
+                    <div class="bg-white rounded-[2.5rem] p-8 sm:p-10 max-w-md w-full shadow-2xl relative overflow-hidden">
+                        <!-- Decoration -->
+                        <div class="absolute -top-12 -right-12 w-32 h-32 bg-[#003366]/5 rounded-full"></div>
+                        <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-[#003366]/5 rounded-full"></div>
+
+                        <div class="relative">
+                            <div class="w-20 h-20 bg-[#003366] rounded-3xl flex items-center justify-center mb-8 mx-auto shadow-xl shadow-[#003366]/20 rotate-12">
+                                <Package class="w-10 h-10 text-white -rotate-12" />
+                            </div>
+
+                            <h3 class="text-2xl font-black text-slate-900 text-center mb-4 uppercase tracking-tight italic">Confirm Your Order</h3>
+                            <p class="text-sm font-bold text-slate-500 text-center mb-8 uppercase tracking-widest leading-relaxed">
+                                Are you sure? <span class="text-[#003366]">৳{{ currentDeliveryCharge }}</span> delivery charge will be added for <span class="text-[#003366]">{{ form.delivery_location }}</span> delivery.
+                            </p>
+
+                            <div class="bg-slate-50 rounded-2xl p-6 mb-8 border border-slate-100">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Subtotal</span>
+                                    <span class="text-sm font-bold text-slate-900">৳{{ subtotal.toLocaleString() }}</span>
+                                </div>
+                                <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-200">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Shipping</span>
+                                    <span class="text-sm font-bold text-[#003366]">৳{{ currentDeliveryCharge.toLocaleString() }}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-black text-slate-900 uppercase tracking-widest italic">Total to pay</span>
+                                    <span class="text-2xl font-black text-[#003366]">৳{{ total.toLocaleString() }}</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <button @click="showConfirmModal = false" class="px-6 py-4 rounded-xl border-2 border-slate-100 text-slate-500 font-black uppercase tracking-widest text-[10px] hover:bg-slate-50 transition-all">
+                                    Go Back
+                                </button>
+                                <button @click="confirmAndSubmit" class="px-6 py-4 rounded-xl bg-[#003366] text-white font-black uppercase tracking-widest text-[10px] hover:bg-slate-800 transition-all shadow-lg shadow-[#003366]/20">
+                                    Confirm Order
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+        </transition>
     </StoreLayout>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
 import { useCart } from '@/Composables/useCart';
-import { Lock, Package, ArrowRight, Banknote, Truck, X, ShoppingCart, MapPin, Phone, ShoppingBag } from 'lucide-vue-next';
+import { Lock, Package, ArrowRight, Banknote, Truck, X, ShoppingCart, MapPin, Phone, ShoppingBag, ChevronDown } from 'lucide-vue-next';
 
 const props = defineProps({
-    cart: Object
+    cart: Object,
+    delivery_charges: Object
 });
 
 const { clearCart } = useCart();
@@ -223,14 +321,104 @@ const form = useForm({
     district: '',
     upazila: '',
     village: '',
+    delivery_location: 'Inside Dhaka',
+    delivery_charge: 0
+});
+
+const currentDeliveryCharge = computed(() => {
+    return form.delivery_location === 'Inside Dhaka' 
+        ? parseFloat(props.delivery_charges.inside_dhaka) 
+        : parseFloat(props.delivery_charges.outside_dhaka);
 });
 
 const subtotal = computed(() => {
     return props.cart.items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
 });
 
+const total = computed(() => {
+    return subtotal.value + currentDeliveryCharge.value;
+});
+
+const districts = ref([]);
+const upazilas = ref([]);
+const loadingUpazilas = ref(false);
+
+const metropolitanThanas = {
+    'Dhaka': [
+        "Adabor", "Airport", "Badda", "Banani", "Bangshal", "Bhashantek", "Cantonment", 
+        "Chackbazar", "Dakshin Khan", "Darus-Salam", "Demra", "Dhanmondi", "Gandaria", 
+        "Gulshan", "Hatirjheel", "Hazaribagh", "Jattrabari", "Kadamtoli", "Kafrul", 
+        "Kalabagan", "Kamrangirchar", "Khilgaon", "Khilkhet", "Kotwali", "Lalbagh", 
+        "Mirpur Model", "Mohammadpur", "Motijheel", "Mugda", "New Market", "Pallabi", 
+        "Paltan Model", "Ramna Model", "Rampura", "Rupnagar", "Sabujbag", "Shah Ali", 
+        "Shahbag", "Shahjahanpur", "Sher e Bangla Nagar", "Shyampur", "Sutrapur", 
+        "Tejgaon", "Tejgaon Industrial", "Turag", "Uttar Khan", "Uttara East", 
+        "Uttara West", "Vatara", "Wari", "Dhamrai", "Dohar", "Keraniganj", "Nawabganj", "Savar"
+    ],
+    'Chattogram': [
+        "Kotwali", "Chandgaon", "Panchlaish", "Doublemooring", "Pahartali", "Bandar", 
+        "Baijid Bostami", "Hali Shohor", "Kornafuli", "Potenga", "Bakolia", "Akborsha",
+        "Anwara", "Banshkhali", "Boalkhali", "Chandanaish", "Fatikchhari", "Hathazari", 
+        "Lohagara", "Mirsharai", "Patiya", "Rangunia", "Raozan", "Sandwip", "Satkania", "Sitakunda"
+    ]
+};
+
+const fetchDistricts = async () => {
+    try {
+        const response = await fetch('https://bdapis.com/api/v1.2/districts');
+        const result = await response.json();
+        districts.value = result.data.sort((a, b) => a.district.localeCompare(b.district));
+    } catch (error) {
+        console.error('Error fetching districts:', error);
+    }
+};
+
+const handleDistrictChange = async () => {
+    form.upazila = '';
+    upazilas.value = [];
+    
+    // Auto-set delivery location
+    if (form.district === 'Dhaka') {
+        form.delivery_location = 'Inside Dhaka';
+    } else {
+        form.delivery_location = 'Outside Dhaka';
+    }
+
+    if (form.district) {
+        loadingUpazilas.value = true;
+        try {
+            const response = await fetch(`https://bdapis.com/api/v1.2/district/${form.district.toLowerCase()}`);
+            const result = await response.json();
+            
+            let apiUpazilas = [];
+            if (result.data && result.data[0]) {
+                apiUpazilas = result.data[0].upazillas || [];
+            }
+
+            // Merge with metropolitan thanas if available
+            const extraThanas = metropolitanThanas[form.district] || [];
+            const combined = [...new Set([...apiUpazilas, ...extraThanas])];
+            
+            upazilas.value = combined.sort();
+        } catch (error) {
+            console.error('Error fetching upazilas:', error);
+            // Fallback to only metropolitan if API fails
+            if (metropolitanThanas[form.district]) {
+                upazilas.value = metropolitanThanas[form.district].sort();
+            }
+        } finally {
+            loadingUpazilas.value = false;
+        }
+    }
+};
+
+onMounted(() => {
+    fetchDistricts();
+});
+
 const confirmAndSubmit = () => {
     showConfirmModal.value = false;
+    form.delivery_charge = currentDeliveryCharge.value;
     form.post('/checkout', {
         onSuccess: () => {
             clearCart();

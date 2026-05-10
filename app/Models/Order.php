@@ -16,6 +16,8 @@ class Order extends Model
         'upazila',
         'village',
         'total_amount',
+        'delivery_charge',
+        'delivery_location',
         'payment_method',
         'status',
         'is_active',

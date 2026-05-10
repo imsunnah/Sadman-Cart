@@ -1,55 +1,43 @@
 <template>
     <!-- Horizontal Layout (e.g. for Top Selling) -->
-    <div v-if="layout === 'horizontal'" class="relative bg-white rounded-lg border border-gray-100 p-6 flex flex-row items-center gap-6 group hover:shadow-xl transition-all duration-300 font-sans">
-        <!-- Badge -->
-        <div class="absolute top-3 right-0 bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-l-full flex items-center gap-1 z-10 uppercase tracking-widest">
-            <span class="w-1.5 h-1.5 bg-white rounded-full"></span>
-            Top Selling
-        </div>
-
+    <div v-if="layout === 'horizontal'" class="group relative bg-white rounded-[2.5rem] border border-slate-100 p-6 flex flex-row items-center gap-8 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 font-sans animate-in fade-in slide-in-from-left-4 duration-700">
         <!-- Image Area (Left) -->
-        <Link :href="`/products/${product.slug}`" class="w-1/3 aspect-square flex-shrink-0">
+        <div @click="$emit('view-image', product)" class="w-1/3 aspect-square flex-shrink-0 cursor-zoom-in relative overflow-hidden rounded-[2rem] bg-slate-50 border border-slate-100 group-hover:border-[#FF6600]/20 transition-all">
             <img 
-                v-if="product.image" 
-                :src="product.image" 
-                :alt="product.name" 
-                class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform" 
+                :src="product.image || 'https://placehold.co/400x400/f8fafc/cbd5e1?text=No+Image'" 
+                :alt="product.name"
+                class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" 
             />
-            <div v-else class="w-full h-full flex items-center justify-center bg-gray-50 rounded-lg">
-                <Package class="w-10 h-10 text-gray-200" />
+            <!-- Quick View Overlay -->
+            <div class="absolute inset-0 bg-[#003366]/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-[2px]">
+                <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                    <Maximize2 class="w-5 h-5 text-[#FF6600]" />
+                </div>
             </div>
-        </Link>
+        </div>
 
         <!-- Product Details (Right) -->
         <div class="flex-grow flex flex-col">
-            <Link :href="`/products/${product.slug}`" class="text-lg font-black text-slate-800 hover:text-[#FF6600] transition-colors mb-2 line-clamp-1 italic uppercase tracking-tight">
+            <Link :href="`/products/${product.slug}`" class="text-xl font-black text-[#003366] hover:text-[#FF6600] transition-colors mb-2 line-clamp-1 italic uppercase tracking-tighter">
                 {{ product.name }}
             </Link>
             
-            <!-- Pricing & Savings -->
-            <div class="flex flex-col gap-1 mb-6">
-                <div class="flex items-center gap-3">
-                    <span class="text-[#FF6600] font-black text-2xl">৳{{ parseFloat(product.price).toLocaleString() }}</span>
-                    <span class="text-gray-300 text-lg line-through font-bold">৳{{ (parseFloat(product.price) * 1.2).toFixed(0) }}</span>
-                </div>
-                <!-- Savings Badge -->
-                <div class="inline-block self-start bg-green-500 text-white text-[11px] font-black px-2 py-0.5 rounded shadow-sm">
-                    Save ৳{{ (parseFloat(product.price) * 0.2).toFixed(0) }}
-                </div>
+            <div class="flex items-center gap-3 mb-6">
+                <span class="text-2xl font-black text-[#FF6600]">৳{{ parseFloat(product.price).toLocaleString() }}</span>
+                <span class="text-xs text-slate-300 line-through font-bold italic">৳{{ (parseFloat(product.price) * 1.2).toFixed(0) }}</span>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex items-center gap-3">
                 <button 
                     @click="addToCart(product)"
-                    class="flex-1 flex items-center justify-center gap-2 py-2.5 px-2 border border-[#FF6600] text-[#FF6600] rounded-lg font-black text-[10px] uppercase tracking-widest hover:bg-orange-50 transition-colors"
+                    class="flex-1 h-12 bg-white border-2 border-slate-100 text-[#003366] rounded-xl font-black text-[9px] uppercase tracking-widest hover:border-[#FF6600] hover:text-[#FF6600] transition-all flex items-center justify-center gap-2"
                 >
-                    <ShoppingCart class="w-3 h-3" />
-                    Add To Cart
+                    <ShoppingCart class="w-4 h-4" /> Add
                 </button>
                 <button 
                     @click="buyNow(product)"
-                    class="flex-1 py-2.5 px-2 bg-[#FF6600] text-white rounded-lg font-black text-[10px] uppercase tracking-widest hover:bg-orange-600 transition-all shadow-xl shadow-orange-500/20"
+                    class="flex-1 h-12 bg-[#003366] text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-black transition-all shadow-lg active:scale-95"
                 >
                     Buy Now
                 </button>
@@ -58,44 +46,42 @@
     </div>
 
     <!-- Vertical Layout (Default) -->
-    <div v-else class="relative bg-white rounded-lg border border-slate-100 p-4 flex flex-col group hover:shadow-xl transition-all duration-300 font-sans h-full">
-        <!-- Top Right Badge (Save %) -->
-        <div class="absolute top-3 right-3 bg-green-500 text-white text-[10px] font-black px-2 py-1 rounded shadow-sm z-10">
-            SAVE 20%
+    <div v-else class="group bg-white rounded-[2rem] overflow-hidden border border-slate-100 transition-all duration-500 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-2 animate-in fade-in zoom-in duration-700">
+        <!-- Image Container -->
+        <div class="relative aspect-square bg-slate-50 overflow-hidden flex items-center justify-center p-6 cursor-pointer" @click="$inertia.visit(`/products/${product.slug}`)">
+            <img 
+                :src="product.image || 'https://placehold.co/400x400/f8fafc/cbd5e1?text=No+Image'" 
+                :alt="product.name"
+                class="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110"
+            />
+            
+            <!-- Quick View Overlay -->
+            <div class="absolute inset-0 bg-[#003366]/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-[2px]">
+                <button 
+                    @click.stop="$emit('view-image', product)"
+                    class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-[#FF6600] hover:text-white"
+                >
+                    <Maximize2 class="w-5 h-5" />
+                </button>
+            </div>
         </div>
 
-        <!-- Image Area -->
-        <Link :href="`/products/${product.slug}`" class="relative block aspect-square bg-white mb-4 overflow-hidden">
-            <img 
-                v-if="product.image" 
-                :src="product.image" 
-                :alt="product.name" 
-                class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700" 
-            />
-            <div v-else class="w-full h-full flex items-center justify-center text-slate-200">
-                <Package class="w-12 h-12" />
-            </div>
-        </Link>
-
-        <!-- Product Details -->
-        <div class="flex flex-col flex-grow">
-            <Link :href="`/products/${product.slug}`" class="text-sm font-black text-slate-800 hover:text-[#FF6600] line-clamp-1 mb-2 transition-colors italic uppercase tracking-tight">
-                {{ product.name }}
-            </Link>
+        <!-- Info -->
+        <div class="p-6">
+            <h3 class="text-xs font-black text-[#003366] uppercase tracking-widest line-clamp-1 mb-2 italic group-hover:text-[#FF6600] transition-colors">
+                <Link :href="`/products/${product.slug}`">{{ product.name }}</Link>
+            </h3>
             
-            <div class="flex items-center gap-3 mb-4">
-                <span class="text-[#FF6600] font-black text-lg">৳{{ parseFloat(product.price).toLocaleString() }}</span>
-                <span class="text-slate-300 text-sm line-through font-bold">৳{{ (parseFloat(product.price) * 1.2).toFixed(0) }}</span>
-            </div>
-            
-            <div class="mt-auto">
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex flex-col">
+                    <span class="text-sm text-slate-300 line-through font-bold italic">৳{{ (parseFloat(product.price) * 1.2).toFixed(0) }}</span>
+                    <span class="text-lg font-black text-slate-900 tracking-tighter">৳{{ parseFloat(product.price).toLocaleString() }}</span>
+                </div>
                 <button 
-                    @click="addToCart(product)" 
-                    :disabled="product.stock <= 0" 
-                    class="w-full flex items-center justify-center py-3 bg-white text-[#FF6600] border-2 border-[#FF6600] rounded-xl hover:bg-[#FF6600] hover:text-white transition-all text-[11px] font-black uppercase tracking-widest"
+                    @click.stop="addToCart(product)"
+                    class="w-10 h-10 bg-[#003366] text-white rounded-xl flex items-center justify-center hover:bg-[#FF6600] transition-all duration-300 shadow-lg active:scale-90"
                 >
-                    <ShoppingCart class="w-4 h-4 mr-2" />
-                    Add To Cart
+                    <ShoppingCart class="w-5 h-5" />
                 </button>
             </div>
         </div>
@@ -105,7 +91,7 @@
 <script setup>
 import { Link, router } from '@inertiajs/vue3';
 import { useCart } from '@/Composables/useCart';
-import { Package, ShoppingCart } from 'lucide-vue-next';
+import { Package, ShoppingCart, Maximize2, Plus } from 'lucide-vue-next';
 
 const props = defineProps({
     product: Object,

@@ -81,7 +81,7 @@ class StoreController extends Controller
             ->get();
 
         return Inertia::render('ProductData', [
-            'product' => $product->load('category'),
+            'product' => $product->load(['category', 'gallery']),
             'relatedProducts' => $relatedProducts
         ]);
     }
@@ -94,8 +94,14 @@ class StoreController extends Controller
             return redirect()->route('cart');
         }
 
+        $delivery_charges = [
+            'inside_dhaka' => \App\Models\Setting::where('key', 'delivery_charge_inside_dhaka')->first()->value ?? 60,
+            'outside_dhaka' => \App\Models\Setting::where('key', 'delivery_charge_outside_dhaka')->first()->value ?? 120,
+        ];
+
         return Inertia::render('Checkout', [
-            'cart' => $cart
+            'cart' => $cart,
+            'delivery_charges' => $delivery_charges
         ]);
     }
 
@@ -109,6 +115,8 @@ class StoreController extends Controller
             'district' => 'required|string|max:255',
             'upazila' => 'required|string|max:255',
             'village' => 'required|string|max:255',
+            'delivery_location' => 'required|string|in:Inside Dhaka,Outside Dhaka',
+            'delivery_charge' => 'required|numeric',
         ]);
 
         $cart = $this->getCart();
@@ -122,6 +130,9 @@ class StoreController extends Controller
             $totalAmount += ($item->product->price * $item->quantity);
         }
 
+        // Add delivery charge
+        $totalAmount += $validated['delivery_charge'];
+
         $order = \App\Models\Order::create([
             'user_id' => Auth::id(), // null for guests — column is nullable
             'customer_name' => $validated['customer_name'],
@@ -132,6 +143,8 @@ class StoreController extends Controller
             'upazila' => $validated['upazila'],
             'village' => $validated['village'],
             'total_amount' => $totalAmount,
+            'delivery_charge' => $validated['delivery_charge'],
+            'delivery_location' => $validated['delivery_location'],
             'payment_method' => 'cod',
             'status' => 'pending',
             'is_active' => true
