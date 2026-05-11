@@ -71,6 +71,31 @@
                             <textarea v-model="form.description" rows="5" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium"></textarea>
                             <p v-if="form.errors.description" class="mt-1 text-xs text-red-500">{{ form.errors.description }}</p>
                         </div>
+
+                        <!-- Discount -->
+                        <div class="bg-orange-50 p-6 rounded-2xl border border-orange-100 space-y-4">
+                            <h3 class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em]">Discount Settings</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Discount Type</label>
+                                    <select v-model="form.discount_type" class="w-full px-4 py-3 rounded-xl bg-white border-none shadow-sm focus:ring-2 focus:ring-[#003366]/10 outline-none font-bold">
+                                        <option :value="null">No Discount</option>
+                                        <option value="percentage">Percentage (%)</option>
+                                        <option value="fixed">Fixed Amount (৳)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Discount Value</label>
+                                    <input v-model="form.discount_value" type="number" step="0.01" :disabled="!form.discount_type" placeholder="0" class="w-full px-4 py-3 rounded-xl bg-white border-none shadow-sm focus:ring-2 focus:ring-[#003366]/10 outline-none font-bold disabled:opacity-40" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Remarks -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Product Note / Remarks <span class="text-slate-300 font-normal normal-case">(shown to customers)</span></label>
+                            <textarea v-model="form.remarks" rows="3" placeholder="Optional note about this product..." class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium"></textarea>
+                        </div>
                     </div>
 
                     <!-- Right Column -->
@@ -162,6 +187,9 @@ const form = useForm({
     buying_price: props.product.buying_price,
     package_cost: props.product.package_cost,
     stock: props.product.stock,
+    discount_type: props.product.discount_type || null,
+    discount_value: props.product.discount_value || null,
+    remarks: props.product.remarks || '',
     image: null,
     gallery_images: [],
     keep_gallery_images: props.product.gallery || [], // Track which old images to keep
