@@ -23,7 +23,7 @@ class SettingController extends Controller
         // Handle Site Logo
         if ($request->hasFile('site_logo')) {
             $path = $request->file('site_logo')->store('uploads/settings', 'public');
-            Setting::where('key', 'site_logo')->update(['value' => '/storage/' . $path]);
+            Setting::where('key', 'site_logo')->update(['value' => \Illuminate\Support\Facades\Storage::disk('public')->url($path)]);
         }
 
         // Handle Slider Images (Appending new ones)
@@ -31,7 +31,7 @@ class SettingController extends Controller
             $currentSliders = json_decode(Setting::where('key', 'slider_images')->first()->value ?? '[]', true);
             foreach ($request->file('slider_upload') as $file) {
                 $path = $file->store('uploads/settings/sliders', 'public');
-                $currentSliders[] = '/storage/' . $path;
+                $currentSliders[] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
             }
             Setting::where('key', 'slider_images')->update(['value' => json_encode($currentSliders)]);
         }

@@ -23,21 +23,55 @@
             <button @click="$page.props.flash.success = null" class="opacity-50 hover:opacity-100 transition-opacity"><XCircle class="w-5 h-5" /></button>
         </div>
 
-        <!-- Status Tabs -->
-        <div class="mb-8 flex flex-wrap gap-3">
-            <Link 
-                v-for="tab in tabs" 
-                :key="tab.value"
-                :href="route('admin.orders.index', tab.value === 'all' ? {} : { status: tab.value })"
-                class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all border-2"
-                :class="[
-                    currentStatus === tab.value 
-                    ? 'bg-[#003366] text-white border-[#003366] shadow-md' 
-                    : 'bg-white text-slate-500 border-slate-200 hover:border-[#003366] hover:text-[#003366]'
-                ]"
-            >
-                {{ tab.label }}
-            </Link>
+        <!-- Filters Section -->
+        <div class="mb-8 space-y-6">
+            <!-- Status Tabs -->
+            <div class="flex flex-wrap gap-3">
+                <Link 
+                    v-for="tab in tabs" 
+                    :key="tab.value"
+                    :href="route('admin.orders.index', getFilterParams({ status: tab.value }))"
+                    class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all border-2"
+                    :class="[
+                        currentStatus === tab.value 
+                        ? 'bg-[#003366] text-white border-[#003366] shadow-md' 
+                        : 'bg-white text-slate-500 border-slate-200 hover:border-[#003366] hover:text-[#003366]'
+                    ]"
+                >
+                    {{ tab.label }}
+                </Link>
+            </div>
+
+            <!-- Resource Filters -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Filter by Category</label>
+                    <select 
+                        v-model="filterForm.category_id" 
+                        @change="applyFilters"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white border-slate-200 text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-[#003366]/10 transition-all"
+                    >
+                        <option value="all">All Categories</option>
+                        <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Filter by Product</label>
+                    <select 
+                        v-model="filterForm.product_id" 
+                        @change="applyFilters"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white border-slate-200 text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-[#003366]/10 transition-all"
+                    >
+                        <option value="all">All Products</option>
+                        <option v-for="prod in products" :key="prod.id" :value="prod.id">{{ prod.name }}</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button @click="resetFilters" class="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                        Reset Filters
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Orders Table -->
@@ -60,6 +94,11 @@
                                 <div class="text-sm font-black text-[#003366]">#{{ String(order.id).padStart(5, '0') }}</div>
                                 <div class="text-[10px] font-bold text-slate-400 mt-1">
                                     {{ new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }}
+                                </div>
+                                <div class="mt-2">
+                                    <button @click="toggleActive(order.id)" :class="order.is_active ? 'bg-green-50 text-green-600 border-green-100' : 'bg-slate-50 text-slate-400 border-slate-100'" class="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border">
+                                        {{ order.is_active ? 'Active' : 'Archived' }}
+                                    </button>
                                 </div>
                             </td>
                             <td class="py-5 px-6">
@@ -212,14 +251,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Eye, CheckCircle, XCircle, ShoppingBag, Phone, MapPin, Truck, AlertTriangle } from 'lucide-vue-next';
 
-defineProps({
+const props = defineProps({
     orders: Object,
-    currentStatus: String
+    categories: Array,
+    products: Array,
+    currentStatus: String,
+    currentCategoryId: [String, Number],
+    currentProductId: [String, Number]
 });
 
 const tabs = [
@@ -229,6 +272,42 @@ const tabs = [
     { label: 'Delivered', value: 'completed' },
     { label: 'Cancelled', value: 'cancelled' },
 ];
+
+const filterForm = reactive({
+    category_id: props.currentCategoryId || 'all',
+    product_id: props.currentProductId || 'all'
+});
+
+const getFilterParams = (overrides = {}) => {
+    const params = {
+        status: props.currentStatus === 'all' ? null : props.currentStatus,
+        category_id: filterForm.category_id === 'all' ? null : filterForm.category_id,
+        product_id: filterForm.product_id === 'all' ? null : filterForm.product_id,
+        ...overrides
+    };
+    
+    // Remove null keys
+    return Object.fromEntries(Object.entries(params).filter(([_, v]) => v != null));
+};
+
+const applyFilters = () => {
+    router.get(route('admin.orders.index'), getFilterParams(), {
+        preserveScroll: true,
+        preserveState: true
+    });
+};
+
+const resetFilters = () => {
+    filterForm.category_id = 'all';
+    filterForm.product_id = 'all';
+    router.get(route('admin.orders.index'));
+};
+
+const toggleActive = (id) => {
+    router.put(`/admin/orders/${id}/toggle-active`, {}, {
+        preserveScroll: true
+    });
+};
 
 const showStatusModal = ref(false);
 const showLocationModal = ref(false);

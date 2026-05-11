@@ -37,6 +37,18 @@
                         </Link>
                     </li>
                     <li>
+                        <Link href="/admin/combos" :class="[$page.url.startsWith('/admin/combos') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                            <Zap class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/combos') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                            <span class="font-bold text-sm">{{ $t('Combos') }}</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/admin/reviews" :class="[$page.url.startsWith('/admin/reviews') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                            <Star class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/reviews') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                            <span class="font-bold text-sm">{{ $t('Reviews') }}</span>
+                        </Link>
+                    </li>
+                    <li>
                         <Link href="/admin/categories" :class="[$page.url.startsWith('/admin/categories') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
                             <Tags class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/categories') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
                             <span class="font-bold text-sm">{{ $t('Categories') }}</span>
@@ -128,7 +140,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu } from 'lucide-vue-next';
+import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star } from 'lucide-vue-next';
 
 const isSidebarOpen = ref(false);
 </script>

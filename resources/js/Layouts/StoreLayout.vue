@@ -62,12 +62,12 @@
 
                 <!-- Right Actions -->
                 <div class="flex items-center gap-2 md:gap-6 order-2 md:order-3">
-                    <Link href="/cart" class="relative p-3 group bg-slate-50 rounded-2xl hover:bg-[#003366]/5 transition-all">
+                    <button @click="isCartOpen = true" class="relative p-3 group bg-slate-50 rounded-2xl hover:bg-[#003366]/5 transition-all">
                         <ShoppingCart class="w-6 h-6 text-[#003366] group-hover:scale-110 transition-transform" />
                         <span v-if="cartCount > 0" class="absolute -top-1 -right-1 bg-[#FF6600] text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow-lg border-2 border-white animate-bounce">
                             {{ cartCount }}
                         </span>
-                    </Link>
+                    </button>
                     <button @click="isMobileMenuOpen = true" class="md:hidden p-3 bg-[#003366] text-white rounded-2xl shadow-lg active:scale-95 transition-all">
                         <Menu class="w-6 h-6" />
                     </button>
@@ -75,22 +75,49 @@
             </div>
 
             <!-- Desktop Nav -->
-            <nav class="border-t border-slate-50 hidden md:block">
-                <div class="max-w-[1600px] mx-auto px-4 py-4 flex justify-center items-center gap-10">
-                    <Link href="/" :class="[$page.url === '/' ? 'text-[#FF6600]' : 'text-slate-600 hover:text-[#003366]']" class="text-[10px] font-black uppercase tracking-[0.2em] italic transition-all">Home</Link>
-                    <Link href="/shop" :class="[$page.url.startsWith('/shop') ? 'text-[#FF6600]' : 'text-slate-600 hover:text-[#003366]']" class="text-[10px] font-black uppercase tracking-[0.2em] italic transition-all">Shop All</Link>
+            <nav class="bg-[#003366] hidden md:block">
+                <div class="max-w-[1600px] mx-auto px-4 py-5 flex justify-center items-center gap-12">
+                    <Link href="/" :class="[$page.url === '/' ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']" class="text-xs md:text-sm font-black uppercase tracking-[0.2em] italic transition-all">Home</Link>
+                    <Link href="/shop" :class="[$page.url.startsWith('/shop') ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']" class="text-xs md:text-sm font-black uppercase tracking-[0.2em] italic transition-all">Shop All</Link>
                     <Link 
                         v-for="category in $page.props.categories" 
                         :key="category.id" 
                         :href="`/shop?category=${category.slug}`"
-                        :class="[$page.url.includes(`category=${category.slug}`) ? 'text-[#FF6600]' : 'text-slate-600 hover:text-[#003366]']"
-                        class="text-[10px] font-black uppercase tracking-[0.2em] italic transition-all"
+                        :class="[$page.url.includes(`category=${category.slug}`) ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']"
+                        class="text-xs md:text-sm font-black uppercase tracking-[0.2em] italic transition-all"
                     >
                         {{ category.name }}
                     </Link>
                 </div>
             </nav>
         </header>
+
+        <!-- Floating Cart (Right Middle) - Compact -->
+        <button 
+            @click="isCartOpen = true"
+            class="fixed right-0 top-1/2 -translate-y-1/2 z-[90] bg-[#FF6600] text-white px-2 py-3 rounded-l-2xl shadow-xl flex flex-col items-center gap-1.5 hover:px-3 transition-all duration-300 group"
+        >
+            <ShoppingCart class="w-5 h-5" />
+            <span v-if="cartCount > 0" class="text-[10px] font-black leading-none">{{ cartCount }}</span>
+        </button>
+
+        <CartDrawer :isOpen="isCartOpen" @close="isCartOpen = false" />
+
+        <!-- Refined Floating Messenger Chat (Right Bottom) -->
+        <a 
+            href="https://m.me/sadmancart" 
+            target="_blank" 
+            class="fixed bottom-8 right-8 z-[90] w-16 h-16 bg-[#0084FF] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all group"
+            title="Chat with us on Messenger"
+        >
+            <svg viewBox="0 0 24 24" class="w-8 h-8 fill-current" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.908 1.455 5.494 3.714 7.155.195.143.313.37.313.615v2.336c0 .487.564.76 1.01.467l2.613-1.716a.92.92 0 0 1 .536-.168h1.814c5.523 0 10-4.145 10-9.258C22 6.145 17.523 2 12 2zm1.268 12.392l-2.484-2.656-4.839 2.656 5.323-5.648 2.553 2.656 4.771-2.656-5.324 5.648z"/>
+            </svg>
+            <span class="absolute -top-1 -left-1 flex h-4 w-4">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0084FF] opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-[#0084FF]"></span>
+            </span>
+        </a>
 
         <!-- Premium Mobile Menu Overlay -->
         <Transition
@@ -181,47 +208,60 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-slate-50 border-t border-slate-200 pt-16 pb-10">
-            <div class="max-w-[1600px] mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-                <div class="space-y-6">
+        <footer class="bg-[#003366] text-white pt-16 pb-10">
+            <div class="max-w-[1600px] mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+                <div class="col-span-2 md:col-span-1 space-y-6">
                     <div v-if="$page.props.settings.site_logo" class="flex items-center">
-                        <img :src="$page.props.settings.site_logo" class="h-16 md:h-24 w-auto object-contain mr-3" />
-                        <span class="text-3xl font-black tracking-tight text-[#003366] italic uppercase italic">{{ $page.props.settings.site_name }}</span>
+                        <img :src="$page.props.settings.site_logo" class="h-16 w-auto object-contain mr-3 brightness-0 invert" />
+                        <span class="text-2xl font-black tracking-tight italic uppercase">{{ $page.props.settings.site_name }}</span>
                     </div>
                     <div v-else class="flex items-center">
-                        <ShoppingBag class="w-8 h-8 text-[#003366] mr-2" />
-                        <span class="text-2xl font-bold text-[#003366] uppercase italic">{{ $page.props.settings.site_name }}</span>
+                        <ShoppingBag class="w-8 h-8 text-white mr-2" />
+                        <span class="text-2xl font-bold uppercase italic">{{ $page.props.settings.site_name }}</span>
                     </div>
-                    <p class="text-sm text-slate-500 leading-relaxed font-bold">{{ $page.props.settings.footer_about }}</p>
+                    <p class="text-[10px] text-slate-300 leading-relaxed font-bold uppercase tracking-widest">{{ $page.props.settings.footer_about }}</p>
+                    
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="https://facebook.com/sadmancart" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#FF6600] transition-all">
+                            <Facebook class="w-4 h-4" />
+                        </a>
+                        <a href="https://instagram.com/sadmancart" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#FF6600] transition-all">
+                            <Instagram class="w-4 h-4" />
+                        </a>
+                        <a href="https://m.me/sadmancart" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#0084FF] transition-all">
+                            <MessageCircle class="w-4 h-4" />
+                        </a>
+                    </div>
                 </div>
                 <div>
-                    <h3 class="font-black text-[#003366] mb-8 uppercase text-xs tracking-widest italic">Quick Links</h3>
-                    <ul class="space-y-4 text-sm text-slate-500 font-bold">
+                    <h3 class="font-black text-white mb-6 uppercase text-[10px] tracking-widest italic border-b border-white/10 pb-2">Links</h3>
+                    <ul class="space-y-3 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
                         <li><Link href="/" class="hover:text-[#FF6600] transition-colors">Home</Link></li>
-                        <li><Link href="/shop" class="hover:text-[#FF6600] transition-colors">Shop Catalog</Link></li>
-                        <li><Link href="/cart" class="hover:text-[#FF6600] transition-colors">My Cart</Link></li>
+                        <li><Link href="/shop" class="hover:text-[#FF6600] transition-colors">Shop</Link></li>
+                        <li><Link href="/cart" class="hover:text-[#FF6600] transition-colors">Cart</Link></li>
                         <li><Link href="/checkout" class="hover:text-[#FF6600] transition-colors">Checkout</Link></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-black text-[#003366] mb-8 uppercase text-xs tracking-widest italic">Store Policy</h3>
-                    <ul class="space-y-4 text-sm text-slate-500 font-bold">
-                        <li><a href="#" class="hover:text-[#FF6600] transition-colors uppercase text-[11px] tracking-widest">Return Policy</a></li>
-                        <li><a href="#" class="hover:text-[#FF6600] transition-colors uppercase text-[11px] tracking-widest">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-[#FF6600] transition-colors uppercase text-[11px] tracking-widest">Privacy Policy</a></li>
+                    <h3 class="font-black text-white mb-6 uppercase text-[10px] tracking-widest italic border-b border-white/10 pb-2">Policy</h3>
+                    <ul class="space-y-3 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                        <li><Link href="/returns-refunds" class="hover:text-[#FF6600] transition-colors">Returns</Link></li>
+                        <li><Link href="/shipping-policy" class="hover:text-[#FF6600] transition-colors">Shipping</Link></li>
+                        <li><Link href="/privacy-policy" class="hover:text-[#FF6600] transition-colors">Privacy</Link></li>
+                        <li><Link href="/terms" class="hover:text-[#FF6600] transition-colors">Terms</Link></li>
                     </ul>
                 </div>
-                <div>
-                    <h3 class="font-black text-[#003366] mb-8 uppercase text-xs tracking-widest italic">Contact Info</h3>
-                    <ul class="space-y-5 text-sm text-slate-500 font-bold">
-                        <li class="flex items-start"><MapPin class="w-5 h-5 mr-3 text-[#FF6600] mt-0.5" />{{ $page.props.settings.footer_address }}</li>
-                        <li class="flex items-center"><Phone class="w-5 h-5 mr-3 text-[#FF6600]" />{{ $page.props.settings.footer_phone }}</li>
-                        <li class="flex items-center"><Mail class="w-5 h-5 mr-3 text-[#FF6600]" />{{ $page.props.settings.footer_email }}</li>
+                <div class="col-span-2 md:col-span-1">
+                    <h3 class="font-black text-white mb-6 uppercase text-[10px] tracking-widest italic border-b border-white/10 pb-2">Contact</h3>
+                    <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                        <li class="flex items-start"><MapPin class="w-4 h-4 mr-3 text-[#FF6600] shrink-0" />{{ $page.props.settings.footer_address }}</li>
+                        <li class="flex items-center"><Phone class="w-4 h-4 mr-3 text-[#FF6600] shrink-0" />{{ $page.props.settings.footer_phone }}</li>
+                        <li class="flex items-center"><Mail class="w-4 h-4 mr-3 text-[#FF6600] shrink-0" />{{ $page.props.settings.footer_email }}</li>
                     </ul>
                 </div>
             </div>
-            <div class="max-w-[1600px] mx-auto px-4 mt-16 pt-8 border-t border-slate-200 text-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
-                <p>&copy; 2026 {{ $page.props.settings.site_name }}. All rights reserved.</p>
+            <div class="max-w-[1600px] mx-auto px-4 mt-12 pt-8 border-t border-white/5 text-center text-[8px] text-slate-500 font-bold uppercase tracking-[0.3em]">
+                <p>&copy; 2026 {{ $page.props.settings.site_name }}. Premium E-commerce Solutions.</p>
             </div>
         </footer>
     </div>
@@ -242,6 +282,9 @@ import {
     XCircle,
     Info,
     ShoppingBag,
+    MessageCircle,
+    Facebook,
+    Instagram,
 } from "lucide-vue-next";
 import { useCart } from "@/Composables/useCart";
 import { useToast } from "@/Composables/useToast";

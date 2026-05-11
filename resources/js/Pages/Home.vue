@@ -1,226 +1,208 @@
 <template>
     <StoreLayout>
-        <!-- Hero Slider -->
-        <div class="bg-white border-b border-slate-50 font-sans">
-            <div class="max-w-[1600px] mx-auto px-4 py-8 flex flex-col lg:flex-row gap-6">
-                <!-- Main Slider -->
-                <div class="flex-grow relative h-[300px] md:h-[500px] rounded-2xl overflow-hidden shadow-2xl group">
-                    <div class="absolute inset-0 flex transition-transform duration-700 ease-in-out" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
-                        <div v-for="(img, index) in sliderImages" :key="index" class="min-w-full h-full relative">
+
+        <!-- ─── HERO SLIDER ─────────────────────────────────── -->
+        <section class="bg-white">
+            <div class="max-w-[1600px] mx-auto px-4 pt-6 pb-10">
+                <div class="relative h-[220px] md:h-[480px] rounded-[2rem] overflow-hidden shadow-xl group">
+                    <div class="absolute inset-0 flex transition-transform duration-1000 ease-in-out" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
+                        <div v-for="(img, i) in sliderImages" :key="i" class="min-w-full h-full relative">
                             <img :src="img" class="w-full h-full object-cover" />
-                            <div class="absolute inset-0 bg-black/10"></div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-[#003366]/70 via-[#003366]/20 to-transparent"></div>
                         </div>
                     </div>
-                    <!-- Controls -->
-                    <button @click="prevSlide" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100">
-                        <ChevronLeft class="w-5 h-5 md:w-6 md:h-6 text-[#003366]" />
+                    <div v-if="sliderImages.length" class="absolute inset-0 flex items-center px-8 md:px-20 pointer-events-none">
+                        <div class="max-w-xl pointer-events-auto">
+                            <p class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.4em] mb-2">Premium Organic Store</p>
+                            <h1 class="text-3xl md:text-6xl font-black text-white uppercase tracking-tighter italic leading-none mb-5">
+                                Pure. Fresh. <span class="text-[#FF6600]">Direct.</span>
+                            </h1>
+                            <Link href="/shop" class="inline-flex items-center gap-2 px-8 py-4 bg-[#FF6600] text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl hover:bg-white hover:text-[#003366] transition-all duration-300 active:scale-95">
+                                Explore All Products <ArrowRight class="w-4 h-4" />
+                            </Link>
+                        </div>
+                    </div>
+                    <button @click="prevSlide" class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/30 backdrop-blur hover:bg-white flex items-center justify-center text-[#003366] transition-all opacity-0 group-hover:opacity-100 active:scale-90">
+                        <ChevronLeft class="w-5 h-5" />
                     </button>
-                    <button @click="nextSlide" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100">
-                        <ChevronRight class="w-5 h-5 md:w-6 md:h-6 text-[#003366]" />
+                    <button @click="nextSlide" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/30 backdrop-blur hover:bg-white flex items-center justify-center text-[#003366] transition-all opacity-0 group-hover:opacity-100 active:scale-90">
+                        <ChevronRight class="w-5 h-5" />
                     </button>
+                    <div v-if="sliderImages.length > 1" class="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                        <button v-for="(_, i) in sliderImages" :key="i" @click="currentSlide = i" :class="currentSlide === i ? 'w-5 bg-[#FF6600]' : 'w-2 bg-white/50'" class="h-2 rounded-full transition-all duration-300"></button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Rounded Categories -->
-        <div class="max-w-[1600px] mx-auto px-4 py-16">
-            <h2 class="text-2xl font-black text-[#003366] mb-10 text-center uppercase tracking-widest italic">Browse Categories</h2>
-            <div class="flex justify-center flex-wrap gap-8 md:gap-12">
-                <Link v-for="category in featuredCategories" :key="category.id" :href="`/shop?category=${category.slug}`" class="group flex flex-col items-center">
-                    <div class="w-24 h-24 rounded-full bg-slate-50 border-4 border-slate-50 group-hover:border-[#FF6600] transition-all flex items-center justify-center overflow-hidden shadow-sm">
-                        <img :src="category.image || `https://placehold.co/200x200/003366/ffffff?text=${category.name.charAt(0)}`" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
-                    </div>
-                    <span class="mt-4 text-xs font-black text-slate-500 group-hover:text-[#003366] uppercase tracking-wide">{{ category.name }}</span>
-                </Link>
-            </div>
-        </div>
-
-        <!-- Top Selling -->
-        <div class="bg-slate-100 py-16 border-y border-slate-200">
+        <!-- ─── ELITE SELECTIONS (Categories) ────────────────── -->
+        <section class="py-12 bg-slate-50 border-y border-slate-100">
             <div class="max-w-[1600px] mx-auto px-4">
-                <div class="flex justify-between items-center mb-10">
-                    <h2 class="text-2xl font-black text-[#003366] uppercase tracking-tight italic">Top Selling Products</h2>
-                    <Link href="/shop" class="text-sm font-bold text-[#FF6600] hover:underline">View All</Link>
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="w-1 h-7 bg-[#FF6600] rounded-full"></div>
+                    <h2 class="text-xl font-black text-[#003366] uppercase tracking-tight italic">Elite Selections</h2>
                 </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <ProductCard v-for="product in topSelling.slice(0, 4)" :key="product.id" :product="product" layout="horizontal" @view-image="openLightbox" />
-                </div>
-            </div>
-        </div>
-
-    <!-- Featured Deals Carousel -->
-    <div class="py-12 bg-white border-y border-slate-50">
-        <div class="max-w-[1600px] mx-auto px-4">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-xl font-black text-[#003366] uppercase tracking-tight italic border-l-4 border-[#FF6600] pl-4">
-                    Featured Deals
-                </h2>
-                <div class="flex space-x-2">
-                    <button @click="prevDeal" class="p-2 bg-slate-50 rounded-full hover:bg-slate-100 transition-colors">
-                        <ChevronLeft class="w-5 h-5 text-[#003366]" />
-                    </button>
-                    <button @click="nextDeal" class="p-2 bg-slate-50 rounded-full hover:bg-slate-100 transition-colors">
-                        <ChevronRight class="w-5 h-5 text-[#003366]" />
-                    </button>
-                </div>
-            </div>
-            
-            <div class="relative overflow-hidden mb-10">
-                <div 
-                    class="flex transition-transform duration-700 ease-in-out gap-6"
-                    :style="{ transform: `translateX(-${currentDealPage * 100}%)` }"
-                >
-                    <div v-for="pageIndex in Math.ceil(justForYou.length / 4)" :key="pageIndex" class="min-w-full grid grid-cols-2 md:grid-cols-4 gap-6">
-                        <ProductCard 
-                            v-for="product in justForYou.slice((pageIndex - 1) * 4, pageIndex * 4)" 
-                            :key="product.id" 
-                            :product="product" 
-                            @view-image="openLightbox"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex justify-center space-x-3">
-                <button 
-                    v-for="idx in Math.ceil(justForYou.length / 4)" 
-                    :key="idx"
-                    @click="currentDealPage = idx - 1"
-                    :class="[currentDealPage === idx - 1 ? 'w-8 bg-[#FF6600]' : 'w-2 bg-slate-200 hover:bg-slate-300']"
-                    class="h-2 rounded-full transition-all duration-300"
-                ></button>
-            </div>
-        </div>
-    </div>
-
-        <!-- Why Choose Us -->
-        <div class="py-24 bg-[#003366] relative overflow-hidden">
-            <div class="absolute inset-0 opacity-10">
-                <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-                <div class="absolute bottom-0 right-0 w-96 h-96 bg-[#FF6600] rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"></div>
-            </div>
-            
-            <div class="max-w-[1600px] mx-auto px-4 relative z-10">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-black text-white uppercase tracking-tighter italic mb-4">Why Sadman Cart?</h2>
-                    <div class="w-24 h-1 bg-[#FF6600] mx-auto rounded-full"></div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="bg-white/5 backdrop-blur-lg p-10 rounded-[2.5rem] border border-white/10 text-center group hover:bg-white/10 transition-all duration-500">
-                        <div class="w-16 h-16 bg-[#FF6600] rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:rotate-12 transition-transform">
-                            <Truck class="w-8 h-8 text-white" />
+                <div class="flex flex-wrap justify-start gap-6 md:gap-8">
+                    <Link v-for="cat in featuredCategories" :key="cat.id" :href="`/shop?category=${cat.slug}`" class="group flex flex-col items-center gap-2 min-w-[80px] cursor-pointer">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-white group-hover:border-[#FF6600] overflow-hidden flex items-center justify-center bg-white transition-all duration-300 shadow-md group-hover:shadow-orange-100">
+                            <img v-if="cat.image" :src="cat.image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                            <span v-else class="text-xl font-black text-[#003366]/30 italic uppercase">{{ cat.name.charAt(0) }}</span>
                         </div>
-                        <h3 class="text-lg font-black text-white uppercase tracking-widest mb-4 italic">Ultra Fast Delivery</h3>
-                        <p class="text-slate-400 text-xs font-bold leading-relaxed uppercase">Same day delivery inside Dhaka and 48 hours nationwide.</p>
-                    </div>
-                    
-                    <div class="bg-white/5 backdrop-blur-lg p-10 rounded-[2.5rem] border border-white/10 text-center group hover:bg-white/10 transition-all duration-500">
-                        <div class="w-16 h-16 bg-[#0099FF] rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:-rotate-12 transition-transform">
-                            <ShieldCheck class="w-8 h-8 text-white" />
-                        </div>
-                        <h3 class="text-lg font-black text-white uppercase tracking-widest mb-4 italic">Guaranteed Quality</h3>
-                        <p class="text-slate-400 text-xs font-bold leading-relaxed uppercase">100% authentic organic products sourced directly from growers.</p>
-                    </div>
-                    
-                    <div class="bg-white/5 backdrop-blur-lg p-10 rounded-[2.5rem] border border-white/10 text-center group hover:bg-white/10 transition-all duration-500">
-                        <div class="w-16 h-16 bg-[#FF3366] rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:rotate-12 transition-transform">
-                            <RotateCcw class="w-8 h-8 text-white" />
-                        </div>
-                        <h3 class="text-lg font-black text-white uppercase tracking-widest mb-4 italic">Easy Returns</h3>
-                        <p class="text-slate-400 text-xs font-bold leading-relaxed uppercase">No questions asked 7-day return policy for your peace of mind.</p>
-                    </div>
-                    
-                    <div class="bg-white/5 backdrop-blur-lg p-10 rounded-[2.5rem] border border-white/10 text-center group hover:bg-white/10 transition-all duration-500">
-                        <div class="w-16 h-16 bg-[#00CC66] rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:-rotate-12 transition-transform">
-                            <ShoppingCart class="w-8 h-8 text-white" />
-                        </div>
-                        <h3 class="text-lg font-black text-white uppercase tracking-widest mb-4 italic">Secure Checkout</h3>
-                        <p class="text-slate-400 text-xs font-bold leading-relaxed uppercase">Multiple payment options including cash on delivery.</p>
-                    </div>
+                        <span class="text-[9px] font-black text-slate-500 group-hover:text-[#003366] uppercase tracking-widest transition-colors text-center leading-tight">{{ cat.name }}</span>
+                    </Link>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Dynamic Categories -->
-        <div v-for="(section, idx) in categorySections" :key="section.id" :class="[idx % 2 === 0 ? 'bg-slate-50' : 'bg-white']" class="py-20 border-t border-slate-100">
+        <!-- ─── COMBO BUNDLES ─────────────────────────────────── -->
+        <section v-if="combos.length" class="py-14 bg-white border-b border-slate-100">
             <div class="max-w-[1600px] mx-auto px-4">
-                <div class="flex justify-between items-center mb-12">
-                    <h2 class="text-2xl font-black text-[#003366] uppercase tracking-tight italic">{{ section.name }}</h2>
-                    <Link :href="`/shop?category=${section.slug}`" class="text-sm font-bold text-[#FF6600] hover:underline">Explore Category</Link>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                    <ProductCard v-for="product in section.products" :key="product.id" :product="product" @view-image="openLightbox" />
+                <SectionTitle title="Combo Bundles & Offers" subtitle="Exclusive bundle deals" />
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
+                    <ComboCard v-for="combo in combos" :key="combo.id" :combo="combo" />
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- High-End Image Lightbox Modal -->
-        <ImageLightbox 
-            :show="showLightbox" 
-            :product="lightboxProduct" 
-            @close="showLightbox = false" 
-        />
+        <!-- ─── HOT DEALS ─────────────────────────────────────── -->
+        <section v-if="discountedProducts.length" class="py-14 bg-slate-50 border-b border-slate-100">
+            <div class="max-w-[1600px] mx-auto px-4">
+                <SectionTitle title="Hot Flash Deals" subtitle="Limited time discounts" />
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
+                    <ProductCard v-for="p in discountedProducts" :key="p.id" :product="p" />
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── LATEST ARRIVALS ───────────────────────────────── -->
+        <section class="py-14 bg-white border-b border-slate-100">
+            <div class="max-w-[1600px] mx-auto px-4">
+                <SectionTitle title="Newly Arrived" subtitle="Fresh in from the farms" />
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
+                    <ProductCard v-for="p in latestProducts" :key="p.id" :product="p" />
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── TRUST BADGES ──────────────────────────────────── -->
+        <section class="py-16 bg-[#003366]">
+            <div class="max-w-[1600px] mx-auto px-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                    <div v-for="b in badges" :key="b.title" class="flex items-center gap-4 p-5 rounded-2xl bg-white/5 border border-white/10">
+                        <div :class="b.color" class="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg">
+                            <component :is="b.icon" class="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                            <h3 class="text-[10px] font-black text-white uppercase tracking-widest italic">{{ b.title }}</h3>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ b.desc }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── CATEGORY SECTIONS (All products in grid) ──────── -->
+        <template v-for="(section, idx) in categorySections" :key="section.id">
+            <section v-if="section.products.length" :class="idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'" class="py-14 border-t border-slate-100">
+                <div class="max-w-[1600px] mx-auto px-4">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center gap-4">
+                            <div class="w-1 h-7 bg-[#FF6600] rounded-full"></div>
+                            <h2 class="text-xl font-black text-[#003366] uppercase tracking-tight italic">{{ section.name }}</h2>
+                        </div>
+                        <Link :href="`/shop?category=${section.slug}`" class="text-[9px] font-black text-[#003366] uppercase tracking-widest flex items-center gap-1 hover:text-[#FF6600] transition-colors">
+                            View All <ArrowRight class="w-3 h-3" />
+                        </Link>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
+                        <ProductCard v-for="p in section.products" :key="p.id" :product="p" />
+                    </div>
+                </div>
+            </section>
+        </template>
+
+        <!-- ─── CUSTOMER REVIEWS ──────────────────────────────── -->
+        <section v-if="reviews && reviews.length" class="py-20 bg-[#003366]">
+            <div class="max-w-[1600px] mx-auto px-4">
+                <div class="text-center mb-12">
+                    <p class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.4em] mb-2">Real Experiences</p>
+                    <h2 class="text-3xl font-black text-white uppercase tracking-tighter italic">Customer Reviews</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div v-for="review in reviews" :key="review.id" class="bg-white/5 border border-white/10 rounded-3xl p-7 relative group hover:bg-white/10 transition-all duration-300">
+                        <Quote class="absolute top-5 right-5 w-7 h-7 text-white/10" />
+                        <div class="flex gap-1 mb-4">
+                            <Star v-for="i in 5" :key="i" class="w-4 h-4" :class="i <= review.rating ? 'text-[#FF6600] fill-[#FF6600]' : 'text-white/20'" />
+                        </div>
+                        <p class="text-sm text-slate-300 font-bold italic leading-relaxed mb-5">"{{ review.comment }}"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-[#FF6600]/20 border border-[#FF6600]/30 flex items-center justify-center text-[#FF6600] font-black text-sm italic">
+                                {{ review.customer_name.charAt(0).toUpperCase() }}
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black text-white uppercase tracking-widest">{{ review.customer_name }}</p>
+                                <p class="text-[9px] text-slate-500 uppercase tracking-widest">Verified Customer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <ImageLightbox :show="showLightbox" :product="lightboxProduct" @close="showLightbox = false" />
     </StoreLayout>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, defineComponent, h } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
-import { ChevronLeft, ChevronRight, Truck, ShieldCheck, RotateCcw, ShoppingCart } from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight, Truck, ShieldCheck, RotateCcw, ShoppingCart, ArrowRight, Quote, Star } from 'lucide-vue-next';
 import ProductCard from '@/Components/ProductCard.vue';
+import ComboCard from '@/Components/ComboCard.vue';
 import ImageLightbox from '@/Components/ImageLightbox.vue';
 
-const props = defineProps({
-    topSelling: Array,
-    justForYou: Array,
-    featuredCategories: Array,
-    categorySections: Array
+// Inline SectionTitle component
+const SectionTitle = defineComponent({
+    props: { title: String, subtitle: String },
+    setup(props) {
+        return () => h('div', { class: 'flex items-center gap-4 mb-8' }, [
+            h('div', { class: 'w-1 h-7 bg-[#FF6600] rounded-full flex-shrink-0' }),
+            h('div', [
+                h('h2', { class: 'text-xl font-black text-[#003366] uppercase tracking-tight italic leading-none' }, props.title),
+                h('p', { class: 'text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1' }, props.subtitle),
+            ])
+        ]);
+    }
 });
 
-const page = usePage();
-const sliderImages = ref(JSON.parse(page.props.settings.slider_images || '[]'));
+const props = defineProps({
+    topSelling:         Array,
+    latestProducts:     Array,
+    discountedProducts: Array,
+    combos:             Array,
+    featuredCategories: Array,
+    categorySections:   Array,
+    reviews:            Array,
+});
+
+const page         = usePage();
+const sliderImages = ref(JSON.parse(page.props.settings?.slider_images || '[]'));
 const currentSlide = ref(0);
-const currentDealPage = ref(0);
 const showLightbox = ref(false);
 const lightboxProduct = ref(null);
 
-const openLightbox = (product) => {
-    lightboxProduct.value = product;
-    showLightbox.value = true;
-};
+const nextSlide = () => { if (sliderImages.value.length > 0) currentSlide.value = (currentSlide.value + 1) % sliderImages.value.length; };
+const prevSlide = () => { if (sliderImages.value.length > 0) currentSlide.value = (currentSlide.value - 1 + sliderImages.value.length) % sliderImages.value.length; };
 
-const nextDeal = () => {
-    const totalPages = Math.ceil(props.justForYou.length / 4);
-    currentDealPage.value = (currentDealPage.value + 1) % totalPages;
-};
+const badges = [
+    { icon: Truck,        color: 'bg-[#FF6600]', title: 'Fast Delivery',    desc: '48hr nationwide' },
+    { icon: ShieldCheck,  color: 'bg-[#0099FF]', title: 'Certified Organic', desc: 'Verified farms only' },
+    { icon: RotateCcw,    color: 'bg-[#FF3366]', title: 'Easy Returns',     desc: '7-day policy' },
+    { icon: ShoppingCart, color: 'bg-[#00CC66]', title: 'Cash on Delivery', desc: 'Safe payments' },
+];
 
-const prevDeal = () => {
-    const totalPages = Math.ceil(props.justForYou.length / 4);
-    currentDealPage.value = (currentDealPage.value - 1 + totalPages) % totalPages;
-};
-
-const nextSlide = () => {
-    if (sliderImages.value.length > 0) {
-        currentSlide.value = (currentSlide.value + 1) % sliderImages.value.length;
-    }
-};
-
-const prevSlide = () => {
-    if (sliderImages.value.length > 0) {
-        currentSlide.value = (currentSlide.value - 1 + sliderImages.value.length) % sliderImages.value.length;
-    }
-};
-
-let slideInterval;
-onMounted(() => {
-    if (sliderImages.value.length > 1) {
-        slideInterval = setInterval(nextSlide, 5000);
-    }
-});
-
-onUnmounted(() => {
-    clearInterval(slideInterval);
-});
+let autoSlide;
+onMounted(() => { if (sliderImages.value.length > 1) autoSlide = setInterval(nextSlide, 6000); });
+onUnmounted(() => clearInterval(autoSlide));
 </script>

@@ -13,12 +13,23 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['category', 'subCategory', 'gallery'])->latest()->paginate(10);
+        $categoryId = $request->query('category_id');
+        
+        $query = Product::with(['category', 'subCategory', 'gallery'])->latest();
+        
+        if ($categoryId && $categoryId !== 'all') {
+            $query->where('category_id', $categoryId);
+        }
+        
+        $products = $query->paginate(10)->withQueryString();
+        $categories = Category::all();
         
         return Inertia::render('Admin/Product/Index', [
-            'products' => $products
+            'products' => $products,
+            'categories' => $categories,
+            'currentCategoryId' => $categoryId ?? 'all'
         ]);
     }
 
@@ -44,7 +55,10 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'gallery_images' => 'nullable|array',
             'gallery_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
+            'discount_type' => 'nullable|string|in:percentage,fixed',
+            'discount_value' => 'nullable|numeric|min:0',
+            'remarks' => 'nullable|string',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
@@ -52,7 +66,7 @@ class ProductController extends Controller
         
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/products', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
         }
 
         $product = Product::create($validated);
@@ -62,7 +76,7 @@ class ProductController extends Controller
                 $path = $file->store('uploads/products/gallery', 'public');
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => '/storage/' . $path
+                    'image' => \Illuminate\Support\Facades\Storage::disk('public')->url($path)
                 ]);
             }
         }
@@ -93,14 +107,17 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'gallery_images' => 'nullable|array',
             'gallery_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
+            'discount_type' => 'nullable|string|in:percentage,fixed',
+            'discount_value' => 'nullable|numeric|min:0',
+            'remarks' => 'nullable|string',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/products', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
         }
 
         $product->update($validated);
@@ -115,7 +132,7 @@ class ProductController extends Controller
                 $path = $file->store('uploads/products/gallery', 'public');
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => '/storage/' . $path
+                    'image' => \Illuminate\Support\Facades\Storage::disk('public')->url($path)
                 ]);
             }
         }
@@ -127,5 +144,11 @@ class ProductController extends Controller
     {
         $product->delete();
         return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully.');
+    }
+
+    public function toggleActive(Product $product)
+    {
+        $product->update(['is_active' => !$product->is_active]);
+        return redirect()->back()->with('success', 'Product status updated successfully.');
     }
 }

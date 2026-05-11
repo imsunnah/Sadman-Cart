@@ -41,7 +41,7 @@ class SubCategoryController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/subcategories', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
         }
 
         SubCategory::create($validated);
@@ -72,7 +72,7 @@ class SubCategoryController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/subcategories', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
         }
 
         $subcategory->update($validated);
@@ -84,5 +84,11 @@ class SubCategoryController extends Controller
     {
         $subcategory->delete();
         return redirect()->route('admin.subcategories.index')->with('success', 'Subcategory deleted successfully.');
+    }
+
+    public function toggleActive(SubCategory $subcategory)
+    {
+        $subcategory->update(['is_active' => !$subcategory->is_active]);
+        return redirect()->back()->with('success', 'Subcategory status updated successfully.');
     }
 }

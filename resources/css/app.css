@@ -33,4 +33,7 @@
         background-color: var(--color-gray-50);
         color: var(--color-gray-900);
     }
+    a:hover {
+        color: var(--color-accent-500) !important;
+    }
 }

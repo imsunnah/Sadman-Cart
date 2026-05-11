@@ -37,7 +37,7 @@ class CategoryController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/categories', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
         }
 
         Category::create($validated);
@@ -65,7 +65,7 @@ class CategoryController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/categories', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
         }
 
         $category->update($validated);
@@ -77,5 +77,11 @@ class CategoryController extends Controller
     {
         $category->delete();
         return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully.');
+    }
+
+    public function toggleActive(Category $category)
+    {
+        $category->update(['is_active' => !$category->is_active]);
+        return redirect()->back()->with('success', 'Category status updated successfully.');
     }
 }

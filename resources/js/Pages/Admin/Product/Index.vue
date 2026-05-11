@@ -5,7 +5,7 @@
                 <h1 class="text-3xl font-bold text-[#003366] tracking-tight">Inventory</h1>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Manage product entities and stock status</p>
             </div>
-            <Link href="/admin/products/create" resources\js\Pages\Admin\Product\Create.vue class="bg-[#003366] text-white px-8 py-4 rounded-xl hover:bg-slate-800 transition-all font-bold text-xs uppercase tracking-widest flex items-center shadow-lg active:scale-95">
+            <Link href="/admin/products/create" class="bg-[#003366] text-white px-8 py-4 rounded-xl hover:bg-slate-800 transition-all font-bold text-xs uppercase tracking-widest flex items-center shadow-lg active:scale-95">
                 <Plus class="w-4 h-4 mr-3" /> Add Product
             </Link>
         </div>
@@ -16,6 +16,34 @@
                 <span class="text-xs font-bold uppercase tracking-widest">{{ $page.props.flash.success }}</span>
             </div>
             <button @click="$page.props.flash.success = null" class="opacity-50 hover:opacity-100 transition-opacity"><XCircle class="w-5 h-5" /></button>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="mb-8 flex flex-wrap gap-2">
+            <Link 
+                :href="route('admin.products.index')"
+                class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2"
+                :class="[
+                    currentCategoryId === 'all' 
+                    ? 'bg-[#003366] text-white border-[#003366] shadow-md' 
+                    : 'bg-white text-slate-400 border-slate-200 hover:border-[#003366] hover:text-[#003366]'
+                ]"
+            >
+                All Products
+            </Link>
+            <Link 
+                v-for="cat in categories" 
+                :key="cat.id"
+                :href="route('admin.products.index', { category_id: cat.id })"
+                class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2"
+                :class="[
+                    currentCategoryId == cat.id
+                    ? 'bg-[#003366] text-white border-[#003366] shadow-md' 
+                    : 'bg-white text-slate-400 border-slate-200 hover:border-[#003366] hover:text-[#003366]'
+                ]"
+            >
+                {{ cat.name }}
+            </Link>
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -43,6 +71,11 @@
                             <td class="py-4 px-6">
                                 <div class="text-sm font-bold text-slate-900">{{ product.name }}</div>
                                 <div class="text-[10px] text-slate-400 font-mono mt-1 px-2 py-0.5 bg-slate-100 rounded inline-block">{{ product.sku }}</div>
+                                <div v-if="product.discount_type" class="mt-1">
+                                    <span class="text-[9px] font-black uppercase tracking-tighter bg-orange-100 text-orange-600 px-2 py-0.5 rounded">
+                                        {{ product.discount_type === 'percentage' ? product.discount_value + '%' : '৳' + product.discount_value }} OFF
+                                    </span>
+                                </div>
                             </td>
                             <td class="py-4 px-6">
                                 <div class="flex flex-col gap-1">
@@ -62,9 +95,9 @@
                                 </div>
                             </td>
                             <td class="py-4 px-6 text-center">
-                                <div :class="product.is_active ? 'text-green-700 bg-green-50 border-green-200' : 'text-slate-500 bg-slate-50 border-slate-200'" class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border">
+                                <button @click="toggleStatus(product.id)" :class="product.is_active ? 'text-green-700 bg-green-50 border-green-200' : 'text-slate-500 bg-slate-50 border-slate-200'" class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border hover:scale-105 transition-transform">
                                     {{ product.is_active ? 'Active' : 'Archived' }}
-                                </div>
+                                </button>
                             </td>
                             <td class="py-4 px-6 text-right">
                                 <div class="flex justify-end gap-2">
@@ -97,15 +130,15 @@
             
             <!-- Pagination -->
             <div v-if="products.last_page > 1" class="p-6 bg-slate-50 border-t border-slate-200 flex justify-center space-x-2">
-                <button v-for="link in products.links" :key="link.label" 
-                    @click="link.url && router.visit(link.url)"
+                <Link v-for="link in products.links" :key="link.label" 
+                    :href="link.url || '#'"
                     v-html="link.label"
                     class="px-4 py-2 rounded-lg text-xs font-bold transition-all border"
                     :class="[
                         link.active ? 'bg-[#003366] text-white border-[#003366]' : 'bg-white text-slate-500 border-slate-200 hover:border-[#003366]',
                         !link.url ? 'opacity-50 cursor-not-allowed bg-slate-100' : ''
                     ]"
-                ></button>
+                ></Link>
             </div>
         </div>
 
@@ -164,7 +197,12 @@
                                 <div class="grid grid-cols-1 gap-3">
                                     <div class="flex justify-between items-center p-4 bg-green-50 rounded-2xl border border-green-100">
                                         <span class="text-[10px] font-bold text-green-600 uppercase tracking-widest">Selling Price</span>
-                                        <span class="text-xl font-black text-green-700">৳{{ parseFloat(productToView?.price || 0).toLocaleString() }}</span>
+                                        <div class="text-right">
+                                            <span class="text-xl font-black text-green-700">৳{{ parseFloat(productToView?.price || 0).toLocaleString() }}</span>
+                                            <div v-if="productToView?.discount_type" class="text-[10px] font-black text-orange-500 uppercase tracking-widest mt-1">
+                                                -{{ productToView.discount_type === 'percentage' ? productToView.discount_value + '%' : '৳' + productToView.discount_value }} DISCOUNT
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                         <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Buying Price</span>
@@ -196,6 +234,13 @@
                             </div>
                         </div>
                     </div>
+
+                    <div v-if="productToView?.remarks" class="mb-8">
+                        <h4 class="text-[10px] font-black text-[#003366] uppercase tracking-[0.2em] mb-4">Administrative Remarks</h4>
+                        <div class="p-6 bg-orange-50 rounded-2xl border border-orange-100 text-sm text-orange-800 font-bold italic">
+                            {{ productToView.remarks }}
+                        </div>
+                    </div>
                     
                     <div>
                         <h4 class="text-[10px] font-black text-[#003366] uppercase tracking-[0.2em] mb-4">Description</h4>
@@ -210,7 +255,7 @@
         <!-- Quick Edit Modal -->
         <transition enter-active-class="transition duration-300 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-200 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
             <div v-if="showQuickEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-                <div class="bg-white rounded-[2.5rem] p-8 sm:p-10 max-w-md w-full shadow-2xl relative overflow-hidden">
+                <div class="bg-white rounded-[2.5rem] p-8 sm:p-10 max-w-md w-full shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto">
                     <div class="mb-8 flex items-center justify-between">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 bg-[#FF6600]/10 rounded-xl flex items-center justify-center text-[#FF6600]">
@@ -236,6 +281,26 @@
                                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Stock Units</label>
                                 <input v-model="quickEditForm.stock" type="number" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold text-sm">
                             </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Discount Type</label>
+                                <select v-model="quickEditForm.discount_type" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold text-sm">
+                                    <option :value="null">No Discount</option>
+                                    <option value="percentage">Percentage (%)</option>
+                                    <option value="fixed">Fixed Amount (৳)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Discount Value</label>
+                                <input v-model="quickEditForm.discount_value" type="number" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Administrative Remarks</label>
+                            <textarea v-model="quickEditForm.remarks" rows="2" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold text-sm"></textarea>
                         </div>
 
                         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
@@ -268,7 +333,9 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Plus, Edit2, Trash2, CheckCircle, XCircle, Package, Eye, X, Zap } from 'lucide-vue-next';
 
 defineProps({
-    products: Object
+    products: Object,
+    categories: Array,
+    currentCategoryId: [String, Number]
 });
 
 const showDeleteModal = ref(false);
@@ -284,6 +351,9 @@ const quickEditForm = useForm({
     price: '',
     stock: '',
     is_active: true,
+    discount_type: null,
+    discount_value: '',
+    remarks: '',
     // Keep these as they are required by the update method but not edited here
     category_id: null,
     description: '',
@@ -296,12 +366,21 @@ const viewProduct = (product) => {
     showViewModal.value = true;
 };
 
+const toggleStatus = (id) => {
+    router.put(`/admin/products/${id}/toggle-active`, {}, {
+        preserveScroll: true
+    });
+};
+
 const openQuickEdit = (product) => {
     quickEditForm.id = product.id;
     quickEditForm.name = product.name;
     quickEditForm.price = product.price;
     quickEditForm.stock = product.stock;
     quickEditForm.is_active = product.is_active ? true : false;
+    quickEditForm.discount_type = product.discount_type;
+    quickEditForm.discount_value = product.discount_value;
+    quickEditForm.remarks = product.remarks;
     
     // Populate hidden fields needed for validation
     quickEditForm.category_id = product.category_id;

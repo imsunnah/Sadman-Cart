@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\Combo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -14,31 +15,63 @@ class CartController extends Controller
     public function getCart()
     {
         $cart = $this->getOrCreateCart();
-        return response()->json($cart->load('items.product'));
+        return response()->json($cart->load(['items.product', 'items.combo.products']));
     }
 
     public function addItem(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'nullable|exists:products,id',
+            'combo_id' => 'nullable|exists:combos,id',
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $cart = $this->getOrCreateCart();
-        $product = Product::findOrFail($request->product_id);
-
-        $cartItem = $cart->items()->where('product_id', $product->id)->first();
-
-        if ($cartItem) {
-            $cartItem->increment('quantity', $request->quantity);
-        } else {
-            $cart->items()->create([
-                'product_id' => $product->id,
-                'quantity' => $request->quantity,
-            ]);
+        if (!$request->product_id && !$request->combo_id) {
+            return response()->json(['message' => 'Product or Combo ID is required'], 422);
         }
 
-        return response()->json(['message' => 'Item added to cart', 'cart' => $cart->load('items.product')]);
+        $cart = $this->getOrCreateCart();
+
+        if ($request->product_id) {
+            $product = Product::findOrFail($request->product_id);
+            $cartItem = $cart->items()->where('product_id', $product->id)->first();
+            $newQuantity = ($cartItem ? $cartItem->quantity : 0) + $request->quantity;
+
+            if ($newQuantity > $product->stock) {
+                return response()->json(['message' => 'Cannot add more than available stock (' . $product->stock . ')'], 422);
+            }
+
+            if ($cartItem) {
+                $cartItem->update(['quantity' => $newQuantity]);
+            } else {
+                $cart->items()->create([
+                    'product_id' => $product->id,
+                    'quantity' => $request->quantity,
+                ]);
+            }
+        } else {
+            $combo = Combo::findOrFail($request->combo_id);
+            $cartItem = $cart->items()->where('combo_id', $combo->id)->first();
+            $newQuantity = ($cartItem ? $cartItem->quantity : 0) + $request->quantity;
+
+            // Check stock for all products in combo
+            foreach ($combo->products as $p) {
+                if ($newQuantity > $p->stock) {
+                    return response()->json(['message' => 'Cannot add combo. One or more products exceed available stock.'], 422);
+                }
+            }
+
+            if ($cartItem) {
+                $cartItem->update(['quantity' => $newQuantity]);
+            } else {
+                $cart->items()->create([
+                    'combo_id' => $combo->id,
+                    'quantity' => $request->quantity,
+                ]);
+            }
+        }
+
+        return response()->json(['message' => 'Item added to cart', 'cart' => $cart->load(['items.product', 'items.combo.products'])]);
     }
 
     public function updateItem(Request $request, $itemId)
@@ -48,9 +81,22 @@ class CartController extends Controller
         ]);
 
         $cartItem = CartItem::findOrFail($itemId);
+        
+        if ($cartItem->product_id) {
+            if ($request->quantity > $cartItem->product->stock) {
+                return response()->json(['message' => 'Cannot exceed available stock (' . $cartItem->product->stock . ')'], 422);
+            }
+        } else if ($cartItem->combo_id) {
+            foreach ($cartItem->combo->products as $p) {
+                if ($request->quantity > $p->stock) {
+                    return response()->json(['message' => 'Cannot exceed available stock for combo components.'], 422);
+                }
+            }
+        }
+
         $cartItem->update(['quantity' => $request->quantity]);
 
-        return response()->json(['message' => 'Cart updated', 'cart' => $cartItem->cart->load('items.product')]);
+        return response()->json(['message' => 'Cart updated', 'cart' => $cartItem->cart->load(['items.product', 'items.combo.products'])]);
     }
 
     public function removeItem($itemId)
@@ -59,7 +105,7 @@ class CartController extends Controller
         $cart = $cartItem->cart;
         $cartItem->delete();
 
-        return response()->json(['message' => 'Item removed', 'cart' => $cart->load('items.product')]);
+        return response()->json(['message' => 'Item removed', 'cart' => $cart->load(['items.product', 'items.combo.products'])]);
     }
 
     public function mergeSessionCartToUser($user)
@@ -71,7 +117,12 @@ class CartController extends Controller
             $userCart = Cart::firstOrCreate(['user_id' => $user->id]);
             
             foreach ($sessionCart->items as $item) {
-                $existingItem = $userCart->items()->where('product_id', $item->product_id)->first();
+                if ($item->product_id) {
+                    $existingItem = $userCart->items()->where('product_id', $item->product_id)->first();
+                } else {
+                    $existingItem = $userCart->items()->where('combo_id', $item->combo_id)->first();
+                }
+
                 if ($existingItem) {
                     $existingItem->increment('quantity', $item->quantity);
                     $item->delete();
@@ -88,7 +139,7 @@ class CartController extends Controller
         if (Auth::check()) {
             $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
             $this->mergeSessionCartToUser(Auth::user());
-            return $cart->fresh('items.product');
+            return $cart->fresh(['items.product', 'items.combo.products']);
         }
 
         $sessionId = Session::getId();

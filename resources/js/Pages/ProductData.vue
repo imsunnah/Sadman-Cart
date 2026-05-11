@@ -8,7 +8,7 @@
                     <div class="lg:grid lg:grid-cols-12 lg:gap-16 items-start">
                         
                         <!-- Left: Image Section -->
-                        <div class="lg:col-span-6 space-y-8">
+                        <div class="lg:col-span-7 space-y-6">
                             <!-- Main Active Image -->
                             <div @click="openLightboxMain" class="aspect-square rounded-[2.5rem] overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center p-8 cursor-zoom-in group relative transition-all duration-500 hover:shadow-2xl hover:border-[#FF6600]/20">
                                 <img :src="activeImage" :alt="product.name" class="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110" />
@@ -33,7 +33,7 @@
                         </div>
 
                         <!-- Right: Product Info -->
-                        <div class="lg:col-span-6 mt-12 lg:mt-0">
+                        <div class="lg:col-span-5 mt-10 lg:mt-0">
                             <!-- Category Badge -->
                             <div class="inline-flex items-center space-x-2 mb-6 px-4 py-2 bg-[#003366]/5 rounded-full">
                                 <span class="text-[10px] font-black text-[#003366] uppercase tracking-[0.2em] italic">Category</span>
@@ -41,39 +41,41 @@
                                 <span class="text-[10px] font-black text-[#FF6600] uppercase tracking-[0.2em]">{{ product.category?.name || 'Organic' }}</span>
                             </div>
 
-                            <h1 class="text-4xl sm:text-5xl font-black text-slate-900 mb-4 italic uppercase tracking-tighter leading-tight">{{ product.name }}</h1>
+                            <h1 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2 italic uppercase tracking-tighter leading-tight">{{ product.name }}</h1>
                             
                             <!-- Pricing Section -->
-                            <div class="flex items-baseline space-x-6 mb-8 pb-8 border-b border-slate-100">
-                                <span class="text-4xl sm:text-5xl font-black text-[#FF6600] drop-shadow-sm">৳{{ parseFloat(product.price).toLocaleString() }}</span>
-                                <span class="text-xl text-slate-300 line-through font-bold italic">৳{{ (parseFloat(product.price) * 1.2).toFixed(0) }}</span>
-                                <span class="text-xs font-black text-green-500 uppercase tracking-widest bg-green-50 px-3 py-1 rounded-lg">20% Instant Discount</span>
+                            <div class="flex items-baseline space-x-6 mb-6 pb-6 border-b border-slate-100">
+                                <span class="text-3xl sm:text-4xl font-black text-[#FF6600] drop-shadow-sm">৳{{ parseFloat(product.price).toLocaleString() }}</span>
+                                <template v-if="product.discount_type">
+                                    <span class="text-lg text-slate-300 line-through font-bold italic">৳{{ (product.discount_type === 'percentage' ? parseFloat(product.price) / (1 - product.discount_value/100) : parseFloat(product.price) + parseFloat(product.discount_value)).toFixed(0) }}</span>
+                                    <span class="text-[10px] font-black text-green-500 uppercase tracking-widest bg-green-50 px-3 py-1 rounded-lg">
+                                        {{ product.discount_type === 'percentage' ? product.discount_value + '%' : '৳' + product.discount_value }} Discount
+                                    </span>
+                                </template>
                             </div>
 
-                            <!-- Stock Indicator -->
-                            <div class="mb-10 p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                                <div class="flex justify-between items-center mb-3">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Inventory Status</span>
-                                    <span :class="product.stock <= 5 ? 'text-red-600' : 'text-green-600'" class="text-[10px] font-black uppercase tracking-widest">
-                                        {{ product.stock > 5 ? 'In Stock' : (product.stock > 0 ? `Limited Stock: ${product.stock} left` : 'Out of Stock') }}
-                                    </span>
-                                </div>
-                                <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                                    <div 
-                                        class="h-full transition-all duration-1000" 
-                                        :class="product.stock <= 5 ? 'bg-red-500' : 'bg-green-500'"
-                                        :style="{ width: `${Math.min((product.stock / 20) * 100, 100)}%` }"
-                                    ></div>
-                                </div>
+                            <!-- Note / Remarks -->
+                            <div v-if="product.remarks" class="mb-8 p-5 bg-amber-50 border-l-4 border-amber-400 rounded-r-2xl">
+                                <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1 flex items-center gap-2">
+                                    <span>📋</span> Product Note
+                                </p>
+                                <p class="text-sm font-bold text-amber-800 leading-relaxed">{{ product.remarks }}</p>
+                            </div>
+
+                            <!-- Inventory Status (Small text only, no bar) -->
+                            <div class="mb-8">
+                                <span :class="product.stock <= 5 ? 'text-red-600' : 'text-green-600'" class="text-[10px] font-black uppercase tracking-widest">
+                                    {{ product.stock > 0 ? 'Available in Stock' : 'Currently Out of Stock' }}
+                                </span>
                             </div>
 
                             <!-- Quantity Selector -->
-                            <div class="flex items-center space-x-6 mb-10">
+                            <div class="flex items-center space-x-6 mb-8">
                                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">Select Quantity:</span>
-                                <div class="flex items-center bg-white border-2 border-slate-100 rounded-2xl overflow-hidden h-14 shadow-sm">
-                                    <button @click="quantity > 1 && quantity--" class="px-6 h-full text-[#003366] hover:bg-slate-50 transition-colors"><Minus class="w-4 h-4" /></button>
-                                    <input type="number" v-model="quantity" class="w-16 h-full text-center font-black text-lg border-none focus:ring-0 text-[#003366]" />
-                                    <button @click="quantity < product.stock && quantity++" class="px-6 h-full text-[#003366] hover:bg-slate-50 transition-colors"><Plus class="w-4 h-4" /></button>
+                                <div class="flex items-center bg-white border-2 border-slate-100 rounded-2xl overflow-hidden h-12 shadow-sm">
+                                    <button @click="quantity > 1 && quantity--" class="px-4 h-full text-[#003366] hover:bg-slate-50 transition-colors"><Minus class="w-3 h-3" /></button>
+                                    <input type="number" v-model="quantity" class="w-12 h-full text-center font-black text-sm border-none focus:ring-0 text-[#003366]" />
+                                    <button @click="quantity < product.stock && quantity++" class="px-4 h-full text-[#003366] hover:bg-slate-50 transition-colors"><Plus class="w-3 h-3" /></button>
                                 </div>
                             </div>
 
@@ -97,12 +99,6 @@
                                 </button>
                             </div>
 
-                            <!-- Order Help -->
-                            <div class="flex flex-col gap-4">
-                                <a :href="`https://wa.me/${$page.props.settings.footer_phone}`" class="flex items-center justify-center gap-4 py-5 bg-[#25D366] text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:brightness-110 transition-all shadow-xl shadow-green-500/10 active:scale-95">
-                                    <PhoneIncoming class="w-5 h-5" /> WhatsApp Order Now
-                                </a>
-                            </div>
 
                             <!-- Trust Badges -->
                             <div class="mt-12 grid grid-cols-3 gap-4 py-8 border-t border-slate-100">
@@ -145,7 +141,7 @@
                     <div class="p-8 sm:p-12">
                         <div v-if="activeTab === 'description'" class="max-w-4xl">
                             <h3 class="text-sm font-black text-[#003366] mb-6 uppercase tracking-[0.3em] italic">Product Specifications</h3>
-                            <div class="prose prose-slate prose-lg text-slate-600 leading-relaxed font-bold italic">
+                            <div class="prose prose-slate prose-sm text-slate-600 leading-relaxed font-bold italic">
                                 {{ product.description }}
                             </div>
                         </div>
@@ -193,7 +189,7 @@
                         </div>
                         <Link href="/shop" class="text-[10px] font-black text-[#FF6600] hover:underline uppercase tracking-[0.3em]">Explore Full Catalog →</Link>
                     </div>
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         <ProductCard v-for="p in relatedProducts" :key="p.id" :product="p" @view-image="openLightbox" />
                     </div>
                 </div>
@@ -260,10 +256,16 @@ const allImages = computed(() => {
 const activeImage = ref(allImages.value.length > 0 ? allImages.value[0] : null);
 
 const handleAddToCart = async () => {
+    if (quantity.value > props.product.stock) {
+        quantity.value = props.product.stock;
+    }
     await addToCart(props.product, quantity.value);
 };
 
 const handleBuyNow = async () => {
+    if (quantity.value > props.product.stock) {
+        quantity.value = props.product.stock;
+    }
     await addToCart(props.product, quantity.value);
     router.visit('/cart');
 };

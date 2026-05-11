@@ -12,19 +12,45 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $status = $request->query('status');
+        $categoryId = $request->query('category_id');
+        $productId = $request->query('product_id');
         
         $query = Order::with('items')->latest();
         
         if ($status && in_array($status, ['pending', 'processing', 'completed', 'cancelled'])) {
             $query->where('status', $status);
         }
+
+        if ($categoryId && $categoryId !== 'all') {
+            $query->whereHas('items.product', function($q) use ($categoryId) {
+                $q->where('category_id', $categoryId);
+            });
+        }
+
+        if ($productId && $productId !== 'all') {
+            $query->whereHas('items', function($q) use ($productId) {
+                $q->where('product_id', $productId);
+            });
+        }
         
         $orders = $query->paginate(15)->withQueryString();
+        $categories = \App\Models\Category::all();
+        $products = \App\Models\Product::all();
         
         return Inertia::render('Admin/Order/Index', [
             'orders' => $orders,
-            'currentStatus' => $status ?? 'all'
+            'categories' => $categories,
+            'products' => $products,
+            'currentStatus' => $status ?? 'all',
+            'currentCategoryId' => $categoryId ?? 'all',
+            'currentProductId' => $productId ?? 'all'
         ]);
+    }
+
+    public function toggleActive(Order $order)
+    {
+        $order->update(['is_active' => !$order->is_active]);
+        return redirect()->back()->with('success', 'Order status updated successfully.');
     }
 
     public function show(Order $order)

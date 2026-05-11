@@ -1,110 +1,116 @@
 <template>
-    <!-- Horizontal Layout (e.g. for Top Selling) -->
-    <div v-if="layout === 'horizontal'" class="group relative bg-white rounded-[2.5rem] border border-slate-100 p-6 flex flex-row items-center gap-8 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 font-sans animate-in fade-in slide-in-from-left-4 duration-700">
-        <!-- Image Area (Left) -->
-        <div @click="$emit('view-image', product)" class="w-1/3 aspect-square flex-shrink-0 cursor-zoom-in relative overflow-hidden rounded-[2rem] bg-slate-50 border border-slate-100 group-hover:border-[#FF6600]/20 transition-all">
-            <img 
-                :src="product.image || 'https://placehold.co/400x400/f8fafc/cbd5e1?text=No+Image'" 
-                :alt="product.name"
-                class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" 
-            />
-            <!-- Quick View Overlay -->
-            <div class="absolute inset-0 bg-[#003366]/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-[2px]">
-                <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                    <Maximize2 class="w-5 h-5 text-[#FF6600]" />
-                </div>
-            </div>
+    <div class="group relative bg-white rounded-3xl overflow-hidden border border-slate-100 flex flex-col transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-slate-200/50 hover:border-slate-200">
+
+        <!-- Discount badge -->
+        <div v-if="product.discount_type" class="absolute top-3 left-3 z-10 bg-[#FF6600] text-white text-[9px] font-black px-2.5 py-1 rounded-full shadow uppercase tracking-wider">
+            {{ product.discount_type === 'percentage' ? product.discount_value + '% OFF' : '৳' + product.discount_value + ' OFF' }}
         </div>
 
-        <!-- Product Details (Right) -->
-        <div class="flex-grow flex flex-col">
-            <Link :href="`/products/${product.slug}`" class="text-xl font-black text-[#003366] hover:text-[#FF6600] transition-colors mb-2 line-clamp-1 italic uppercase tracking-tighter">
-                {{ product.name }}
+        <!-- Stock badge -->
+        <div v-if="product.stock <= 5 && product.stock > 0" class="absolute top-3 right-3 z-10 bg-red-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full">
+            Only {{ product.stock }} left
+        </div>
+
+        <!-- Image — click → detail page -->
+        <Link :href="`/products/${product.slug}`" class="block relative w-full bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden" style="aspect-ratio:1/1;">
+            <img
+                v-if="product.image"
+                :src="product.image"
+                :alt="product.name"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                loading="lazy"
+            />
+            <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-200">
+                <Package class="w-16 h-16" />
+                <span class="text-[9px] font-black uppercase tracking-widest mt-2">No Image</span>
+            </div>
+            <!-- Hover overlay -->
+            <div class="absolute inset-0 bg-[#003366]/0 group-hover:bg-[#003366]/5 transition-all duration-500 flex items-center justify-center">
+                <div class="opacity-0 group-hover:opacity-100 transition-all duration-500 bg-white text-[#003366] text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-lg transform translate-y-2 group-hover:translate-y-0 flex items-center gap-2">
+                    <Eye class="w-3 h-3" /> View Details
+                </div>
+            </div>
+        </Link>
+
+        <!-- Card Body -->
+        <div class="flex flex-col flex-1 p-4">
+            <!-- Category -->
+            <span v-if="product.category" class="text-[9px] font-black text-[#FF6600]/70 uppercase tracking-[0.15em] mb-1">
+                {{ product.category.name }}
+            </span>
+
+            <!-- Name — click → detail page -->
+            <Link :href="`/products/${product.slug}`" class="flex-grow mb-3">
+                <h3 class="text-[11px] font-black text-slate-800 uppercase tracking-wide leading-snug line-clamp-2 group-hover:text-[#003366] transition-colors">
+                    {{ product.name }}
+                </h3>
             </Link>
-            
-            <div class="flex items-center gap-3 mb-6">
-                <span class="text-2xl font-black text-[#FF6600]">৳{{ parseFloat(product.price).toLocaleString() }}</span>
-                <span class="text-xs text-slate-300 line-through font-bold italic">৳{{ (parseFloat(product.price) * 1.2).toFixed(0) }}</span>
+
+            <!-- Price -->
+            <div class="flex items-baseline gap-2 mb-4">
+                <span class="text-[17px] font-black text-[#003366] tracking-tighter leading-none">
+                    ৳{{ parseFloat(discountedPrice).toLocaleString() }}
+                </span>
+                <span v-if="product.discount_type" class="text-[10px] text-slate-300 line-through font-bold">
+                    ৳{{ parseFloat(product.price).toLocaleString() }}
+                </span>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-3">
-                <button 
-                    @click="addToCart(product)"
-                    class="flex-1 h-12 bg-white border-2 border-slate-100 text-[#003366] rounded-xl font-black text-[9px] uppercase tracking-widest hover:border-[#FF6600] hover:text-[#FF6600] transition-all flex items-center justify-center gap-2"
+            <!-- 2 Action Buttons -->
+            <div class="grid grid-cols-2 gap-2">
+                <button
+                    :disabled="product.stock <= 0"
+                    @click.prevent="handleAddToCart"
+                    class="h-10 rounded-xl border-2 border-[#003366] text-[#003366] text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-[#003366] hover:text-white transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                    <ShoppingCart class="w-4 h-4" /> Add
+                    <ShoppingCart class="w-3.5 h-3.5 flex-shrink-0" />
+                    Add Cart
                 </button>
-                <button 
-                    @click="buyNow(product)"
-                    class="flex-1 h-12 bg-[#003366] text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-black transition-all shadow-lg active:scale-95"
+                <button
+                    :disabled="product.stock <= 0"
+                    @click.prevent="handleBuyNow"
+                    class="h-10 rounded-xl bg-[#FF6600] text-white text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-orange-600 transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
+                    <Zap class="w-3.5 h-3.5 flex-shrink-0" />
                     Buy Now
                 </button>
             </div>
-        </div>
-    </div>
 
-    <!-- Vertical Layout (Default) -->
-    <div v-else class="group bg-white rounded-[2rem] overflow-hidden border border-slate-100 transition-all duration-500 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-2 animate-in fade-in zoom-in duration-700">
-        <!-- Image Container -->
-        <div class="relative aspect-square bg-slate-50 overflow-hidden flex items-center justify-center p-6 cursor-pointer" @click="$inertia.visit(`/products/${product.slug}`)">
-            <img 
-                :src="product.image || 'https://placehold.co/400x400/f8fafc/cbd5e1?text=No+Image'" 
-                :alt="product.name"
-                class="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110"
-            />
-            
-            <!-- Quick View Overlay -->
-            <div class="absolute inset-0 bg-[#003366]/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-[2px]">
-                <button 
-                    @click.stop="$emit('view-image', product)"
-                    class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-[#FF6600] hover:text-white"
-                >
-                    <Maximize2 class="w-5 h-5" />
-                </button>
-            </div>
-        </div>
-
-        <!-- Info -->
-        <div class="p-6">
-            <h3 class="text-xs font-black text-[#003366] uppercase tracking-widest line-clamp-1 mb-2 italic group-hover:text-[#FF6600] transition-colors">
-                <Link :href="`/products/${product.slug}`">{{ product.name }}</Link>
-            </h3>
-            
-            <div class="flex items-center justify-between mt-4">
-                <div class="flex flex-col">
-                    <span class="text-sm text-slate-300 line-through font-bold italic">৳{{ (parseFloat(product.price) * 1.2).toFixed(0) }}</span>
-                    <span class="text-lg font-black text-slate-900 tracking-tighter">৳{{ parseFloat(product.price).toLocaleString() }}</span>
-                </div>
-                <button 
-                    @click.stop="addToCart(product)"
-                    class="w-10 h-10 bg-[#003366] text-white rounded-xl flex items-center justify-center hover:bg-[#FF6600] transition-all duration-300 shadow-lg active:scale-90"
-                >
-                    <ShoppingCart class="w-5 h-5" />
-                </button>
+            <div v-if="product.stock <= 0" class="text-center mt-2">
+                <span class="text-[9px] font-black text-red-400 uppercase tracking-widest">Out of Stock</span>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
+import { ShoppingCart, Package, Eye, Zap } from 'lucide-vue-next';
 import { useCart } from '@/Composables/useCart';
-import { Package, ShoppingCart, Maximize2, Plus } from 'lucide-vue-next';
 
 const props = defineProps({
     product: Object,
-    layout: {
-        type: String,
-        default: 'vertical'
-    }
 });
+
+defineEmits(['view-image']);
 
 const { addToCart } = useCart();
 
-const buyNow = async (product) => {
-    await addToCart(product);
-    router.visit('/cart');
+const discountedPrice = computed(() => {
+    if (!props.product.discount_type) return props.product.price;
+    if (props.product.discount_type === 'percentage') {
+        return props.product.price * (1 - props.product.discount_value / 100);
+    }
+    return Math.max(0, props.product.price - props.product.discount_value);
+});
+
+const handleAddToCart = async () => {
+    await addToCart(props.product, 1);
+};
+
+const handleBuyNow = async () => {
+    await addToCart(props.product, 1);
+    router.visit('/checkout');
 };
 </script>

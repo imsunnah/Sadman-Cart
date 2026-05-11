@@ -66,7 +66,7 @@
                             </div>
                         </div>
 
-                        <div v-if="products.data.length > 0" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
+                        <div v-if="products.data.length > 0" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-6">
                             <ProductCard v-for="product in products.data" :key="product.id" :product="product" @view-image="openLightbox" />
                         </div>
 

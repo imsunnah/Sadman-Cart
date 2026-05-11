@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Cart;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -15,21 +16,26 @@ class StoreController extends Controller
     public function home()
     {
         $topSelling = Product::with('category')->where('is_active', true)->inRandomOrder()->take(8)->get();
-        $justForYou = Product::with('category')->where('is_active', true)->latest()->take(12)->get();
-        $featuredCategories = Category::withCount('products')->orderBy('products_count', 'desc')->take(6)->get();
+        $latestProducts = Product::with('category')->where('is_active', true)->latest()->take(10)->get();
+        $discountedProducts = Product::with('category')->where('is_active', true)->whereNotNull('discount_type')->latest()->take(10)->get();
+        $combos = \App\Models\Combo::with('products')->where('is_active', true)->latest()->take(6)->get();
+        $featuredCategories = Category::withCount('products')->orderBy('products_count', 'desc')->take(8)->get();
+        $reviews = Review::where('is_active', true)->latest()->take(9)->get();
 
-        // Fetch 2 specific categories with their products for "category-wise data"
         $categorySections = Category::with([
             'products' => function ($query) {
-                $query->where('is_active', true)->take(4);
+                $query->where('is_active', true)->take(8);
             }
-        ])->has('products', '>=', 4)->inRandomOrder()->take(2)->get();
+        ])->has('products', '>', 0)->get();
 
         return Inertia::render('Home', [
-            'topSelling' => $topSelling,
-            'justForYou' => $justForYou,
+            'topSelling'         => $topSelling,
+            'latestProducts'     => $latestProducts,
+            'discountedProducts' => $discountedProducts,
+            'combos'             => $combos,
             'featuredCategories' => $featuredCategories,
-            'categorySections' => $categorySections
+            'categorySections'   => $categorySections,
+            'reviews'            => $reviews,
         ]);
     }
 
@@ -151,18 +157,36 @@ class StoreController extends Controller
         ]);
 
         foreach ($cart->items as $item) {
-            $order->items()->create([
-                'product_id' => $item->product_id,
-                'product_name' => $item->product->name,
-                'price' => $item->product->price,
-                'buying_price' => $item->product->buying_price,
-                'package_cost' => $item->product->package_cost,
-                'quantity' => $item->quantity
-            ]);
+            if ($item->product_id) {
+                $order->items()->create([
+                    'product_id' => $item->product_id,
+                    'product_name' => $item->product->name,
+                    'price' => $item->product->price,
+                    'buying_price' => $item->product->buying_price,
+                    'package_cost' => $item->product->package_cost,
+                    'quantity' => $item->quantity
+                ]);
 
-            // Reduce stock
-            if ($item->product->stock >= $item->quantity) {
-                $item->product->decrement('stock', $item->quantity);
+                // Reduce stock
+                if ($item->product->stock >= $item->quantity) {
+                    $item->product->decrement('stock', $item->quantity);
+                }
+            } else if ($item->combo_id) {
+                $order->items()->create([
+                    'combo_id' => $item->combo_id,
+                    'product_name' => $item->combo->name . ' (Bundle)',
+                    'price' => $item->combo->price,
+                    'buying_price' => $item->combo->products->sum('buying_price'),
+                    'package_cost' => $item->combo->products->sum('package_cost'),
+                    'quantity' => $item->quantity
+                ]);
+
+                // Reduce stock for each product in the combo
+                foreach ($item->combo->products as $p) {
+                    if ($p->stock >= $item->quantity) {
+                        $p->decrement('stock', $item->quantity);
+                    }
+                }
             }
         }
 
@@ -178,6 +202,26 @@ class StoreController extends Controller
         return Inertia::render('ThankYou', [
             'order' => $order->load('items')
         ]);
+    }
+
+    public function shippingPolicy()
+    {
+        return Inertia::render('Policies/ShippingPolicy');
+    }
+
+    public function returnsRefunds()
+    {
+        return Inertia::render('Policies/ReturnsRefunds');
+    }
+
+    public function privacyPolicy()
+    {
+        return Inertia::render('Policies/PrivacyPolicy');
+    }
+
+    public function terms()
+    {
+        return Inertia::render('Policies/Terms');
     }
 
     /**

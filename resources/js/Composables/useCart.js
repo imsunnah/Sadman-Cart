@@ -24,18 +24,29 @@ fetchCart();
 export function useCart() {
     const { success, error: toastError } = useToast();
 
-    const addToCart = async (product, quantity = 1) => {
+    const addToCart = async (item, quantity = 1) => {
         try {
             isLoading.value = true;
-            const response = await axios.post("/api/cart/add", {
-                product_id: product.id,
+            const isCombo = item.products !== undefined;
+            const payload = {
                 quantity: quantity,
-            });
+            };
+            if (isCombo) {
+                payload.combo_id = item.id;
+            } else {
+                payload.product_id = item.id;
+            }
+
+            const response = await axios.post("/api/cart/add", payload);
             cartData.value = response.data.cart;
-            success(`"${product.name}" added to cart!`);
+            success(`"${item.name}" added to cart!`);
         } catch (err) {
             console.error("Error adding to cart:", err);
-            toastError("Failed to add item to cart. Please try again.");
+            if (err.response && err.response.data && err.response.data.message) {
+                toastError(err.response.data.message);
+            } else {
+                toastError("Failed to add item to cart. Please try again.");
+            }
         } finally {
             isLoading.value = false;
         }
@@ -64,7 +75,11 @@ export function useCart() {
             cartData.value = response.data.cart;
         } catch (err) {
             console.error("Error updating cart:", err);
-            toastError("Failed to update quantity.");
+            if (err.response && err.response.data && err.response.data.message) {
+                toastError(err.response.data.message);
+            } else {
+                toastError("Failed to update quantity.");
+            }
         } finally {
             isLoading.value = false;
         }
@@ -78,7 +93,12 @@ export function useCart() {
 
     const cartTotal = computed(() => {
         return cart.value.reduce((total, item) => {
-            const price = item.product ? parseFloat(item.product.price) : 0;
+            let price = 0;
+            if (item.product) {
+                price = parseFloat(item.product.price);
+            } else if (item.combo) {
+                price = parseFloat(item.combo.price);
+            }
             return total + price * item.quantity;
         }, 0);
     });
