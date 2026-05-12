@@ -30,18 +30,18 @@ class SettingController extends Controller
         if ($request->hasFile('slider_upload')) {
             $currentSliders = json_decode(Setting::where('key', 'slider_images')->first()->value ?? '[]', true);
             foreach ($request->file('slider_upload') as $file) {
-                $path = $file->store('uploads/settings/sliders', 'public');
-                $currentSliders[] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+                $path = $file->store('settings/sliders', 'uploads');
+                $currentSliders[] = \Illuminate\Support\Facades\Storage::disk('uploads')->url($path);
             }
             Setting::where('key', 'slider_images')->update(['value' => json_encode($currentSliders)]);
         }
 
         // Handle Hero Static Image
         if ($request->hasFile('hero_static_image')) {
-            $path = $request->file('hero_static_image')->store('uploads/settings', 'public');
+            $path = $request->file('hero_static_image')->store('settings', 'uploads');
             Setting::updateOrCreate(
                 ['key' => 'hero_static_image'],
-                ['value' => \Illuminate\Support\Facades\Storage::disk('public')->url($path), 'group' => 'general']
+                ['value' => \Illuminate\Support\Facades\Storage::disk('uploads')->url($path), 'group' => 'general']
             );
         }
 

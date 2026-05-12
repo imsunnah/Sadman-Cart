@@ -65,9 +65,9 @@ class ProductController extends Controller
         $validated['sku'] = 'PRD-' . strtoupper(substr(uniqid(), -5));
         
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/products', 'public');
-            $validated['image'] = '/storage/' . $path;
-        } elseif (is_string($request->image) && str_starts_with($request->image, '/storage/')) {
+            $path = $request->file('image')->store('products', 'uploads');
+            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('uploads')->url($path);
+        } elseif (is_string($request->image)) {
             $validated['image'] = $request->image;
         }
 
@@ -76,8 +76,8 @@ class ProductController extends Controller
         if ($request->has('gallery_images')) {
             foreach ($request->gallery_images as $img) {
                 if ($img instanceof \Illuminate\Http\UploadedFile) {
-                    $path = $img->store('uploads/products/gallery', 'public');
-                    $imagePath = '/storage/' . $path;
+                    $path = $img->store('products/gallery', 'uploads');
+                    $imagePath = \Illuminate\Support\Facades\Storage::disk('uploads')->url($path);
                 } else {
                     $imagePath = $img;
                 }
@@ -125,8 +125,8 @@ class ProductController extends Controller
 
         // Handle Featured Image update safely
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/products', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $path = $request->file('image')->store('products', 'uploads');
+            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('uploads')->url($path);
         } elseif ($request->filled('image') && is_string($request->image)) {
             // If it's a string, only update if it looks like a valid path or URL
             // If it's already the current image, this is fine. 
@@ -147,9 +147,9 @@ class ProductController extends Controller
         if ($request->has('gallery_images')) {
             foreach ($request->gallery_images as $img) {
                 if ($img instanceof \Illuminate\Http\UploadedFile) {
-                    $path = $img->store('uploads/products/gallery', 'public');
-                    $imagePath = '/storage/' . $path;
-                } elseif (is_string($img) && str_starts_with($img, '/storage/')) {
+                    $path = $img->store('products/gallery', 'uploads');
+                    $imagePath = \Illuminate\Support\Facades\Storage::disk('uploads')->url($path);
+                } elseif (is_string($img)) {
                     $imagePath = $img;
                 } else {
                     continue;
