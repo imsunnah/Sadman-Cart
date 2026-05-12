@@ -41,8 +41,8 @@ class ComboController extends Controller
         $data['slug'] = Str::slug($request->name) . '-' . time();
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('combos', 'uploads');
-            $data['image'] = \Illuminate\Support\Facades\Storage::disk('uploads')->url($path);
+            $path = $request->file('image')->store('uploads/combos', 'public');
+            $data['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
         } elseif (is_string($request->image)) {
             $data['image'] = $request->image;
         }
@@ -79,8 +79,8 @@ class ComboController extends Controller
         $data = $request->except('product_ids', 'image');
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('combos', 'uploads');
-            $data['image'] = \Illuminate\Support\Facades\Storage::disk('uploads')->url($path);
+            $path = $request->file('image')->store('uploads/combos', 'public');
+            $data['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
         } elseif ($request->filled('image') && is_string($request->image)) {
             $data['image'] = $request->image;
         } else {
