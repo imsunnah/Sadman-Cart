@@ -31,13 +31,18 @@
                         <input v-model="form.site_name" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Upload Site Logo</label>
-                        <div class="flex items-center space-x-4">
-                            <div class="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border border-slate-200">
-                                <img v-if="logoPreview || form.existing_site_logo" :src="logoPreview || form.existing_site_logo" class="h-full object-contain" />
-                                <ImageIcon v-else class="w-6 h-6 text-slate-300" />
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Logo</label>
+                        <div class="flex flex-col gap-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border border-slate-200">
+                                    <img v-if="logoPreview || form.existing_site_logo" :src="logoPreview || form.existing_site_logo" class="h-full object-contain" />
+                                    <ImageIcon v-else class="w-6 h-6 text-slate-300" />
+                                </div>
+                                <input type="file" @input="handleLogoUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white" />
                             </div>
-                            <input type="file" @input="handleLogoUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white" />
+                            <button @click.prevent="openGallery('logo')" class="w-full py-2 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-black uppercase tracking-widest text-[#003366] hover:bg-[#003366] hover:text-white transition-all flex items-center justify-center gap-2">
+                                <ImageIcon class="w-3 h-3" /> Select From Gallery
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -52,7 +57,12 @@
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-bold text-slate-400 uppercase">Current Sliders</span>
-                        <button @click.prevent="triggerSliderUpload" class="text-xs font-bold text-[#FF6600] uppercase hover:underline">Add More Images</button>
+                        <div class="flex items-center gap-4">
+                            <button @click.prevent="openGallery('slider')" class="text-xs font-bold text-[#003366] uppercase hover:underline flex items-center gap-1">
+                                <ImageIcon class="w-3 h-3" /> Select From Gallery
+                            </button>
+                            <button @click.prevent="triggerSliderUpload" class="text-xs font-bold text-[#FF6600] uppercase hover:underline">Add New Image</button>
+                        </div>
                     </div>
                     <input type="file" multiple ref="sliderInput" @input="handleSliderUpload" class="hidden" />
                     
@@ -133,7 +143,12 @@
                                     <span class="text-[10px] font-black uppercase">Upload Static Cover</span>
                                 </div>
                             </div>
-                            <input type="file" @input="handleHeroStaticUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-[#003366] file:text-white cursor-pointer" />
+                            <div class="flex items-center gap-3">
+                                <input type="file" @input="handleHeroStaticUpload" class="flex-grow text-xs text-slate-500 file:mr-4 file:py-2 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-[#003366] file:text-white cursor-pointer" />
+                                <button @click.prevent="openGallery('hero')" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-[#003366] hover:bg-[#003366] hover:text-white transition-all flex items-center justify-center gap-2">
+                                    <ImageIcon class="w-3 h-3" /> Gallery
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,6 +172,13 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Media Gallery Modal -->
+        <MediaPicker 
+            :show="showGallery" 
+            @close="showGallery = false" 
+            @select="handleGallerySelection" 
+        />
     </AdminLayout>
 </template>
 
@@ -164,6 +186,7 @@
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import MediaPicker from '@/Components/MediaPicker.vue';
 import { Save, Settings as SettingsIcon, Image as ImageIcon, Info, Plus, Trash2, CheckCircle, X, Truck, Layout } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -182,6 +205,8 @@ const sliderImages = ref(JSON.parse(getVal('slider_images') || '[]'));
 const logoPreview = ref(null);
 const heroStaticPreview = ref(null);
 const sliderInput = ref(null);
+const showGallery = ref(false);
+const galleryTarget = ref(''); // 'logo', 'slider', 'hero'
 
 const form = useForm({
     site_name: getVal('site_name'),
@@ -231,9 +256,29 @@ const handleSliderUpload = (e) => {
 
 const removeSlider = (index) => {
     sliderImages.value.splice(index, 1);
-    // If it was a new upload, remove from slider_upload too
-    // This is simplified, in a real app you'd track indices carefully
-    form.slider_images = sliderImages.value.filter(img => !img.startsWith('blob:'));
+    form.slider_images = [...sliderImages.value];
+};
+
+const openGallery = (target) => {
+    galleryTarget.value = target;
+    showGallery.value = true;
+};
+
+const handleGallerySelection = (item) => {
+    const url = item.url;
+    if (galleryTarget.value === 'logo') {
+        form.site_logo = url;
+        form.existing_site_logo = url;
+        logoPreview.value = null;
+    } else if (galleryTarget.value === 'hero') {
+        form.hero_static_image = url;
+        form.existing_hero_static_image = url;
+        heroStaticPreview.value = null;
+    } else if (galleryTarget.value === 'slider') {
+        sliderImages.value.push(url);
+        form.slider_images = [...sliderImages.value];
+    }
+    showGallery.value = false;
 };
 
 const saveSettings = () => {

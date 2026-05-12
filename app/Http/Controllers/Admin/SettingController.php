@@ -24,6 +24,8 @@ class SettingController extends Controller
         if ($request->hasFile('site_logo')) {
             $path = $request->file('site_logo')->store('uploads/settings', 'public');
             Setting::where('key', 'site_logo')->update(['value' => \Illuminate\Support\Facades\Storage::disk('public')->url($path)]);
+        } elseif ($request->filled('site_logo') && is_string($request->site_logo)) {
+            Setting::where('key', 'site_logo')->update(['value' => $request->site_logo]);
         }
 
         // Handle Slider Images (Appending new ones)
@@ -42,6 +44,11 @@ class SettingController extends Controller
             Setting::updateOrCreate(
                 ['key' => 'hero_static_image'],
                 ['value' => \Illuminate\Support\Facades\Storage::disk('public')->url($path), 'group' => 'general']
+            );
+        } elseif ($request->filled('hero_static_image') && is_string($request->hero_static_image)) {
+            Setting::updateOrCreate(
+                ['key' => 'hero_static_image'],
+                ['value' => $request->hero_static_image, 'group' => 'general']
             );
         }
 
