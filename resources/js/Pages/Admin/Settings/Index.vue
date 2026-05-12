@@ -96,6 +96,49 @@
                 </div>
             </div>
 
+            <!-- Hero Section Customization -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:col-span-2">
+                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
+                    <Layout class="w-5 h-5 text-[#003366]" />
+                    <h2 class="text-lg font-bold text-slate-900">Hero Section Configuration</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <!-- Slider Text Control -->
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <div>
+                                <h3 class="text-sm font-bold text-[#003366]">Show Slider Text</h3>
+                                <p class="text-[10px] text-slate-500 font-medium">Toggle display of text over the hero slider</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" v-model="form.hero_slider_text_show" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF6600]"></div>
+                            </label>
+                        </div>
+                        
+                        <div v-if="form.hero_slider_text_show">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Slider Overlay Text (HTML allowed)</label>
+                            <textarea v-model="form.hero_slider_text" rows="4" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none font-medium" placeholder="e.g. <h1>Fresh Organic</h1><p>Direct from farms</p>"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Static Image Control -->
+                    <div class="space-y-4">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Right-side Static Image</label>
+                        <div class="flex flex-col gap-4">
+                            <div class="w-full aspect-video bg-slate-50 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-dashed border-slate-200 group">
+                                <img v-if="heroStaticPreview || form.existing_hero_static_image" :src="heroStaticPreview || form.existing_hero_static_image" class="w-full h-full object-cover" />
+                                <div v-else class="flex flex-col items-center gap-2 opacity-30">
+                                    <ImageIcon class="w-8 h-8" />
+                                    <span class="text-[10px] font-black uppercase">Upload Static Cover</span>
+                                </div>
+                            </div>
+                            <input type="file" @input="handleHeroStaticUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-[#003366] file:text-white cursor-pointer" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Delivery Settings -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:col-span-2">
                 <div class="flex items-center space-x-3 mb-6 border-b pb-4">
@@ -121,7 +164,7 @@
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Save, Settings as SettingsIcon, Image as ImageIcon, Info, Plus, Trash2, CheckCircle, X, Truck } from 'lucide-vue-next';
+import { Save, Settings as SettingsIcon, Image as ImageIcon, Info, Plus, Trash2, CheckCircle, X, Truck, Layout } from 'lucide-vue-next';
 
 const props = defineProps({
     settings: Object
@@ -137,20 +180,25 @@ const getVal = (key) => {
 
 const sliderImages = ref(JSON.parse(getVal('slider_images') || '[]'));
 const logoPreview = ref(null);
+const heroStaticPreview = ref(null);
 const sliderInput = ref(null);
 
 const form = useForm({
     site_name: getVal('site_name'),
-    site_logo: null, // This will hold the file for upload
-    existing_site_logo: getVal('site_logo'), // Store existing for preview
+    site_logo: null,
+    existing_site_logo: getVal('site_logo'),
     footer_about: getVal('footer_about'),
     footer_address: getVal('footer_address'),
     footer_phone: getVal('footer_phone'),
     footer_email: getVal('footer_email'),
     delivery_charge_inside_dhaka: getVal('delivery_charge_inside_dhaka'),
     delivery_charge_outside_dhaka: getVal('delivery_charge_outside_dhaka'),
-    slider_upload: [], // New files to upload
-    slider_images: sliderImages.value // Remaining existing images
+    slider_upload: [],
+    slider_images: sliderImages.value,
+    hero_static_image: null,
+    existing_hero_static_image: getVal('hero_static_image'),
+    hero_slider_text_show: getVal('hero_slider_text_show') == '1',
+    hero_slider_text: getVal('hero_slider_text'),
 });
 
 const handleLogoUpload = (e) => {
@@ -158,6 +206,14 @@ const handleLogoUpload = (e) => {
     if (file) {
         form.site_logo = file;
         logoPreview.value = URL.createObjectURL(file);
+    }
+};
+
+const handleHeroStaticUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        form.hero_static_image = file;
+        heroStaticPreview.value = URL.createObjectURL(file);
     }
 };
 

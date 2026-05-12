@@ -31,34 +31,54 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead>
-                                <tr class="bg-white text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
-                                    <th class="py-4 px-6">Product Name</th>
+                                <tr class="bg-white text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                    <th class="py-4 px-6">Product & Specification</th>
                                     <th class="py-4 px-6 text-center">Quantity</th>
-                                    <th class="py-4 px-6 text-right">Total Price</th>
+                                    <th class="py-4 px-6 text-right">Unit Price</th>
+                                    <th class="py-4 px-6 text-right">Line Total</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50">
-                                <tr v-for="item in order.items" :key="item.id" class="hover:bg-slate-50 transition-colors">
+                                <tr v-for="item in order.items" :key="item.id" class="hover:bg-slate-50/50 transition-colors group">
                                     <td class="py-5 px-6">
-                                        <div class="text-sm font-bold text-slate-800">{{ item.product_name }}</div>
-                                        <div class="text-xs text-slate-400 mt-1">Unit Price: ৳{{ parseFloat(item.price).toLocaleString() }}</div>
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-14 h-14 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden flex-shrink-0">
+                                                <img v-if="item.product?.image || item.combo?.image" :src="item.product?.image || item.combo?.image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                <div v-else class="w-full h-full flex items-center justify-center text-slate-200"><Package class="w-6 h-6" /></div>
+                                            </div>
+                                            <div>
+                                                <div class="flex items-center gap-2 mb-1" v-if="item.combo_id">
+                                                    <span class="text-[7px] font-black bg-[#003366] text-white px-1.5 py-0.5 rounded-full uppercase tracking-widest">Combo</span>
+                                                </div>
+                                                <div class="text-sm font-black text-slate-900 group-hover:text-[#003366] transition-colors italic uppercase tracking-tight">{{ item.product_name }}</div>
+                                                <div v-if="item.combo_id && item.combo?.products" class="mt-1 flex flex-wrap gap-2">
+                                                    <span v-for="p in item.combo.products" :key="p.id" class="text-[8px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded uppercase tracking-widest">
+                                                        {{ p.name }}
+                                                    </span>
+                                                </div>
+                                                <div class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-widest">SKU: {{ item.product?.sku || 'BUNDLE-' + item.combo_id }}</div>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td class="py-5 px-6 text-center text-sm text-slate-600 font-bold">x{{ item.quantity }}</td>
-                                    <td class="py-5 px-6 text-right text-sm font-black text-slate-900">৳{{ parseFloat(item.price * item.quantity).toLocaleString() }}</td>
+                                    <td class="py-5 px-6 text-center">
+                                        <span class="px-3 py-1 bg-slate-100 rounded-lg text-xs font-black text-[#003366]">x{{ item.quantity }}</span>
+                                    </td>
+                                    <td class="py-5 px-6 text-right text-sm font-bold text-slate-600 italic">৳{{ parseFloat(item.price).toLocaleString() }}</td>
+                                    <td class="py-5 px-6 text-right text-sm font-black text-[#003366]">৳{{ parseFloat(item.price * item.quantity).toLocaleString() }}</td>
                                 </tr>
                             </tbody>
-                            <tfoot class="bg-slate-50 text-slate-900 border-t border-slate-200">
+                            <tfoot class="bg-slate-50/50 text-slate-900 border-t border-slate-200">
                                 <tr class="border-b border-slate-100">
-                                    <td colspan="2" class="py-4 px-6 text-[10px] font-black uppercase tracking-widest text-right text-slate-400">Subtotal:</td>
+                                    <td colspan="3" class="py-4 px-6 text-[10px] font-black uppercase tracking-widest text-right text-slate-400">Subtotal:</td>
                                     <td class="py-4 px-6 text-right text-sm font-bold">৳{{ (order.total_amount - order.delivery_charge).toLocaleString() }}</td>
                                 </tr>
                                 <tr class="border-b border-slate-100">
-                                    <td colspan="2" class="py-4 px-6 text-[10px] font-black uppercase tracking-widest text-right text-slate-400">Delivery ({{ order.delivery_location }}):</td>
+                                    <td colspan="3" class="py-4 px-6 text-[10px] font-black uppercase tracking-widest text-right text-slate-400">Delivery Charge ({{ order.delivery_location }}):</td>
                                     <td class="py-4 px-6 text-right text-sm font-bold text-[#FF6600]">৳{{ parseFloat(order.delivery_charge).toLocaleString() }}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2" class="py-6 px-6 text-sm font-black uppercase tracking-wider text-right">Grand Total:</td>
-                                    <td class="py-6 px-6 text-right text-xl font-black text-[#003366]">৳{{ parseFloat(order.total_amount).toLocaleString() }}</td>
+                                    <td colspan="3" class="py-8 px-6 text-sm font-black uppercase tracking-widest text-right italic">Grand Total:</td>
+                                    <td class="py-8 px-6 text-right text-2xl font-black text-[#003366]">৳{{ parseFloat(order.total_amount).toLocaleString() }}</td>
                                 </tr>
                             </tfoot>
                         </table>

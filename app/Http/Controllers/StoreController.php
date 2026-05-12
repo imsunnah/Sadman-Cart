@@ -92,12 +92,38 @@ class StoreController extends Controller
         ]);
     }
 
-    public function checkout()
+    public function combo(\App\Models\Combo $combo)
+    {
+        abort_if(!$combo->is_active, 404);
+
+        $relatedProducts = Product::where('is_active', true)
+            ->inRandomOrder()
+            ->take(5)
+            ->get();
+
+        return Inertia::render('ComboData', [
+            'combo' => $combo->load('products'),
+            'relatedProducts' => $relatedProducts
+        ]);
+    }
+
+    public function checkout(Request $request)
     {
         $cart = $this->getCart();
-
+        
         if (!$cart || $cart->items->count() === 0) {
             return redirect()->route('cart');
+        }
+
+        $selectedIds = $request->query('items') ? explode(',', $request->query('items')) : null;
+
+        if ($selectedIds) {
+            // Re-load the cart items with only selected ones
+            $cart->setRelation('items', $cart->items->whereIn('id', $selectedIds));
+        }
+
+        if ($cart->items->count() === 0) {
+            return redirect()->route('cart')->with('error', 'Please select at least one item to checkout.');
         }
 
         $delivery_charges = [
@@ -107,7 +133,8 @@ class StoreController extends Controller
 
         return Inertia::render('Checkout', [
             'cart' => $cart,
-            'delivery_charges' => $delivery_charges
+            'delivery_charges' => $delivery_charges,
+            'selectedItemIds' => $selectedIds // Pass back so we can include in form
         ]);
     }
 
@@ -123,6 +150,7 @@ class StoreController extends Controller
             'village' => 'required|string|max:255',
             'delivery_location' => 'required|string|in:Inside Dhaka,Outside Dhaka',
             'delivery_charge' => 'required|numeric',
+            'selected_items' => 'nullable|string', // Added to filter items
         ]);
 
         $cart = $this->getCart();
@@ -131,9 +159,17 @@ class StoreController extends Controller
             return redirect()->route('cart')->with('error', 'Your cart is empty.');
         }
 
+        $selectedIds = $validated['selected_items'] ? explode(',', $validated['selected_items']) : null;
+        $itemsToProcess = $selectedIds ? $cart->items->whereIn('id', $selectedIds) : $cart->items;
+
+        if ($itemsToProcess->count() === 0) {
+            return redirect()->route('cart')->with('error', 'No items selected for checkout.');
+        }
+
         $totalAmount = 0;
-        foreach ($cart->items as $item) {
-            $totalAmount += ($item->product->price * $item->quantity);
+        foreach ($itemsToProcess as $item) {
+            $price = $item->product_id ? $item->product->price : $item->combo->price;
+            $totalAmount += ($price * $item->quantity);
         }
 
         // Add delivery charge
@@ -156,7 +192,7 @@ class StoreController extends Controller
             'is_active' => true
         ]);
 
-        foreach ($cart->items as $item) {
+        foreach ($itemsToProcess as $item) {
             if ($item->product_id) {
                 $order->items()->create([
                     'product_id' => $item->product_id,
@@ -190,9 +226,13 @@ class StoreController extends Controller
             }
         }
 
-        // Clear the cart
-        $cart->items()->delete();
-        $cart->delete();
+        // Clear only selected items or entire cart if all were selected
+        if ($selectedIds) {
+            $cart->items()->whereIn('id', $selectedIds)->delete();
+        } else {
+            $cart->items()->delete();
+            $cart->delete();
+        }
 
         return redirect()->route('thank-you', $order->id);
     }
@@ -230,10 +270,10 @@ class StoreController extends Controller
     private function getCart(): ?Cart
     {
         if (Auth::check()) {
-            return Cart::where('user_id', Auth::id())->with('items.product')->first();
+            return Cart::where('user_id', Auth::id())->with(['items.product', 'items.combo.products'])->first();
         }
 
         $sessionId = Session::getId();
-        return Cart::where('session_id', $sessionId)->whereNull('user_id')->with('items.product')->first();
+        return Cart::where('session_id', $sessionId)->whereNull('user_id')->with(['items.product', 'items.combo.products'])->first();
     }
 }

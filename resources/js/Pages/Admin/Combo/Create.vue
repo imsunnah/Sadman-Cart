@@ -43,19 +43,35 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Bundle Showcase Image</label>
-                        <div class="mt-2 flex items-center gap-8">
-                            <div class="w-32 h-32 rounded-[1.5rem] bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden">
-                                <img v-if="imagePreview" :src="imagePreview" class="w-full h-full object-cover" />
-                                <ImagePlus v-else class="w-8 h-8 text-slate-300" />
-                            </div>
-                            <label class="px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest cursor-pointer hover:bg-black transition-all">
-                                Choose Image
-                                <input type="file" @change="handleImageUpload" class="hidden" accept="image/*">
-                            </label>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center px-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Bundle Showcase Image</label>
+                            <button @click.prevent="showMediaPicker = true" class="text-[9px] font-black text-[#FF6600] uppercase tracking-widest hover:underline flex items-center gap-1">
+                                <Library class="w-3 h-3" /> Choose from Gallery
+                            </button>
                         </div>
+                        <div class="relative group max-w-md">
+                            <div class="w-full aspect-video rounded-[2rem] bg-slate-50 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center overflow-hidden transition-all group-hover:border-[#003366]/30">
+                                <img v-if="imagePreview" :src="imagePreview" class="w-full h-full object-cover" />
+                                <div v-else class="flex flex-col items-center gap-4 opacity-40 group-hover:opacity-60 transition-opacity">
+                                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                                        <ImagePlus class="w-8 h-8 text-[#003366]" />
+                                    </div>
+                                    <span class="text-[10px] font-black uppercase tracking-widest">Click to Upload Bundle Cover</span>
+                                </div>
+                                <input type="file" @change="handleImageUpload" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
+                            </div>
+                            <div v-if="imagePreview" class="absolute top-4 right-4">
+                                <button @click.prevent="imagePreview = null; form.image = null" class="p-3 bg-red-500 text-white rounded-2xl shadow-xl hover:bg-red-600 transition-all active:scale-95">
+                                    <Trash2 class="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                        <div v-if="form.errors.image" class="text-red-500 text-[10px] mt-2 ml-2 font-bold uppercase">{{ form.errors.image }}</div>
                     </div>
+
+        <!-- Media Picker Modal -->
+        <MediaPicker :show="showMediaPicker" @close="showMediaPicker = false" @select="handleMediaSelect" />
                 </div>
 
                 <div class="bg-white rounded-[2.5rem] p-8 sm:p-12 shadow-sm border border-slate-100">
@@ -99,7 +115,8 @@
 import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { ArrowLeft, ImagePlus, Package } from 'lucide-vue-next';
+import MediaPicker from '@/Components/MediaPicker.vue';
+import { ArrowLeft, ImagePlus, Package, Trash2, Library } from 'lucide-vue-next';
 
 const props = defineProps({
     products: Array
@@ -116,6 +133,7 @@ const form = useForm({
 });
 
 const imagePreview = ref(null);
+const showMediaPicker = ref(false);
 
 const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -127,6 +145,11 @@ const handleImageUpload = (e) => {
         };
         reader.readAsDataURL(file);
     }
+};
+
+const handleMediaSelect = (item) => {
+    form.image = item.url;
+    imagePreview.value = item.url;
 };
 
 const toggleProduct = (id) => {

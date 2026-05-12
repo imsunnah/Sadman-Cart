@@ -4,7 +4,7 @@
         <header class="bg-white sticky top-0 z-50 shadow-sm">
             <!-- Top bar -->
             <div class="bg-[#003366] text-white py-2 md:py-3 text-[9px] md:text-xs font-bold uppercase tracking-[0.2em]">
-                <div class="max-w-[1600px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-2 md:gap-0">
+                <div class="max-w-[1550px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-2 md:gap-0">
                     <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8">
                         <a :href="`tel:${$page.props.settings.footer_phone}`" class="flex items-center hover:text-[#FF6600] transition-colors">
                             <Phone class="w-3 h-3 mr-2 text-[#FF6600]" />
@@ -33,58 +33,72 @@
                 </div>
             </div>
 
-            <!-- Main Header -->
-            <div class="max-w-[1600px] mx-auto px-4 py-3 md:py-6 flex flex-wrap md:flex-nowrap justify-between items-center gap-4">
-                <!-- Logo -->
-                <Link href="/" class="flex items-center flex-shrink-0">
+            <!-- Main Header (Compact & Elite) -->
+            <div class="max-w-[1550px] mx-auto px-4 py-4 md:py-6 flex items-center justify-between gap-4 md:gap-12">
+                <!-- Logo (Simple & Clean) -->
+                <Link href="/" class="flex items-center group flex-shrink-0">
                     <div v-if="$page.props.settings.site_logo" class="flex items-center">
-                        <img :src="$page.props.settings.site_logo" :alt="$page.props.settings.site_name" class="h-12 md:h-20 w-auto object-contain mr-3" />
-                        <span class="text-xl md:text-3xl font-black text-[#003366] tracking-tighter italic uppercase leading-none">{{ $page.props.settings.site_name }}</span>
+                        <img :src="$page.props.settings.site_logo" :alt="$page.props.settings.site_name" class="h-10 md:h-16 w-auto object-contain transition-transform" />
+                        <span class="ml-3 block text-xl md:text-3xl font-black text-[#003366] tracking-tighter italic uppercase leading-tight">{{ $page.props.settings.site_name }}</span>
                     </div>
                     <div v-else class="flex items-center">
-                        <ShoppingBag class="w-8 h-8 md:w-10 md:h-10 text-[#003366] mr-3" />
-                        <span class="text-xl md:text-3xl font-black text-[#003366] tracking-tighter italic uppercase leading-none">{{ $page.props.settings.site_name }}</span>
+                        <ShoppingBag class="w-8 h-8 text-[#003366] mr-2" />
+                        <span class="text-xl md:text-2xl font-black text-[#003366] tracking-tighter italic uppercase leading-none">{{ $page.props.settings.site_name }}</span>
                     </div>
                 </Link>
 
-                <!-- Search (Responsive) -->
-                <div class="w-full md:w-auto md:flex-grow md:max-w-xl order-3 md:order-2">
+                <!-- Search (Clean & Wide) -->
+                <div class="hidden md:block flex-grow max-w-2xl relative">
                     <form @submit.prevent="handleSearch" class="relative group">
                         <input
                             v-model="searchQuery"
                             type="text"
-                            placeholder="Find your organic preference..."
-                            class="w-full pl-12 pr-4 py-3 md:py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl text-xs font-bold focus:bg-white focus:border-[#003366]/10 focus:ring-0 outline-none transition-all shadow-inner"
+                            placeholder="Find your selection..."
+                            class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:bg-white focus:border-[#003366]/20 focus:ring-0 outline-none transition-all shadow-sm"
                         />
-                        <Search class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#003366] transition-colors" />
+                        <Search class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#003366] transition-colors" />
                     </form>
                 </div>
 
                 <!-- Right Actions -->
-                <div class="flex items-center gap-2 md:gap-6 order-2 md:order-3">
-                    <button @click="isCartOpen = true" class="relative p-3 group bg-slate-50 rounded-2xl hover:bg-[#003366]/5 transition-all">
-                        <ShoppingCart class="w-6 h-6 text-[#003366] group-hover:scale-110 transition-transform" />
-                        <span v-if="cartCount > 0" class="absolute -top-1 -right-1 bg-[#FF6600] text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow-lg border-2 border-white animate-bounce">
+                <div class="flex items-center gap-3 md:gap-6">
+                    <button @click="isCartOpen = true" class="relative p-2.5 group bg-slate-50 rounded-xl hover:bg-[#003366]/5 transition-all">
+                        <ShoppingCart class="w-5 h-5 text-[#003366] group-hover:scale-110 transition-transform" />
+                        <span v-if="cartCount > 0" class="absolute -top-1 -right-1 bg-[#FF6600] text-white text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full shadow-lg border-2 border-white">
                             {{ cartCount }}
                         </span>
                     </button>
-                    <button @click="isMobileMenuOpen = true" class="md:hidden p-3 bg-[#003366] text-white rounded-2xl shadow-lg active:scale-95 transition-all">
-                        <Menu class="w-6 h-6" />
+                    <button @click="isMobileMenuOpen = true" class="md:hidden p-2.5 bg-[#003366] text-white rounded-xl active:scale-95 transition-all">
+                        <Menu class="w-5 h-5" />
                     </button>
                 </div>
             </div>
 
-            <!-- Desktop Nav -->
-            <nav class="bg-[#003366] hidden md:block">
-                <div class="max-w-[1600px] mx-auto px-4 py-5 flex justify-center items-center gap-12">
-                    <Link href="/" :class="[$page.url === '/' ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']" class="text-xs md:text-sm font-black uppercase tracking-[0.2em] italic transition-all">Home</Link>
-                    <Link href="/shop" :class="[$page.url.startsWith('/shop') ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']" class="text-xs md:text-sm font-black uppercase tracking-[0.2em] italic transition-all">Shop All</Link>
+            <!-- Search (Mobile Only) -->
+            <div class="md:hidden px-4 pb-4">
+                <form @submit.prevent="handleSearch" class="relative group">
+                    <input
+                        v-model="searchQuery"
+                        type="text"
+                        placeholder="Search..."
+                        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none"
+                    />
+                    <Search class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                </form>
+            </div>
+
+            <!-- Desktop Nav (Bold & Prominent) -->
+            <nav class="bg-[#003366] hidden md:block border-y border-white/5">
+                <div class="max-w-[1550px] mx-auto px-4 py-5 flex justify-center items-center gap-12">
+                    <Link href="/" :class="[$page.url === '/' ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']" class="text-[11px] font-black uppercase tracking-[0.3em] italic transition-all drop-shadow-sm">Home</Link>
+                    <Link href="/shop" :class="[$page.url.startsWith('/shop') ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']" class="text-[11px] font-black uppercase tracking-[0.3em] italic transition-all drop-shadow-sm">Shop All Products</Link>
+                    <div class="h-4 w-0.5 bg-[#FF6600]/30 mx-2"></div>
                     <Link 
                         v-for="category in $page.props.categories" 
                         :key="category.id" 
                         :href="`/shop?category=${category.slug}`"
                         :class="[$page.url.includes(`category=${category.slug}`) ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']"
-                        class="text-xs md:text-sm font-black uppercase tracking-[0.2em] italic transition-all"
+                        class="text-[11px] font-black uppercase tracking-[0.3em] italic transition-all drop-shadow-sm"
                     >
                         {{ category.name }}
                     </Link>
@@ -92,31 +106,44 @@
             </nav>
         </header>
 
-        <!-- Floating Cart (Right Middle) - Compact -->
+        <!-- Floating Cart Card (Right Side) - Matching Image Design Exactly -->
         <button 
             @click="isCartOpen = true"
-            class="fixed right-0 top-1/2 -translate-y-1/2 z-[90] bg-[#FF6600] text-white px-2 py-3 rounded-l-2xl shadow-xl flex flex-col items-center gap-1.5 hover:px-3 transition-all duration-300 group"
+            class="fixed right-0 top-1/2 -translate-y-1/2 z-[100] flex flex-col items-center w-16 bg-white shadow-[-5px_0_20px_rgba(0,0,0,0.1)] rounded-l-lg overflow-hidden group transition-all active:scale-95 border-l border-y border-slate-100"
         >
-            <ShoppingCart class="w-5 h-5" />
-            <span v-if="cartCount > 0" class="text-[10px] font-black leading-none">{{ cartCount }}</span>
+            <!-- Top Section (Orange) -->
+            <div class="w-full bg-[#FF6600] pt-4 pb-3 flex flex-col items-center justify-center">
+                <ShoppingBag class="w-6 h-6 text-white mb-1" />
+                <span class="text-[9px] font-black text-white uppercase tracking-tight leading-none">{{ cartCount }} Items</span>
+            </div>
+            
+            <!-- Bottom Section (White) -->
+            <div class="w-full bg-white py-3 flex items-center justify-center">
+                <span class="text-[11px] font-black text-[#FF6600] flex items-center gap-0.5">
+                    <span class="text-xs">৳</span>{{ cartTotal.toLocaleString() }}
+                </span>
+            </div>
         </button>
 
         <CartDrawer :isOpen="isCartOpen" @close="isCartOpen = false" />
 
-        <!-- Refined Floating Messenger Chat (Right Bottom) -->
+        <!-- Elite Floating Chat (Messenger Style) -->
         <a 
             href="https://m.me/sadmancart" 
             target="_blank" 
-            class="fixed bottom-8 right-8 z-[90] w-16 h-16 bg-[#0084FF] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all group"
-            title="Chat with us on Messenger"
+            class="fixed bottom-8 right-8 z-[90] flex items-center gap-3 bg-white pl-5 pr-2 py-2 rounded-full shadow-[0_15px_40px_-10px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all group border border-slate-100"
         >
-            <svg viewBox="0 0 24 24" class="w-8 h-8 fill-current" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.908 1.455 5.494 3.714 7.155.195.143.313.37.313.615v2.336c0 .487.564.76 1.01.467l2.613-1.716a.92.92 0 0 1 .536-.168h1.814c5.523 0 10-4.145 10-9.258C22 6.145 17.523 2 12 2zm1.268 12.392l-2.484-2.656-4.839 2.656 5.323-5.648 2.553 2.656 4.771-2.656-5.324 5.648z"/>
-            </svg>
-            <span class="absolute -top-1 -left-1 flex h-4 w-4">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0084FF] opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-4 w-4 bg-[#0084FF]"></span>
-            </span>
+            <div class="flex flex-col items-end">
+                <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Online Support</span>
+                <span class="text-[10px] font-black text-[#003366] uppercase tracking-wider leading-none group-hover:text-[#FF6600] transition-colors">Chat with us</span>
+            </div>
+            <div class="w-12 h-12 bg-[#0084FF] text-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-105 transition-all">
+                <MessageCircle class="w-6 h-6 fill-current" />
+                <span class="absolute -top-1 -left-1 flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500 border-2 border-white"></span>
+                </span>
+            </div>
         </a>
 
         <!-- Premium Mobile Menu Overlay -->
@@ -207,61 +234,114 @@
             <slot />
         </main>
 
-        <!-- Footer -->
-        <footer class="bg-[#003366] text-white pt-16 pb-10">
-            <div class="max-w-[1600px] mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-                <div class="col-span-2 md:col-span-1 space-y-6">
-                    <div v-if="$page.props.settings.site_logo" class="flex items-center">
-                        <img :src="$page.props.settings.site_logo" class="h-16 w-auto object-contain mr-3 brightness-0 invert" />
-                        <span class="text-2xl font-black tracking-tight italic uppercase">{{ $page.props.settings.site_name }}</span>
+        <!-- Footer (Clean & Detailed) -->
+        <footer class="bg-gradient-to-b from-[#003366] to-[#001A33] text-white pt-24 pb-12 relative overflow-hidden">
+            <!-- Subtle Decorative Element -->
+            <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#FF6600]/30 to-transparent"></div>
+            
+            <div class="max-w-[1550px] mx-auto px-4 grid grid-cols-2 md:grid-cols-5 gap-12 md:gap-16">
+                <!-- Brand & Contact -->
+                <div class="col-span-2 md:col-span-1 space-y-8">
+                    <div class="space-y-6">
+                        <Link href="/" v-if="$page.props.settings.site_logo" class="flex items-center group">
+                            <div class="p-2 bg-white/5 rounded-xl group-hover:bg-white/10 transition-all">
+                                <img :src="$page.props.settings.site_logo" class="h-16 w-auto object-contain" />
+                            </div>
+                            <div class="ml-3">
+                                <span class="block text-xl font-black text-white tracking-tight italic uppercase">{{ $page.props.settings.site_name }}</span>
+                            </div>
+                        </Link>
+                        <div v-else class="flex items-center">
+                            <ShoppingBag class="w-8 h-8 text-white mr-2" />
+                            <span class="text-2xl font-black text-white uppercase italic">{{ $page.props.settings.site_name }}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-300 leading-relaxed font-bold uppercase tracking-widest max-w-[280px]">{{ $page.props.settings.footer_about }}</p>
                     </div>
-                    <div v-else class="flex items-center">
-                        <ShoppingBag class="w-8 h-8 text-white mr-2" />
-                        <span class="text-2xl font-bold uppercase italic">{{ $page.props.settings.site_name }}</span>
-                    </div>
-                    <p class="text-[10px] text-slate-300 leading-relaxed font-bold uppercase tracking-widest">{{ $page.props.settings.footer_about }}</p>
                     
-                    <div class="flex items-center gap-3 pt-2">
-                        <a href="https://facebook.com/sadmancart" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#FF6600] transition-all">
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <MapPin class="w-4 h-4 text-[#FF6600] shrink-0 mt-0.5" />
+                            <span class="text-[10px] font-bold text-slate-300 uppercase leading-relaxed">{{ $page.props.settings.footer_address }}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <Phone class="w-4 h-4 text-[#FF6600] shrink-0" />
+                            <span class="text-[10px] font-bold text-slate-300 uppercase">{{ $page.props.settings.footer_phone }}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <Mail class="w-4 h-4 text-[#FF6600] shrink-0" />
+                            <span class="text-[10px] font-bold text-slate-300 uppercase">{{ $page.props.settings.footer_email }}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 pt-2">
+                        <a href="https://facebook.com/sadmancart" target="_blank" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-400 hover:bg-[#FF6600] hover:text-white transition-all">
                             <Facebook class="w-4 h-4" />
                         </a>
-                        <a href="https://instagram.com/sadmancart" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#FF6600] transition-all">
+                        <a href="https://instagram.com/sadmancart" target="_blank" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-400 hover:bg-[#FF6600] hover:text-white transition-all">
                             <Instagram class="w-4 h-4" />
                         </a>
-                        <a href="https://m.me/sadmancart" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#0084FF] transition-all">
+                        <a href="https://m.me/sadmancart" target="_blank" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-400 hover:bg-[#0084FF] hover:text-white transition-all">
                             <MessageCircle class="w-4 h-4" />
                         </a>
                     </div>
                 </div>
+
+                <!-- Information -->
                 <div>
-                    <h3 class="font-black text-white mb-6 uppercase text-[10px] tracking-widest italic border-b border-white/10 pb-2">Links</h3>
-                    <ul class="space-y-3 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
-                        <li><Link href="/" class="hover:text-[#FF6600] transition-colors">Home</Link></li>
-                        <li><Link href="/shop" class="hover:text-[#FF6600] transition-colors">Shop</Link></li>
-                        <li><Link href="/cart" class="hover:text-[#FF6600] transition-colors">Cart</Link></li>
-                        <li><Link href="/checkout" class="hover:text-[#FF6600] transition-colors">Checkout</Link></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-black text-white mb-6 uppercase text-[10px] tracking-widest italic border-b border-white/10 pb-2">Policy</h3>
-                    <ul class="space-y-3 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
-                        <li><Link href="/returns-refunds" class="hover:text-[#FF6600] transition-colors">Returns</Link></li>
-                        <li><Link href="/shipping-policy" class="hover:text-[#FF6600] transition-colors">Shipping</Link></li>
-                        <li><Link href="/privacy-policy" class="hover:text-[#FF6600] transition-colors">Privacy</Link></li>
-                        <li><Link href="/terms" class="hover:text-[#FF6600] transition-colors">Terms</Link></li>
-                    </ul>
-                </div>
-                <div class="col-span-2 md:col-span-1">
-                    <h3 class="font-black text-white mb-6 uppercase text-[10px] tracking-widest italic border-b border-white/10 pb-2">Contact</h3>
+                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Information</h3>
                     <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
-                        <li class="flex items-start"><MapPin class="w-4 h-4 mr-3 text-[#FF6600] shrink-0" />{{ $page.props.settings.footer_address }}</li>
-                        <li class="flex items-center"><Phone class="w-4 h-4 mr-3 text-[#FF6600] shrink-0" />{{ $page.props.settings.footer_phone }}</li>
-                        <li class="flex items-center"><Mail class="w-4 h-4 mr-3 text-[#FF6600] shrink-0" />{{ $page.props.settings.footer_email }}</li>
+                        <li><Link href="/about" class="hover:text-[#FF6600] transition-colors">About Us</Link></li>
+                        <li><Link href="/contact" class="hover:text-[#FF6600] transition-colors">Contact Us</Link></li>
+                        <li><Link href="/terms" class="hover:text-[#FF6600] transition-colors">Terms & Conditions</Link></li>
+                        <li><Link href="/privacy" class="hover:text-[#FF6600] transition-colors">Privacy Policy</Link></li>
+                        <li><Link href="/careers" class="hover:text-[#FF6600] transition-colors">Careers</Link></li>
+                    </ul>
+                </div>
+
+                <!-- Shop By -->
+                <div>
+                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Shop By</h3>
+                    <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                        <li v-for="cat in $page.props.categories.slice(0, 5)" :key="cat.id">
+                            <Link :href="`/shop?category=${cat.slug}`" class="hover:text-[#FF6600] transition-colors">{{ cat.name }}</Link>
+                        </li>
+                        <li><Link href="/shop" class="hover:text-[#FF6600] transition-colors font-black text-[#FF6600]">View All Shop</Link></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Support</h3>
+                    <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                        <li><Link href="/support" class="hover:text-[#FF6600] transition-colors">Support Center</Link></li>
+                        <li><Link href="/how-to-order" class="hover:text-[#FF6600] transition-colors">How to Order</Link></li>
+                        <li><Link href="/track-order" class="hover:text-[#FF6600] transition-colors">Order Tracking</Link></li>
+                        <li><Link href="/shipping" class="hover:text-[#FF6600] transition-colors">Shipping Info</Link></li>
+                        <li><Link href="/faq" class="hover:text-[#FF6600] transition-colors">FAQ</Link></li>
+                    </ul>
+                </div>
+
+                <!-- Consumer Policy -->
+                <div>
+                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Consumer Policy</h3>
+                    <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                        <li><Link href="/returns" class="hover:text-[#FF6600] transition-colors">Happy Return</Link></li>
+                        <li><Link href="/refunds" class="hover:text-[#FF6600] transition-colors">Refund Policy</Link></li>
+                        <li><Link href="/exchange" class="hover:text-[#FF6600] transition-colors">Exchange Policy</Link></li>
+                        <li><Link href="/cancellation" class="hover:text-[#FF6600] transition-colors">Cancellation</Link></li>
+                        <li><Link href="/pre-order" class="hover:text-[#FF6600] transition-colors">Pre Order</Link></li>
                     </ul>
                 </div>
             </div>
-            <div class="max-w-[1600px] mx-auto px-4 mt-12 pt-8 border-t border-white/5 text-center text-[8px] text-slate-500 font-bold uppercase tracking-[0.3em]">
-                <p>&copy; 2026 {{ $page.props.settings.site_name }}. Premium E-commerce Solutions.</p>
+
+            <div class="max-w-[1550px] mx-auto px-4 mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.3em]">
+                    &copy; 2026 {{ $page.props.settings.site_name }}. All Rights Reserved.
+                </p>
+                <div class="flex items-center gap-2">
+                    <ShieldCheck class="w-4 h-4 text-[#FF6600]" />
+                    <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest italic">Premium Verified Platform</span>
+                </div>
             </div>
         </footer>
     </div>
@@ -288,10 +368,12 @@ import {
 } from "lucide-vue-next";
 import { useCart } from "@/Composables/useCart";
 import { useToast } from "@/Composables/useToast";
+import CartDrawer from "@/Components/CartDrawer.vue";
 
-const { cartCount } = useCart();
+const { cartCount, cartTotal } = useCart();
 const { toasts, removeToast } = useToast();
 const isMobileMenuOpen = ref(false);
+const isCartOpen = ref(false);
 const searchQuery = ref("");
 
 const handleSearch = () => {

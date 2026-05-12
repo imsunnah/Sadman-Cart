@@ -31,7 +31,7 @@ class ComboController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric',
             'original_price' => 'nullable|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable',
             'product_ids' => 'required|array',
             'product_ids.*' => 'exists:products,id',
             'is_active' => 'boolean',
@@ -42,7 +42,9 @@ class ComboController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('combos', 'public');
-            $data['image'] = Storage::disk('public')->url($path);
+            $data['image'] = '/storage/' . $path;
+        } elseif (is_string($request->image) && str_starts_with($request->image, '/storage/')) {
+            $data['image'] = $request->image;
         }
 
         $combo = Combo::create($data);
@@ -68,7 +70,7 @@ class ComboController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric',
             'original_price' => 'nullable|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable',
             'product_ids' => 'required|array',
             'product_ids.*' => 'exists:products,id',
             'is_active' => 'boolean',
@@ -77,13 +79,13 @@ class ComboController extends Controller
         $data = $request->except('product_ids', 'image');
 
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($combo->image) {
-                $oldPath = str_replace(Storage::disk('public')->url(''), '', $combo->image);
-                Storage::disk('public')->delete($oldPath);
-            }
             $path = $request->file('image')->store('combos', 'public');
-            $data['image'] = Storage::disk('public')->url($path);
+            $data['image'] = '/storage/' . $path;
+        } elseif ($request->filled('image') && is_string($request->image)) {
+            $data['image'] = $request->image;
+        } else {
+            // Do not overwrite image if not provided
+            unset($data['image']);
         }
 
         $combo->update($data);

@@ -39,6 +39,7 @@ Route::get('/', [StoreController::class, 'home'])->name('home');
 Route::get('/shop', [StoreController::class, 'shop'])->name('shop');
 Route::get('/categories', [StoreController::class, 'categories'])->name('categories');
 Route::get('/products/{product:slug}', [StoreController::class, 'product'])->name('product.show');
+Route::get('/combos/{combo:slug}', [StoreController::class, 'combo'])->name('combo.show');
 Route::get('/cart', function () {
     return Inertia::render('Cart');
 })->name('cart');
@@ -156,6 +157,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class)->except(['show', 'edit', 'create']);
     Route::put('/reviews/{review}/toggle-active', [\App\Http\Controllers\Admin\ReviewController::class, 'toggleActive'])->name('reviews.toggle-active');
+
+    // Media Gallery
+    Route::get('/gallery', [App\Http\Controllers\Admin\MediaController::class, 'index'])->name('gallery.index');
+    Route::get('/api/media', [App\Http\Controllers\Admin\MediaController::class, 'apiIndex']);
+    Route::post('/gallery', [App\Http\Controllers\Admin\MediaController::class, 'store'])->name('gallery.store');
+    Route::delete('/gallery', [App\Http\Controllers\Admin\MediaController::class, 'destroy'])->name('gallery.destroy');
 
     Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');

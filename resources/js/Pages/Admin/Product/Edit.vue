@@ -100,48 +100,85 @@
 
                     <!-- Right Column -->
                     <div class="space-y-6">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Product Images</label>
+                        <!-- Premium Image Upload Section -->
+                        <div class="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 space-y-8">
+                            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 pb-4">Media Assets</h3>
                             
-                            <!-- Main Image -->
-                            <div class="mb-6">
-                                <span class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Main Image</span>
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-24 h-24 bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
-                                        <img v-if="mainPreview || product.image" :src="mainPreview || product.image" class="w-full h-full object-cover">
-                                        <ImageIcon v-else class="w-full h-full p-6 text-slate-300" />
-                                    </div>
-                                    <input type="file" @input="handleMainImage" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white" />
+                            <!-- Main Product Image -->
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Primary Display Image</label>
+                                    <button @click.prevent="showMainPicker = true" class="text-[9px] font-black text-[#FF6600] uppercase tracking-widest hover:underline flex items-center gap-1">
+                                        <Library class="w-3 h-3" /> Choose from Gallery
+                                    </button>
                                 </div>
-                                <p v-if="form.errors.image" class="mt-1 text-xs text-red-500">{{ form.errors.image }}</p>
+                                <div class="relative group">
+                                    <div class="w-full aspect-video rounded-3xl bg-white border-2 border-dashed border-slate-200 flex flex-col items-center justify-center overflow-hidden transition-all group-hover:border-[#003366]/30">
+                                        <img v-if="mainPreview || product.image" :src="mainPreview || product.image" class="w-full h-full object-cover" />
+                                        <div v-else class="flex flex-col items-center gap-3 opacity-40 group-hover:opacity-60 transition-opacity">
+                                            <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center">
+                                                <ImageIcon class="w-8 h-8 text-[#003366]" />
+                                            </div>
+                                            <span class="text-[10px] font-black uppercase tracking-widest">Click to Change Main Image</span>
+                                        </div>
+                                        <input type="file" @input="handleMainImage" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" />
+                                    </div>
+                                    <div v-if="mainPreview" class="absolute top-4 right-4 flex gap-2">
+                                        <button @click.prevent="mainPreview = null; form.image = null" class="p-2 bg-orange-500 text-white rounded-xl shadow-lg hover:bg-orange-600 transition-colors">
+                                            <RefreshCw class="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                                <p v-if="form.errors.image" class="text-[10px] text-red-500 font-bold uppercase mt-1 ml-1">{{ form.errors.image }}</p>
                             </div>
 
-                            <!-- Additional Images -->
-                            <div class="space-y-4 pt-6 border-t border-slate-100">
-                                <div class="flex justify-between items-center">
-                                    <span class="block text-[10px] font-bold text-slate-400 uppercase">Gallery Images</span>
-                                    <button @click.prevent="triggerGalleryUpload" class="text-[10px] font-bold text-[#003366] uppercase hover:underline">Add More</button>
+                            <!-- Gallery Section -->
+                            <div class="space-y-4 pt-6 border-t border-slate-200">
+                                <div class="flex justify-between items-center px-1">
+                                    <div class="flex items-center gap-3">
+                                        <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Product Gallery</label>
+                                        <button @click.prevent="showGalleryPicker = true" class="text-[9px] font-black text-[#FF6600] uppercase tracking-widest hover:underline flex items-center gap-1">
+                                            <Library class="w-3 h-3" /> Add from Gallery
+                                        </button>
+                                    </div>
+                                    <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">{{ form.keep_gallery_images.length + galleryPreviews.length }} Images Total</span>
                                 </div>
-                                <input type="file" multiple ref="galleryInput" @input="handleGalleryImages" class="hidden" />
                                 
-                                <div class="grid grid-cols-4 gap-4">
+                                <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
                                     <!-- Existing Gallery Images -->
-                                    <div v-for="(img, idx) in form.keep_gallery_images" :key="'old-'+img.id" class="relative group aspect-square rounded-lg overflow-hidden border border-slate-100">
+                                    <div v-for="(img, idx) in form.keep_gallery_images" :key="'old-'+img.id" class="relative aspect-square rounded-2xl overflow-hidden group border border-slate-200">
                                         <img :src="img.image" class="w-full h-full object-cover">
-                                        <button @click.prevent="removeKeepImage(idx)" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <X class="w-3 h-3" />
-                                        </button>
+                                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <button @click.prevent="removeKeepImage(idx)" class="p-2 bg-red-500 text-white rounded-lg" title="Delete from server">
+                                                <X class="w-3 h-3" />
+                                            </button>
+                                        </div>
                                     </div>
+
                                     <!-- New Gallery Previews -->
-                                    <div v-for="(img, idx) in galleryPreviews" :key="'new-'+idx" class="relative group aspect-square rounded-lg overflow-hidden border border-[#FF6600]">
+                                    <div v-for="(img, idx) in galleryPreviews" :key="'new-'+idx" class="relative aspect-square rounded-2xl overflow-hidden group border-2 border-[#FF6600]">
                                         <img :src="img" class="w-full h-full object-cover">
-                                        <button @click.prevent="removeNewGalleryImage(idx)" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <X class="w-3 h-3" />
-                                        </button>
+                                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <button @click.prevent="removeNewGalleryImage(idx)" class="p-2 bg-red-500 text-white rounded-lg">
+                                                <X class="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                        <div class="absolute top-1 left-1 bg-[#FF6600] text-white text-[6px] font-black uppercase px-1.5 py-0.5 rounded-full">New</div>
                                     </div>
+                                    
+                                    <button @click.prevent="triggerGalleryUpload" class="aspect-square rounded-2xl bg-white border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 hover:border-[#FF6600]/30 hover:bg-orange-50 transition-all group">
+                                        <Plus class="w-5 h-5 text-slate-300 group-hover:text-[#FF6600]" />
+                                        <span class="text-[8px] font-black text-slate-300 group-hover:text-[#FF6600] uppercase tracking-widest">Add More</span>
+                                    </button>
                                 </div>
+                                <input type="file" multiple ref="galleryInput" @input="handleGalleryImages" class="hidden" accept="image/*" />
+                                <div v-if="form.errors.gallery_images" class="text-[10px] text-red-500 font-bold uppercase mt-1 ml-1">{{ form.errors.gallery_images }}</div>
                             </div>
                         </div>
+
+        <!-- Media Picker Modals -->
+        <MediaPicker :show="showMainPicker" @close="showMainPicker = false" @select="handleMainGallerySelect" />
+        <MediaPicker :show="showGalleryPicker" @close="showGalleryPicker = false" @select="handleGalleryItemsSelect" />
 
                         <div class="pt-6 border-t border-slate-100">
                             <label class="flex items-center space-x-3 cursor-pointer">
@@ -166,16 +203,13 @@
 import { ref, computed, watch } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { ArrowLeft, Image as ImageIcon, X } from 'lucide-vue-next';
+import MediaPicker from '@/Components/MediaPicker.vue';
+import { ArrowLeft, Image as ImageIcon, X, RefreshCw, Plus, Library } from 'lucide-vue-next';
 
 const props = defineProps({
     product: Object,
     categories: Array
 });
-
-const mainPreview = ref(null);
-const galleryPreviews = ref([]);
-const galleryInput = ref(null);
 
 const form = useForm({
     _method: 'PUT',
@@ -187,14 +221,21 @@ const form = useForm({
     buying_price: props.product.buying_price,
     package_cost: props.product.package_cost,
     stock: props.product.stock,
+    image: null,
+    gallery_images: [],
+    keep_gallery_images: [...props.product.gallery],
+    is_active: props.product.is_active ? true : false,
     discount_type: props.product.discount_type || null,
     discount_value: props.product.discount_value || null,
     remarks: props.product.remarks || '',
-    image: null,
-    gallery_images: [],
-    keep_gallery_images: props.product.gallery || [], // Track which old images to keep
-    is_active: props.product.is_active ? true : false,
 });
+
+const mainPreview = ref(null);
+const galleryPreviews = ref([]);
+const galleryInput = ref(null);
+
+const showMainPicker = ref(false);
+const showGalleryPicker = ref(false);
 
 const selectedCategorySubs = computed(() => {
     const cat = props.categories.find(c => c.id === form.category_id);
@@ -215,8 +256,9 @@ const handleMainImage = (e) => {
     }
 };
 
-const triggerGalleryUpload = () => {
-    galleryInput.value.click();
+const handleMainGallerySelect = (item) => {
+    form.image = item.url;
+    mainPreview.value = item.url;
 };
 
 const handleGalleryImages = (e) => {
@@ -227,10 +269,17 @@ const handleGalleryImages = (e) => {
     });
 };
 
+const handleGalleryItemsSelect = (item) => {
+    form.gallery_images.push(item.url);
+    galleryPreviews.value.push(item.url);
+};
+
+const triggerGalleryUpload = () => {
+    galleryInput.value.click();
+};
+
 const removeKeepImage = (idx) => {
-    if (confirm('Are you sure you want to remove this gallery image?')) {
-        form.keep_gallery_images.splice(idx, 1);
-    }
+    form.keep_gallery_images.splice(idx, 1);
 };
 
 const removeNewGalleryImage = (idx) => {
@@ -239,19 +288,14 @@ const removeNewGalleryImage = (idx) => {
 };
 
 const submit = () => {
-    // We keep form.keep_gallery_images as objects in the UI
-    // But we need to send only IDs to the backend
     const originalKeep = [...form.keep_gallery_images];
-    
-    // Temporarily replace with IDs for submission
     form.keep_gallery_images = originalKeep.map(img => img.id);
 
     form.post(`/admin/products/${props.product.id}`, {
         onSuccess: () => {
-            // Restore if needed, but we are redirecting anyway
+            form.keep_gallery_images = originalKeep;
         },
         onError: () => {
-            // Restore objects so UI doesn't break on error
             form.keep_gallery_images = originalKeep;
         }
     });

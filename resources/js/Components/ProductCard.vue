@@ -1,8 +1,8 @@
 <template>
-    <div class="group relative bg-white rounded-3xl overflow-hidden border border-slate-100 flex flex-col transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-slate-200/50 hover:border-slate-200">
+    <div class="group relative bg-white rounded-[2rem] overflow-hidden border border-slate-100 flex flex-col transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] hover:border-[#FF6600]/20">
 
         <!-- Discount badge -->
-        <div v-if="product.discount_type" class="absolute top-3 left-3 z-10 bg-[#FF6600] text-white text-[9px] font-black px-2.5 py-1 rounded-full shadow uppercase tracking-wider">
+        <div v-if="product.discount_type" class="absolute top-4 left-4 z-10 bg-[#FF6600] text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg uppercase tracking-widest animate-pulse">
             {{ product.discount_type === 'percentage' ? product.discount_value + '% OFF' : '৳' + product.discount_value + ' OFF' }}
         </div>
 
@@ -25,9 +25,9 @@
                 <span class="text-[9px] font-black uppercase tracking-widest mt-2">No Image</span>
             </div>
             <!-- Hover overlay -->
-            <div class="absolute inset-0 bg-[#003366]/0 group-hover:bg-[#003366]/5 transition-all duration-500 flex items-center justify-center">
-                <div class="opacity-0 group-hover:opacity-100 transition-all duration-500 bg-white text-[#003366] text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-lg transform translate-y-2 group-hover:translate-y-0 flex items-center gap-2">
-                    <Eye class="w-3 h-3" /> View Details
+            <div class="absolute inset-0 bg-gradient-to-t from-[#003366]/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 flex items-center justify-center">
+                <div class="bg-white/90 backdrop-blur-md text-[#003366] text-[10px] font-black px-6 py-3 rounded-2xl uppercase tracking-[0.2em] shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-2 border border-white">
+                    <Eye class="w-4 h-4" /> Quick View
                 </div>
             </div>
         </Link>
@@ -40,15 +40,15 @@
             </span>
 
             <!-- Name — click → detail page -->
-            <Link :href="`/products/${product.slug}`" class="flex-grow mb-3">
-                <h3 class="text-[11px] font-black text-slate-800 uppercase tracking-wide leading-snug line-clamp-2 group-hover:text-[#003366] transition-colors">
+            <Link :href="`/products/${product.slug}`" class="flex-grow mb-4">
+                <h3 class="text-sm font-black text-[#003366] uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-[#FF6600] transition-colors duration-300">
                     {{ product.name }}
                 </h3>
             </Link>
 
             <!-- Price -->
-            <div class="flex items-baseline gap-2 mb-4">
-                <span class="text-[17px] font-black text-[#003366] tracking-tighter leading-none">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="text-xl font-black text-[#FF6600] tracking-tighter leading-none drop-shadow-sm">
                     ৳{{ parseFloat(discountedPrice).toLocaleString() }}
                 </span>
                 <span v-if="product.discount_type" class="text-[10px] text-slate-300 line-through font-bold">
@@ -57,21 +57,20 @@
             </div>
 
             <!-- 2 Action Buttons -->
-            <div class="grid grid-cols-2 gap-2">
+            <!-- 2 Action Buttons -->
+            <div class="grid grid-cols-2 gap-3">
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleAddToCart"
-                    class="h-10 rounded-xl border-2 border-[#003366] text-[#003366] text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-[#003366] hover:text-white transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                    class="h-12 rounded-2xl bg-[#FF6600] text-white text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#003366] transition-all duration-300 shadow-lg shadow-orange-900/10 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                    <ShoppingCart class="w-3.5 h-3.5 flex-shrink-0" />
-                    Add Cart
+                    Add To Cart
                 </button>
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleBuyNow"
-                    class="h-10 rounded-xl bg-[#FF6600] text-white text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-orange-600 transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                    class="h-12 rounded-2xl bg-[#003366] text-white text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black transition-all duration-300 shadow-lg shadow-blue-900/10 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                    <Zap class="w-3.5 h-3.5 flex-shrink-0" />
                     Buy Now
                 </button>
             </div>

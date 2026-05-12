@@ -52,9 +52,9 @@ class ProductController extends Controller
             'buying_price' => 'required|numeric|min:0',
             'package_cost' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable',
             'gallery_images' => 'nullable|array',
-            'gallery_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'gallery_images.*' => 'nullable',
             'is_active' => 'boolean',
             'discount_type' => 'nullable|string|in:percentage,fixed',
             'discount_value' => 'nullable|numeric|min:0',
@@ -66,17 +66,25 @@ class ProductController extends Controller
         
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/products', 'public');
-            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $validated['image'] = '/storage/' . $path;
+        } elseif (is_string($request->image) && str_starts_with($request->image, '/storage/')) {
+            $validated['image'] = $request->image;
         }
 
         $product = Product::create($validated);
 
-        if ($request->hasFile('gallery_images')) {
-            foreach ($request->file('gallery_images') as $file) {
-                $path = $file->store('uploads/products/gallery', 'public');
+        if ($request->has('gallery_images')) {
+            foreach ($request->gallery_images as $img) {
+                if ($img instanceof \Illuminate\Http\UploadedFile) {
+                    $path = $img->store('uploads/products/gallery', 'public');
+                    $imagePath = '/storage/' . $path;
+                } else {
+                    $imagePath = $img;
+                }
+
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => \Illuminate\Support\Facades\Storage::disk('public')->url($path)
+                    'image' => $imagePath
                 ]);
             }
         }
@@ -104,9 +112,9 @@ class ProductController extends Controller
             'buying_price' => 'required|numeric|min:0',
             'package_cost' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable',
             'gallery_images' => 'nullable|array',
-            'gallery_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'gallery_images.*' => 'nullable',
             'is_active' => 'boolean',
             'discount_type' => 'nullable|string|in:percentage,fixed',
             'discount_value' => 'nullable|numeric|min:0',
@@ -115,9 +123,18 @@ class ProductController extends Controller
 
         $validated['slug'] = Str::slug($validated['name']);
 
+        // Handle Featured Image update safely
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/products', 'public');
-            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $validated['image'] = '/storage/' . $path;
+        } elseif ($request->filled('image') && is_string($request->image)) {
+            // If it's a string, only update if it looks like a valid path or URL
+            // If it's already the current image, this is fine. 
+            // If it's a new gallery selection, it should be kept.
+            $validated['image'] = $request->image;
+        } else {
+            // If image is not provided in the request, don't overwrite the existing one
+            unset($validated['image']);
         }
 
         $product->update($validated);
@@ -126,13 +143,21 @@ class ProductController extends Controller
         $keepImages = $request->input('keep_gallery_images', []); // Array of Image IDs to keep
         $product->gallery()->whereNotIn('id', $keepImages)->delete();
 
-        // Handle New Gallery Images
-        if ($request->hasFile('gallery_images')) {
-            foreach ($request->file('gallery_images') as $file) {
-                $path = $file->store('uploads/products/gallery', 'public');
+        // Handle New Gallery Images (could be files or strings/URLs)
+        if ($request->has('gallery_images')) {
+            foreach ($request->gallery_images as $img) {
+                if ($img instanceof \Illuminate\Http\UploadedFile) {
+                    $path = $img->store('uploads/products/gallery', 'public');
+                    $imagePath = '/storage/' . $path;
+                } elseif (is_string($img) && str_starts_with($img, '/storage/')) {
+                    $imagePath = $img;
+                } else {
+                    continue;
+                }
+
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => \Illuminate\Support\Facades\Storage::disk('public')->url($path)
+                    'image' => $imagePath
                 ]);
             }
         }

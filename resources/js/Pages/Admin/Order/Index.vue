@@ -7,6 +7,9 @@
                 <p class="text-sm font-bold text-slate-400 mt-1">Manage all your customer orders from here</p>
             </div>
             <div class="flex items-center space-x-4">
+                <Link :href="route('admin.orders.create')" class="px-6 py-4 bg-[#003366] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#FF6600] transition-all flex items-center gap-2 shadow-xl shadow-blue-900/10">
+                    <Plus class="w-4 h-4" /> Create Manual Order
+                </Link>
                 <div class="px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-end">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Orders</span>
                     <span class="text-xl font-black text-[#003366]">{{ orders.total }}</span>
@@ -64,6 +67,17 @@
                     >
                         <option value="all">All Products</option>
                         <option v-for="prod in products" :key="prod.id" :value="prod.id">{{ prod.name }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Filter by Combo</label>
+                    <select 
+                        v-model="filterForm.combo_id" 
+                        @change="applyFilters"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white border-slate-200 text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-[#003366]/10 transition-all"
+                    >
+                        <option value="all">All Combos</option>
+                        <option v-for="combo in combos" :key="combo.id" :value="combo.id">{{ combo.name }}</option>
                     </select>
                 </div>
                 <div class="flex items-end">
@@ -130,10 +144,11 @@
                                             <option value="Outside Dhaka">Outside Dhaka</option>
                                         </select>
                                     </div>
-                                    <ul class="space-y-1">
-                                        <li v-for="item in order.items" :key="item.id" class="text-xs flex justify-between gap-2 border-b border-slate-50 pb-1 last:border-0">
-                                            <span class="font-medium text-slate-700 truncate" :title="item.product_name">{{ item.product_name }}</span>
-                                            <span class="font-bold text-slate-500 whitespace-nowrap">x{{ item.quantity }}</span>
+                                    <ul class="space-y-1 mt-3">
+                                        <li v-for="item in order.items" :key="item.id" class="text-[10px] flex items-center gap-2 border-b border-slate-50 pb-1 last:border-0">
+                                            <div class="w-1.5 h-1.5 rounded-full shrink-0" :class="item.combo_id ? 'bg-[#003366]' : 'bg-slate-300'"></div>
+                                            <span class="font-bold text-slate-700 truncate italic" :title="item.product_name">{{ item.product_name }}</span>
+                                            <span class="font-black text-[#FF6600] ml-auto whitespace-nowrap">x{{ item.quantity }}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -254,15 +269,23 @@
 import { ref, reactive } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Eye, CheckCircle, XCircle, ShoppingBag, Phone, MapPin, Truck, AlertTriangle } from 'lucide-vue-next';
+import { Eye, CheckCircle, XCircle, ShoppingBag, Phone, MapPin, Truck, AlertTriangle, Package, Plus } from 'lucide-vue-next';
 
 const props = defineProps({
     orders: Object,
     categories: Array,
     products: Array,
+    combos: Array,
     currentStatus: String,
     currentCategoryId: [String, Number],
-    currentProductId: [String, Number]
+    currentProductId: [String, Number],
+    currentComboId: [String, Number]
+});
+
+const filterForm = reactive({
+    category_id: props.currentCategoryId || 'all',
+    product_id: props.currentProductId || 'all',
+    combo_id: props.currentComboId || 'all'
 });
 
 const tabs = [
@@ -273,21 +296,19 @@ const tabs = [
     { label: 'Cancelled', value: 'cancelled' },
 ];
 
-const filterForm = reactive({
-    category_id: props.currentCategoryId || 'all',
-    product_id: props.currentProductId || 'all'
-});
-
 const getFilterParams = (overrides = {}) => {
     const params = {
         status: props.currentStatus === 'all' ? null : props.currentStatus,
         category_id: filterForm.category_id === 'all' ? null : filterForm.category_id,
         product_id: filterForm.product_id === 'all' ? null : filterForm.product_id,
+        combo_id: filterForm.combo_id === 'all' ? null : filterForm.combo_id,
         ...overrides
     };
-    
-    // Remove null keys
-    return Object.fromEntries(Object.entries(params).filter(([_, v]) => v != null));
+    // Remove 'all' or null values
+    Object.keys(params).forEach(key => {
+        if (params[key] === 'all' || params[key] === null) delete params[key];
+    });
+    return params;
 };
 
 const applyFilters = () => {
@@ -300,6 +321,7 @@ const applyFilters = () => {
 const resetFilters = () => {
     filterForm.category_id = 'all';
     filterForm.product_id = 'all';
+    filterForm.combo_id = 'all';
     router.get(route('admin.orders.index'));
 };
 

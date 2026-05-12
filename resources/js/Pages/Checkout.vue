@@ -204,13 +204,21 @@
                                     <ul role="list" class="divide-y divide-slate-100 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                                         <li v-for="item in cart.items" :key="item.id" class="flex py-4">
                                             <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-slate-50 bg-slate-100">
-                                                <img v-if="item.product?.image" :src="item.product.image" :alt="item.product.name" class="h-full w-full object-cover object-center" />
+                                                <img v-if="item.product?.image || item.combo?.image" :src="item.product?.image || item.combo?.image" :alt="item.product?.name || item.combo?.name" class="h-full w-full object-cover object-center" />
                                             </div>
                                             <div class="ml-4 flex-1">
-                                                <h3 class="text-[11px] font-black text-slate-900 uppercase tracking-tight line-clamp-1 italic">{{ item.product?.name }}</h3>
+                                                <div class="flex items-center gap-2 mb-1" v-if="item.combo_id">
+                                                    <span class="text-[7px] font-black bg-[#003366] text-white px-1.5 py-0.5 rounded-full uppercase tracking-widest">Combo</span>
+                                                </div>
+                                                <h3 class="text-[11px] font-black text-slate-900 uppercase tracking-tight line-clamp-1 italic">{{ item.product?.name || item.combo?.name }}</h3>
+                                                <div v-if="item.combo_id && item.combo?.products" class="mt-1 flex flex-wrap gap-x-2 gap-y-1">
+                                                    <span v-for="p in item.combo.products" :key="p.id" class="text-[7px] font-bold text-slate-400 uppercase tracking-widest border-r border-slate-200 pr-2 last:border-0 last:pr-0">
+                                                        {{ p.name }}
+                                                    </span>
+                                                </div>
                                                 <div class="flex justify-between items-center mt-2">
                                                     <p class="text-[10px] font-bold text-slate-400">Qty {{ item.quantity }}</p>
-                                                    <p class="text-xs font-black text-slate-900">৳{{ (item.product?.price * item.quantity).toLocaleString() }}</p>
+                                                    <p class="text-xs font-black text-slate-900">৳{{ ((item.product?.price || item.combo?.price) * item.quantity).toLocaleString() }}</p>
                                                 </div>
                                             </div>
                                         </li>
@@ -307,7 +315,8 @@ import { Lock, Package, ArrowRight, Banknote, Truck, X, ShoppingCart, MapPin, Ph
 
 const props = defineProps({
     cart: Object,
-    delivery_charges: Object
+    delivery_charges: Object,
+    selectedItemIds: Array
 });
 
 const { clearCart } = useCart();
@@ -322,7 +331,8 @@ const form = useForm({
     upazila: '',
     village: '',
     delivery_location: 'Inside Dhaka',
-    delivery_charge: 0
+    delivery_charge: 0,
+    selected_items: props.selectedItemIds ? props.selectedItemIds.join(',') : ''
 });
 
 const currentDeliveryCharge = computed(() => {
@@ -332,7 +342,10 @@ const currentDeliveryCharge = computed(() => {
 });
 
 const subtotal = computed(() => {
-    return props.cart.items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    return props.cart.items.reduce((total, item) => {
+        const price = parseFloat(item.product?.price || item.combo?.price || 0);
+        return total + (price * item.quantity);
+    }, 0);
 });
 
 const total = computed(() => {

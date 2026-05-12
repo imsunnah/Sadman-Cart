@@ -36,11 +36,33 @@ class SettingController extends Controller
             Setting::where('key', 'slider_images')->update(['value' => json_encode($currentSliders)]);
         }
 
+        // Handle Hero Static Image
+        if ($request->hasFile('hero_static_image')) {
+            $path = $request->file('hero_static_image')->store('uploads/settings', 'public');
+            Setting::updateOrCreate(
+                ['key' => 'hero_static_image'],
+                ['value' => \Illuminate\Support\Facades\Storage::disk('public')->url($path), 'group' => 'general']
+            );
+        }
+
         // Handle other settings
-        $settings = ['site_name', 'footer_about', 'footer_address', 'footer_phone', 'footer_email', 'delivery_charge_inside_dhaka', 'delivery_charge_outside_dhaka'];
+        $settings = [
+            'site_name', 
+            'footer_about', 
+            'footer_address', 
+            'footer_phone', 
+            'footer_email', 
+            'delivery_charge_inside_dhaka', 
+            'delivery_charge_outside_dhaka',
+            'hero_slider_text_show',
+            'hero_slider_text'
+        ];
         foreach ($settings as $key) {
             if ($request->has($key)) {
-                Setting::where('key', $key)->update(['value' => $request->get($key)]);
+                Setting::updateOrCreate(
+                    ['key' => $key],
+                    ['value' => $request->get($key), 'group' => 'general']
+                );
             }
         }
 

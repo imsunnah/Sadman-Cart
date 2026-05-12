@@ -56,11 +56,11 @@
                         <div class="mt-6 pt-6 border-t border-gray-100 space-y-3">
                             <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                 <p>Subtotal</p>
-                                <p class="text-slate-900">৳ {{ parseFloat(order.total_amount).toLocaleString() }}</p>
+                                <p class="text-slate-900">৳ {{ (order.total_amount - order.delivery_charge).toLocaleString() }}</p>
                             </div>
                             <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                <p>Delivery Charge</p>
-                                <p class="text-green-600">FREE</p>
+                                <p>Delivery Charge ({{ order.delivery_location }})</p>
+                                <p class="text-[#FF6600]">৳ {{ parseFloat(order.delivery_charge).toLocaleString() }}</p>
                             </div>
                             <div class="flex justify-between border-t border-dashed border-gray-200 pt-6 mt-4">
                                 <p class="text-lg font-black text-slate-900 italic uppercase tracking-tighter">Total Payable</p>

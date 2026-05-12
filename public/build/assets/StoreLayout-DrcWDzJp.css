@@ -1,1 +1,0 @@
-.toast-enter-active{transition:all .35s cubic-bezier(.34,1.56,.64,1)}.toast-leave-active{transition:all .25s ease-in}.toast-enter-from,.toast-leave-to{opacity:0;transform:translate(60px) scale(.9)}
