@@ -41,7 +41,7 @@ class SubCategoryController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/subcategories', 'public');
-            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $validated['image'] = '/storage/' . $path;
         }
 
         SubCategory::create($validated);
@@ -72,7 +72,7 @@ class SubCategoryController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/subcategories', 'public');
-            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $validated['image'] = '/storage/' . $path;
         }
 
         $subcategory->update($validated);

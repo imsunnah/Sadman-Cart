@@ -62,7 +62,7 @@
                                 </button>
                             </div>
                             <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-3">
-                                ৳{{ (item.product ? item.product.price : item.combo.price).toLocaleString() }} / unit
+                                ৳{{ getItemPrice(item).toLocaleString() }} / unit
                             </div>
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center bg-slate-50 rounded-xl border border-slate-100">
@@ -71,7 +71,7 @@
                                     <button @click="updateQuantity(item.id, item.quantity + 1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-[#003366]">+</button>
                                 </div>
                                 <div class="text-xs font-black text-slate-900">
-                                    ৳{{ ((item.product ? item.product.price : item.combo.price) * item.quantity).toLocaleString() }}
+                                    ৳{{ (getItemPrice(item) * item.quantity).toLocaleString() }}
                                 </div>
                             </div>
                         </div>
@@ -121,6 +121,18 @@ defineProps({
 defineEmits(['close']);
 
 const { cart, cartTotal, cartCount, removeFromCart, updateQuantity } = useCart();
+
+const getItemPrice = (item) => {
+    if (item.product) {
+        const price = parseFloat(item.product.price || 0);
+        if (!item.product.discount_type) return price;
+        if (item.product.discount_type === 'percentage') {
+            return price * (1 - parseFloat(item.product.discount_value || 0) / 100);
+        }
+        return Math.max(0, price - parseFloat(item.product.discount_value || 0));
+    }
+    return parseFloat(item.combo?.price || 0);
+};
 </script>
 
 <style scoped>

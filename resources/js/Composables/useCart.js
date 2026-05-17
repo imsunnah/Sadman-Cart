@@ -95,9 +95,16 @@ export function useCart() {
         return cart.value.reduce((total, item) => {
             let price = 0;
             if (item.product) {
-                price = parseFloat(item.product.price);
+                const origPrice = parseFloat(item.product.price || 0);
+                if (!item.product.discount_type) {
+                    price = origPrice;
+                } else if (item.product.discount_type === 'percentage') {
+                    price = origPrice * (1 - parseFloat(item.product.discount_value || 0) / 100);
+                } else {
+                    price = Math.max(0, origPrice - parseFloat(item.product.discount_value || 0));
+                }
             } else if (item.combo) {
-                price = parseFloat(item.combo.price);
+                price = parseFloat(item.combo.price || 0);
             }
             return total + price * item.quantity;
         }, 0);

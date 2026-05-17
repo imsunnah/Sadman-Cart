@@ -39,6 +39,7 @@ Route::get('/', [StoreController::class, 'home'])->name('home');
 Route::get('/shop', [StoreController::class, 'shop'])->name('shop');
 Route::get('/categories', [StoreController::class, 'categories'])->name('categories');
 Route::get('/products/{product:slug}', [StoreController::class, 'product'])->name('product.show');
+Route::post('/products/{product:slug}/reviews', [StoreController::class, 'storeProductReview'])->name('product.reviews.store');
 Route::get('/combos/{combo:slug}', [StoreController::class, 'combo'])->name('combo.show');
 Route::get('/cart', function () {
     return Inertia::render('Cart');
@@ -67,6 +68,9 @@ Route::get('/shipping-policy', [StoreController::class, 'shippingPolicy'])->name
 Route::get('/returns-refunds', [StoreController::class, 'returnsRefunds'])->name('returns-refunds');
 Route::get('/privacy-policy', [StoreController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms', [StoreController::class, 'terms'])->name('terms');
+
+// Dynamic Custom Pages
+Route::get('/pages/{page:slug}', [\App\Http\Controllers\PageController::class, 'show'])->name('page.show');
 
 // Admin Auth Routes
 Route::get('/admin/login', [\App\Http\Controllers\Admin\AdminAuthController::class, 'showLogin'])->name('admin.login');
@@ -157,6 +161,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class)->except(['show', 'edit', 'create']);
     Route::put('/reviews/{review}/toggle-active', [\App\Http\Controllers\Admin\ReviewController::class, 'toggleActive'])->name('reviews.toggle-active');
+
+    Route::resource('pages', \App\Http\Controllers\Admin\PageController::class);
+    Route::put('/pages/{page}/toggle-active', [\App\Http\Controllers\Admin\PageController::class, 'toggleActive'])->name('pages.toggle-active');
 
     // Media Gallery
     Route::get('/gallery', [App\Http\Controllers\Admin\MediaController::class, 'index'])->name('gallery.index');

@@ -66,7 +66,7 @@ class ProductController extends Controller
         
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/products', 'public');
-            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $validated['image'] = '/storage/' . $path;
         } elseif (is_string($request->image)) {
             $validated['image'] = $request->image;
         }
@@ -76,8 +76,8 @@ class ProductController extends Controller
         if ($request->has('gallery_images')) {
             foreach ($request->gallery_images as $img) {
                 if ($img instanceof \Illuminate\Http\UploadedFile) {
-                    $path = $img->store('products/gallery', 'uploads');
-                    $imagePath = \Illuminate\Support\Facades\Storage::disk('uploads')->url($path);
+                    $path = $img->store('uploads/products/gallery', 'public');
+                    $imagePath = '/storage/' . $path;
                 } else {
                     $imagePath = $img;
                 }
@@ -126,7 +126,7 @@ class ProductController extends Controller
         // Handle Featured Image update safely
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/products', 'public');
-            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $validated['image'] = '/storage/' . $path;
         } elseif ($request->filled('image') && is_string($request->image)) {
             // If it's a string, only update if it looks like a valid path or URL
             // If it's already the current image, this is fine. 
@@ -148,7 +148,7 @@ class ProductController extends Controller
             foreach ($request->gallery_images as $img) {
                 if ($img instanceof \Illuminate\Http\UploadedFile) {
                     $path = $img->store('uploads/products/gallery', 'public');
-                    $imagePath = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+                    $imagePath = '/storage/' . $path;
                 } elseif (is_string($img)) {
                     $imagePath = $img;
                 } else {

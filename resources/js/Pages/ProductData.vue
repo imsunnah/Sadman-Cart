@@ -47,8 +47,8 @@
                                 <h1 class="text-2xl md:text-3xl font-black text-slate-900 mb-2 uppercase tracking-tight">{{ product.name }}</h1>
                                 <div class="flex items-center gap-4">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="text-xl md:text-2xl font-black text-[#FF6600]">৳{{ parseFloat(product.price).toLocaleString() }}</span>
-                                        <span v-if="product.discount_type" class="text-sm text-slate-300 line-through font-bold">৳{{ calculateOriginalPrice() }}</span>
+                                        <span class="text-xl md:text-2xl font-black text-[#FF6600]">৳{{ discountedPrice.toLocaleString() }}</span>
+                                        <span v-if="product.discount_type" class="text-sm text-slate-300 line-through font-bold">৳{{ parseFloat(product.price).toLocaleString() }}</span>
                                     </div>
                                     <span v-if="product.discount_type" class="text-[9px] font-black text-white bg-green-500 px-2 py-1 rounded-md uppercase tracking-widest">
                                         {{ product.discount_type === 'percentage' ? product.discount_value + '%' : '৳' + product.discount_value }} OFF
@@ -146,7 +146,7 @@
                             :class="[activeTab === 'reviews' ? 'text-[#FF6600] border-b-2 border-[#FF6600]' : 'text-slate-400 hover:text-slate-600']"
                             class="px-8 py-6 font-black text-[10px] uppercase tracking-widest transition-all"
                         >
-                            Customer Reviews (0)
+                            Customer Reviews ({{ product.reviews ? product.reviews.length : 0 }})
                         </button>
                     </div>
 
@@ -161,29 +161,76 @@
                         <div v-if="activeTab === 'reviews'" class="max-w-3xl">
                             <div class="flex items-center gap-8 mb-10 pb-10 border-b border-slate-50">
                                 <div class="text-center">
-                                    <p class="text-5xl font-black text-slate-900">0.0</p>
+                                    <p class="text-5xl font-black text-slate-900">{{ averageRating }}</p>
                                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Overall Rating</p>
                                 </div>
                                 <div class="flex-grow space-y-2">
-                                    <div v-for="i in 5" :key="i" class="flex items-center gap-3">
-                                        <span class="text-[10px] font-bold text-slate-400 w-2">{{ 6-i }}</span>
-                                        <Star class="w-3 h-3 text-slate-200 fill-current" />
+                                    <div v-for="star in 5" :key="star" class="flex items-center gap-3">
+                                        <span class="text-[10px] font-bold text-slate-400 w-2">{{ 6-star }}</span>
+                                        <Star class="w-3 h-3 text-[#FF6600] fill-current" />
                                         <div class="flex-grow h-1.5 bg-slate-50 rounded-full overflow-hidden">
-                                            <div class="h-full bg-slate-200" style="width: 0%"></div>
+                                            <div class="h-full bg-[#FF6600]" :style="{ width: getRatingPercentage(6-star) + '%' }"></div>
                                         </div>
-                                        <span class="text-[10px] font-bold text-slate-400 w-6">0%</span>
+                                        <span class="text-[10px] font-bold text-slate-400 w-6">{{ getRatingPercentage(6-star).toFixed(0) }}%</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100">
-                                <h3 class="text-[10px] font-black text-[#003366] mb-6 uppercase tracking-widest">Submit Your Review</h3>
-                                <form @submit.prevent class="space-y-4">
-                                    <div class="flex gap-2 mb-4">
-                                        <Star v-for="i in 5" :key="i" class="w-5 h-5 text-slate-300 hover:text-[#FF6600] cursor-pointer transition-colors" />
+                            <!-- List of Reviews -->
+                            <div v-if="product.reviews && product.reviews.length > 0" class="mb-10 space-y-6">
+                                <div v-for="r in product.reviews" :key="r.id" class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider">{{ r.customer_name }}</h4>
+                                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ new Date(r.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) }}</p>
+                                        </div>
+                                        <div class="flex gap-0.5">
+                                            <Star v-for="star in 5" :key="star" class="w-3 h-3" :class="star <= r.rating ? 'text-[#FF6600] fill-current' : 'text-slate-200'" />
+                                        </div>
                                     </div>
-                                    <textarea rows="4" placeholder="Write your opinion here..." class="w-full rounded-2xl border-none bg-white p-4 text-xs font-medium focus:ring-1 focus:ring-[#FF6600]/20 transition-all"></textarea>
-                                    <button class="px-8 py-3 bg-[#003366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all">Submit Review</button>
+                                    <p class="text-xs font-medium text-slate-600 leading-relaxed italic">"{{ r.comment }}"</p>
+                                </div>
+                            </div>
+                            <div v-else class="text-center py-10 mb-10 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">No customer remarks/reviews yet. Be the first to leave a note!</p>
+                            </div>
+
+                            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100">
+                                <h3 class="text-[10px] font-black text-[#003366] mb-2 uppercase tracking-widest">Submit Your Remark / Review</h3>
+                                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-6">No login required — open to all customers</p>
+                                
+                                <div v-if="reviewSuccessMessage" class="p-4 mb-6 bg-green-50 border border-green-200 text-green-700 text-xs font-black rounded-xl uppercase tracking-wider">
+                                    {{ reviewSuccessMessage }}
+                                </div>
+
+                                <form @submit.prevent="submitReview" class="space-y-4">
+                                    <div>
+                                        <label class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">Your Name</label>
+                                        <input type="text" v-model="reviewForm.customer_name" placeholder="e.g. Anonymous Guest" class="w-full rounded-2xl border-none bg-white px-5 py-4 text-xs font-medium focus:ring-1 focus:ring-[#FF6600]/20 transition-all" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">Rating</label>
+                                        <div class="flex gap-2">
+                                            <Star 
+                                                v-for="star in 5" 
+                                                :key="star" 
+                                                @click="reviewForm.rating = star"
+                                                class="w-6 h-6 cursor-pointer transition-colors" 
+                                                :class="star <= reviewForm.rating ? 'text-[#FF6600] fill-current' : 'text-slate-300'"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">Remarks / Opinion</label>
+                                        <textarea rows="4" v-model="reviewForm.comment" required placeholder="Write your remark or opinion here..." class="w-full rounded-2xl border-none bg-white p-4 text-xs font-medium focus:ring-1 focus:ring-[#FF6600]/20 transition-all"></textarea>
+                                    </div>
+                                    <button 
+                                        type="submit" 
+                                        :disabled="isSubmittingReview"
+                                        class="px-8 py-4 bg-[#003366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all disabled:opacity-50"
+                                    >
+                                        {{ isSubmittingReview ? 'Submitting...' : 'Submit Remark' }}
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -227,6 +274,52 @@ const activeTab = ref('description');
 const showLightbox = ref(false);
 const lightboxProduct = ref(null);
 
+const reviewForm = ref({
+    customer_name: '',
+    comment: '',
+    rating: 5
+});
+
+const isSubmittingReview = ref(false);
+const reviewSuccessMessage = ref('');
+
+const averageRating = computed(() => {
+    if (!props.product.reviews || props.product.reviews.length === 0) return '0.0';
+    const sum = props.product.reviews.reduce((acc, r) => acc + r.rating, 0);
+    return (sum / props.product.reviews.length).toFixed(1);
+});
+
+const getRatingPercentage = (stars) => {
+    if (!props.product.reviews || props.product.reviews.length === 0) return 0;
+    const count = props.product.reviews.filter(r => r.rating === stars).length;
+    return (count / props.product.reviews.length) * 100;
+};
+
+const submitReview = async () => {
+    isSubmittingReview.value = true;
+    reviewSuccessMessage.value = '';
+    
+    try {
+        await router.post(`/products/${props.product.slug}/reviews`, {
+            customer_name: reviewForm.value.customer_name || 'Anonymous Guest',
+            comment: reviewForm.value.comment,
+            rating: reviewForm.value.rating
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                reviewForm.value.customer_name = '';
+                reviewForm.value.comment = '';
+                reviewForm.value.rating = 5;
+                reviewSuccessMessage.value = 'Thank you! Your remark/review has been posted successfully.';
+            }
+        });
+    } catch (e) {
+        console.error(e);
+    } finally {
+        isSubmittingReview.value = false;
+    }
+};
+
 const allImages = computed(() => {
     let images = [];
     if (props.product.image) images.push(props.product.image);
@@ -246,14 +339,14 @@ watch(() => props.product.id, () => {
     quantity.value = 1;
 }, { immediate: true });
 
-const calculateOriginalPrice = () => {
-    const price = parseFloat(props.product.price);
-    const value = parseFloat(props.product.discount_value);
+const discountedPrice = computed(() => {
+    const price = parseFloat(props.product.price || 0);
+    if (!props.product.discount_type) return price;
     if (props.product.discount_type === 'percentage') {
-        return Math.round(price / (1 - value / 100));
+        return price * (1 - parseFloat(props.product.discount_value || 0) / 100);
     }
-    return Math.round(price + value);
-};
+    return Math.max(0, price - parseFloat(props.product.discount_value || 0));
+});
 
 const handleAddToCart = async () => {
     await addToCart(props.product, quantity.value);

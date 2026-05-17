@@ -90,18 +90,53 @@
             <!-- Desktop Nav (Bold & Prominent) -->
             <nav class="bg-[#003366] hidden md:block border-y border-white/5">
                 <div class="max-w-[1550px] mx-auto px-4 py-5 flex justify-center items-center gap-12">
-                    <Link href="/" :class="[$page.url === '/' ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']" class="text-[11px] font-black uppercase tracking-[0.3em] italic transition-all drop-shadow-sm">Home</Link>
-                    <Link href="/shop" :class="[$page.url.startsWith('/shop') ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']" class="text-[11px] font-black uppercase tracking-[0.3em] italic transition-all drop-shadow-sm">Shop All Products</Link>
-                    <div class="h-4 w-0.5 bg-[#FF6600]/30 mx-2"></div>
-                    <Link 
-                        v-for="category in $page.props.categories" 
-                        :key="category.id" 
-                        :href="`/shop?category=${category.slug}`"
-                        :class="[$page.url.includes(`category=${category.slug}`) ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']"
-                        class="text-[11px] font-black uppercase tracking-[0.3em] italic transition-all drop-shadow-sm"
-                    >
-                        {{ category.name }}
-                    </Link>
+                    <!-- Standard listing (up to 5 categories) -->
+                    <template v-if="($page.props.categories || []).length <= 5">
+                        <Link 
+                            v-for="category in $page.props.categories" 
+                            :key="category.id" 
+                            :href="`/shop?category=${category.slug}`"
+                            :class="[$page.url.includes(`category=${category.slug}`) ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']"
+                            class="text-[11px] font-black uppercase tracking-[0.3em] transition-all drop-shadow-sm"
+                        >
+                            {{ category.name }}
+                        </Link>
+                    </template>
+
+                    <!-- Too many categories - show first 5, then "More ->" dropdown -->
+                    <template v-else>
+                        <Link 
+                            v-for="category in $page.props.categories.slice(0, 5)" 
+                            :key="category.id" 
+                            :href="`/shop?category=${category.slug}`"
+                            :class="[$page.url.includes(`category=${category.slug}`) ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']"
+                            class="text-[11px] font-black uppercase tracking-[0.3em] transition-all drop-shadow-sm"
+                        >
+                            {{ category.name }}
+                        </Link>
+
+                        <!-- More -> Dropdown -->
+                        <div class="relative group/more">
+                            <button 
+                                class="text-[11px] font-black uppercase tracking-[0.3em] text-white hover:text-[#FF6600] transition-all drop-shadow-sm flex items-center gap-1 cursor-pointer"
+                            >
+                                More →
+                            </button>
+                            <div class="absolute left-1/2 -translate-x-1/2 top-full pt-4 opacity-0 invisible group-hover/more:opacity-100 group-hover/more:visible transition-all duration-300 z-50">
+                                <div class="bg-[#002244] border border-white/10 rounded-2xl shadow-2xl py-3 w-64 flex flex-col overflow-hidden">
+                                    <Link 
+                                        v-for="category in $page.props.categories.slice(5)" 
+                                        :key="category.id" 
+                                        :href="`/shop?category=${category.slug}`"
+                                        :class="[$page.url.includes(`category=${category.slug}`) ? 'text-[#FF6600]' : 'text-slate-200 hover:bg-[#FF6600] hover:text-white']"
+                                        class="px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-colors text-left"
+                                    >
+                                        {{ category.name }}
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </nav>
         </header>
@@ -290,11 +325,9 @@
                 <div>
                     <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Information</h3>
                     <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
-                        <li><Link href="/about" class="hover:text-[#FF6600] transition-colors">About Us</Link></li>
-                        <li><Link href="/contact" class="hover:text-[#FF6600] transition-colors">Contact Us</Link></li>
-                        <li><Link href="/terms" class="hover:text-[#FF6600] transition-colors">Terms & Conditions</Link></li>
-                        <li><Link href="/privacy" class="hover:text-[#FF6600] transition-colors">Privacy Policy</Link></li>
-                        <li><Link href="/careers" class="hover:text-[#FF6600] transition-colors">Careers</Link></li>
+                        <li v-for="page in ($page.props.activePages || []).filter(p => p.group === 'about_us')" :key="page.id">
+                            <Link :href="`/pages/${page.slug}`" class="hover:text-[#FF6600] transition-colors">{{ page.title }}</Link>
+                        </li>
                     </ul>
                 </div>
 
@@ -313,11 +346,9 @@
                 <div>
                     <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Support</h3>
                     <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
-                        <li><Link href="/support" class="hover:text-[#FF6600] transition-colors">Support Center</Link></li>
-                        <li><Link href="/how-to-order" class="hover:text-[#FF6600] transition-colors">How to Order</Link></li>
-                        <li><Link href="/track-order" class="hover:text-[#FF6600] transition-colors">Order Tracking</Link></li>
-                        <li><Link href="/shipping" class="hover:text-[#FF6600] transition-colors">Shipping Info</Link></li>
-                        <li><Link href="/faq" class="hover:text-[#FF6600] transition-colors">FAQ</Link></li>
+                        <li v-for="page in ($page.props.activePages || []).filter(p => p.group === 'support')" :key="page.id">
+                            <Link :href="`/pages/${page.slug}`" class="hover:text-[#FF6600] transition-colors">{{ page.title }}</Link>
+                        </li>
                     </ul>
                 </div>
 
@@ -325,11 +356,9 @@
                 <div>
                     <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Consumer Policy</h3>
                     <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
-                        <li><Link href="/returns" class="hover:text-[#FF6600] transition-colors">Happy Return</Link></li>
-                        <li><Link href="/refunds" class="hover:text-[#FF6600] transition-colors">Refund Policy</Link></li>
-                        <li><Link href="/exchange" class="hover:text-[#FF6600] transition-colors">Exchange Policy</Link></li>
-                        <li><Link href="/cancellation" class="hover:text-[#FF6600] transition-colors">Cancellation</Link></li>
-                        <li><Link href="/pre-order" class="hover:text-[#FF6600] transition-colors">Pre Order</Link></li>
+                        <li v-for="page in ($page.props.activePages || []).filter(p => p.group === 'consumer_policy')" :key="page.id">
+                            <Link :href="`/pages/${page.slug}`" class="hover:text-[#FF6600] transition-colors">{{ page.title }}</Link>
+                        </li>
                     </ul>
                 </div>
             </div>

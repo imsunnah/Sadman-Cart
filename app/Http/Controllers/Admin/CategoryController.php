@@ -37,7 +37,7 @@ class CategoryController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/categories', 'public');
-            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $validated['image'] = '/storage/' . $path;
         }
 
         Category::create($validated);
@@ -65,7 +65,7 @@ class CategoryController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/categories', 'public');
-            $validated['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $validated['image'] = '/storage/' . $path;
         } else {
             // Remove image from validated data so it doesn't overwrite existing image with null
             unset($validated['image']);

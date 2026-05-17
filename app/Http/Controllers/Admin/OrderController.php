@@ -202,12 +202,12 @@ class OrderController extends Controller
                 $order->items()->create([
                     'product_id' => $product->id,
                     'product_name' => $product->name,
-                    'price' => $product->price,
+                    'price' => $product->discounted_price,
                     'buying_price' => $product->buying_price,
                     'package_cost' => $product->package_cost,
                     'quantity' => $itemData['quantity'],
                 ]);
-                $totalAmount += $product->price * $itemData['quantity'];
+                $totalAmount += $product->discounted_price * $itemData['quantity'];
                 if ($validated['status'] !== 'cancelled') {
                     $product->decrement('stock', $itemData['quantity']);
                 }

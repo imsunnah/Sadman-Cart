@@ -185,6 +185,18 @@
                                     </div>
                                 </div>
 
+                                <!-- Section 5: Customer Remarks -->
+                                <div class="mb-12">
+                                    <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
+                                        <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">5</span>
+                                        Special Instructions / Remarks
+                                    </h2>
+                                    <div>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Order Note / Customer Remarks</label>
+                                        <textarea v-model="form.customer_remarks" rows="3" class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="e.g. Any special instructions regarding delivery, product requests, packaging, etc."></textarea>
+                                    </div>
+                                </div>
+
                                 <button type="submit" :disabled="form.processing" class="w-full bg-[#003366] py-5 rounded-2xl text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-[#003366]/20 hover:bg-slate-800 transition-all transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center">
                                     Continue to Confirmation <ArrowRight class="w-5 h-5 ml-3" />
                                 </button>
@@ -218,7 +230,7 @@
                                                 </div>
                                                 <div class="flex justify-between items-center mt-2">
                                                     <p class="text-[10px] font-bold text-slate-400">Qty {{ item.quantity }}</p>
-                                                    <p class="text-xs font-black text-slate-900">৳{{ ((item.product?.price || item.combo?.price) * item.quantity).toLocaleString() }}</p>
+                                                    <p class="text-xs font-black text-slate-900">৳{{ (getItemPrice(item) * item.quantity).toLocaleString() }}</p>
                                                 </div>
                                             </div>
                                         </li>
@@ -332,7 +344,8 @@ const form = useForm({
     village: '',
     delivery_location: 'Inside Dhaka',
     delivery_charge: 0,
-    selected_items: props.selectedItemIds ? props.selectedItemIds.join(',') : ''
+    selected_items: props.selectedItemIds ? props.selectedItemIds.join(',') : '',
+    customer_remarks: ''
 });
 
 const currentDeliveryCharge = computed(() => {
@@ -341,10 +354,21 @@ const currentDeliveryCharge = computed(() => {
         : parseFloat(props.delivery_charges.outside_dhaka);
 });
 
+const getItemPrice = (item) => {
+    if (item.product) {
+        const price = parseFloat(item.product.price || 0);
+        if (!item.product.discount_type) return price;
+        if (item.product.discount_type === 'percentage') {
+            return price * (1 - parseFloat(item.product.discount_value || 0) / 100);
+        }
+        return Math.max(0, price - parseFloat(item.product.discount_value || 0));
+    }
+    return parseFloat(item.combo?.price || 0);
+};
+
 const subtotal = computed(() => {
     return props.cart.items.reduce((total, item) => {
-        const price = parseFloat(item.product?.price || item.combo?.price || 0);
-        return total + (price * item.quantity);
+        return total + (getItemPrice(item) * item.quantity);
     }, 0);
 });
 

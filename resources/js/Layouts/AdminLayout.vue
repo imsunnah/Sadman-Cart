@@ -73,6 +73,12 @@
                         </Link>
                     </li>
                     <li>
+                        <Link href="/admin/pages" :class="[$page.url.startsWith('/admin/pages') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                            <FileText class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/pages') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                            <span class="font-bold text-sm">{{ $t('Dynamic Pages') }}</span>
+                        </Link>
+                    </li>
+                    <li>
                         <Link href="/admin/settings" :class="[$page.url.startsWith('/admin/settings') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
                             <Settings class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/settings') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
                             <span class="font-bold text-sm">{{ $t('Site Settings') }}</span>
@@ -146,7 +152,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image } from 'lucide-vue-next';
+import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image, FileText } from 'lucide-vue-next';
 
 const isSidebarOpen = ref(false);
 </script>

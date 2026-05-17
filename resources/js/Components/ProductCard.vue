@@ -1,16 +1,6 @@
 <template>
     <div class="group relative bg-white rounded-[2rem] overflow-hidden border border-slate-100 flex flex-col transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] hover:border-[#FF6600]/20">
 
-        <!-- Discount badge -->
-        <div v-if="product.discount_type" class="absolute top-4 left-4 z-10 bg-[#FF6600] text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg uppercase tracking-widest animate-pulse">
-            {{ product.discount_type === 'percentage' ? product.discount_value + '% OFF' : '৳' + product.discount_value + ' OFF' }}
-        </div>
-
-        <!-- Stock badge -->
-        <div v-if="product.stock <= 5 && product.stock > 0" class="absolute top-3 right-3 z-10 bg-red-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full">
-            Only {{ product.stock }} left
-        </div>
-
         <!-- Image — click → detail page -->
         <Link :href="`/products/${product.slug}`" class="block relative w-full bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden" style="aspect-ratio:1/1;">
             <img
@@ -47,12 +37,15 @@
             </Link>
 
             <!-- Price -->
-            <div class="flex items-center gap-3 mb-6">
+            <div class="flex items-center gap-3 mb-6 flex-wrap">
                 <span class="text-xl font-black text-[#FF6600] tracking-tighter leading-none drop-shadow-sm">
                     ৳{{ parseFloat(discountedPrice).toLocaleString() }}
                 </span>
                 <span v-if="product.discount_type" class="text-[10px] text-slate-300 line-through font-bold">
                     ৳{{ parseFloat(product.price).toLocaleString() }}
+                </span>
+                <span v-if="product.discount_type" class="bg-red-50 text-[#FF6600] text-[9px] font-black px-2 py-0.5 rounded-lg border border-red-100 uppercase tracking-wider">
+                    {{ product.discount_type === 'percentage' ? product.discount_value + '% OFF' : '৳' + product.discount_value + ' OFF' }}
                 </span>
             </div>
 

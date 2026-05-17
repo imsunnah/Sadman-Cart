@@ -65,7 +65,7 @@
                                                 </p>
                                             </div>
                                             <p class="text-2xl font-black text-[#003366]">
-                                                ৳{{ parseFloat(item.product?.price || item.combo?.price || 0).toLocaleString() }}
+                                                ৳{{ getItemPrice(item).toLocaleString() }}
                                             </p>
                                         </div>
                                         <div class="mt-4 sm:mt-auto flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 sm:gap-0">
@@ -176,12 +176,23 @@ const toggleItemSelection = (id) => {
     }
 };
 
+const getItemPrice = (item) => {
+    if (item.product) {
+        const price = parseFloat(item.product.price || 0);
+        if (!item.product.discount_type) return price;
+        if (item.product.discount_type === 'percentage') {
+            return price * (1 - parseFloat(item.product.discount_value || 0) / 100);
+        }
+        return Math.max(0, price - parseFloat(item.product.discount_value || 0));
+    }
+    return parseFloat(item.combo?.price || 0);
+};
+
 const selectedTotal = computed(() => {
     return cart.value
         .filter(item => selectedItems.value.includes(item.id))
         .reduce((total, item) => {
-            const price = parseFloat(item.product?.price || item.combo?.price || 0);
-            return total + (price * item.quantity);
+            return total + (getItemPrice(item) * item.quantity);
         }, 0);
 });
 

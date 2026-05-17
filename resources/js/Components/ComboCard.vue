@@ -1,13 +1,6 @@
 <!-- ComboCard: simplified for front page -->
 <template>
     <div class="group relative bg-white rounded-[2rem] overflow-hidden border border-slate-100 flex flex-col transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] hover:border-orange-100">
-        <!-- Bundle badge -->
-        <div class="absolute top-4 left-4 z-10 bg-[#003366] text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg uppercase tracking-widest">
-            Bundle
-        </div>
-        <div v-if="combo.original_price" class="absolute top-4 right-4 z-10 bg-[#FF6600] text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg uppercase tracking-widest animate-pulse">
-            Save ৳{{ (parseFloat(combo.original_price) - parseFloat(combo.price)).toFixed(0) }}
-        </div>
 
         <!-- Image -->
         <Link :href="`/combos/${combo.slug}`" class="relative w-full aspect-square bg-slate-50 overflow-hidden flex items-center justify-center">
@@ -31,7 +24,12 @@
 
         <!-- Info -->
         <div class="flex flex-col flex-1 p-6">
-            <span class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.2em] mb-2">Combo Collection</span>
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span class="text-[9px] font-black text-white bg-[#003366] px-2 py-0.5 rounded-md uppercase tracking-[0.15em]">Bundle</span>
+                <span v-if="combo.original_price" class="text-[9px] font-black text-[#FF6600] bg-orange-50 border border-orange-100 px-2 py-0.5 rounded-md uppercase tracking-[0.15em]">
+                    Save ৳{{ (parseFloat(combo.original_price) - parseFloat(combo.price)).toFixed(0) }}
+                </span>
+            </div>
             <Link :href="`/combos/${combo.slug}`" class="flex-grow mb-4">
                 <h3 class="text-sm font-black text-[#003366] uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-[#FF6600] transition-colors duration-300">
                     {{ combo.name }}

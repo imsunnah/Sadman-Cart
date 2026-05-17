@@ -87,9 +87,27 @@ class StoreController extends Controller
             ->get();
 
         return Inertia::render('ProductData', [
-            'product' => $product->load(['category', 'gallery']),
+            'product' => $product->load(['category', 'gallery', 'reviews']),
             'relatedProducts' => $relatedProducts
         ]);
+    }
+
+    public function storeProductReview(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'comment' => 'required|string|max:1000',
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        $product->reviews()->create([
+            'customer_name' => $validated['customer_name'],
+            'comment' => $validated['comment'],
+            'rating' => $validated['rating'],
+            'is_active' => true,
+        ]);
+
+        return back()->with('success', 'Thank you! Your remark/review has been submitted.');
     }
 
     public function combo(\App\Models\Combo $combo)
@@ -151,6 +169,7 @@ class StoreController extends Controller
             'delivery_location' => 'required|string|in:Inside Dhaka,Outside Dhaka',
             'delivery_charge' => 'required|numeric',
             'selected_items' => 'nullable|string', // Added to filter items
+            'customer_remarks' => 'nullable|string|max:1000',
         ]);
 
         $cart = $this->getCart();
@@ -168,7 +187,7 @@ class StoreController extends Controller
 
         $totalAmount = 0;
         foreach ($itemsToProcess as $item) {
-            $price = $item->product_id ? $item->product->price : $item->combo->price;
+            $price = $item->product_id ? $item->product->discounted_price : $item->combo->price;
             $totalAmount += ($price * $item->quantity);
         }
 
@@ -189,7 +208,8 @@ class StoreController extends Controller
             'delivery_location' => $validated['delivery_location'],
             'payment_method' => 'cod',
             'status' => 'pending',
-            'is_active' => true
+            'is_active' => true,
+            'customer_remarks' => $validated['customer_remarks'] ?? null,
         ]);
 
         foreach ($itemsToProcess as $item) {
@@ -197,7 +217,7 @@ class StoreController extends Controller
                 $order->items()->create([
                     'product_id' => $item->product_id,
                     'product_name' => $item->product->name,
-                    'price' => $item->product->price,
+                    'price' => $item->product->discounted_price,
                     'buying_price' => $item->product->buying_price,
                     'package_cost' => $item->product->package_cost,
                     'quantity' => $item->quantity

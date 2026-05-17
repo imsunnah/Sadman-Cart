@@ -218,7 +218,14 @@ const getItemName = (item) => {
 
 const getItemPrice = (item) => {
     if (item.type === 'product') {
-        return parseFloat(props.products.find(p => p.id === item.id)?.price || 0);
+        const product = props.products.find(p => p.id === item.id);
+        if (!product) return 0;
+        const price = parseFloat(product.price || 0);
+        if (!product.discount_type) return price;
+        if (product.discount_type === 'percentage') {
+            return price * (1 - parseFloat(product.discount_value || 0) / 100);
+        }
+        return Math.max(0, price - parseFloat(product.discount_value || 0));
     }
     return parseFloat(props.combos.find(c => c.id === item.id)?.price || 0);
 };

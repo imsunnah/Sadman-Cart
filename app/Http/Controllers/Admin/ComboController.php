@@ -42,7 +42,7 @@ class ComboController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/combos', 'public');
-            $data['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $data['image'] = '/storage/' . $path;
         } elseif (is_string($request->image)) {
             $data['image'] = $request->image;
         }
@@ -80,7 +80,7 @@ class ComboController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/combos', 'public');
-            $data['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $data['image'] = '/storage/' . $path;
         } elseif ($request->filled('image') && is_string($request->image)) {
             $data['image'] = $request->image;
         } else {
