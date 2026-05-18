@@ -3,16 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title inertia>{{ config('app.name', 'E-commerce') }}</title>
+    <title inertia>sadmancart.com</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
+    <!-- Favicon Configuration (Logo in Tab of PC) -->
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     @php
         $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value') ?? '/favicon.ico';
     @endphp
-    <link rel="icon" href="{{ asset($siteLogo) }}">
+    <link rel="icon" type="image/png" href="{{ asset($siteLogo) }}">
 
     @routes
     @vite(['resources/js/app.js', 'resources/css/app.css'])
