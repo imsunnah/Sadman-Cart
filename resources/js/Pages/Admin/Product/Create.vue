@@ -21,6 +21,15 @@
                             <p v-if="form.errors.name" class="mt-1 text-xs text-red-500">{{ form.errors.name }}</p>
                         </div>
 
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Brand (Optional)</label>
+                            <select v-model="form.brand_id" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold font-sans">
+                                <option :value="null">No Brand</option>
+                                <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{ brand.name }}</option>
+                            </select>
+                            <p v-if="form.errors.brand_id" class="mt-1 text-xs text-red-500">{{ form.errors.brand_id }}</p>
+                        </div>
+
                         <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-6">
                             <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Classification</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -169,13 +178,15 @@ import MediaPicker from '@/Components/MediaPicker.vue';
 import { ArrowLeft, Image as ImageIcon, X, Trash2, Plus, Library } from 'lucide-vue-next';
 
 const props = defineProps({
-    categories: Array
+    categories: Array,
+    brands: Array
 });
 
 const form = useForm({
     category_id: '',
     sub_category_id: '',
     name: '',
+    brand_id: null,
     description: '',
     price: '',
     buying_price: '',

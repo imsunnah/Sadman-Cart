@@ -22,6 +22,7 @@ class Product extends Model
         'discount_type',
         'discount_value',
         'remarks',
+        'brand_id',
     ];
 
     protected $casts = [
@@ -40,6 +41,11 @@ class Product extends Model
     public function subCategory()
     {
         return $this->belongsTo(SubCategory::class);
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
     }
 
     public function gallery()

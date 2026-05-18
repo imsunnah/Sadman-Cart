@@ -42,17 +42,33 @@ class StoreController extends Controller
 
     public function shop(Request $request)
     {
-        $query = Product::with('category')->where('is_active', true);
+        $query = Product::with(['category', 'brand'])->where('is_active', true);
 
-        if ($request->has('category')) {
-            $query->whereHas('category', function ($q) use ($request) {
-                $q->where('slug', $request->category);
+        if ($request->has('category') && $request->category) {
+            $categories = explode(',', $request->category);
+            $query->whereHas('category', function ($q) use ($categories) {
+                $q->whereIn('slug', $categories);
             });
         }
 
-        if ($request->has('subcategory')) {
+        if ($request->has('subcategory') && $request->subcategory) {
             $query->whereHas('subCategory', function ($q) use ($request) {
                 $q->where('slug', $request->subcategory);
+            });
+        }
+
+        if ($request->has('min_price') && $request->min_price !== null) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price !== null) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        if ($request->has('brand') && $request->brand) {
+            $brandSlugs = explode(',', $request->brand);
+            $query->whereHas('brand', function ($q) use ($brandSlugs) {
+                $q->whereIn('slug', $brandSlugs);
             });
         }
 
@@ -60,11 +76,36 @@ class StoreController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $products = $query->latest()->paginate(12)->withQueryString();
+        // Apply Sorting
+        if ($request->has('sort')) {
+            if ($request->sort === 'Price: Low to High') {
+                $query->orderBy('price', 'asc');
+            } elseif ($request->sort === 'Price: High to Low') {
+                $query->orderBy('price', 'desc');
+            } else {
+                $query->latest();
+            }
+        } else {
+            $query->latest();
+        }
+
+        $products = $query->paginate(12)->withQueryString();
+
+        $brandsQuery = \App\Models\Brand::where('is_active', true)->orderBy('name', 'asc');
+        if ($request->has('category') && $request->category) {
+            $categoriesList = explode(',', $request->category);
+            $brandsQuery->where(function($q) use ($categoriesList) {
+                $q->whereHas('categories', function ($sq) use ($categoriesList) {
+                    $sq->whereIn('slug', $categoriesList);
+                })->orDoesntHave('categories');
+            });
+        }
+        $brands = $brandsQuery->get();
 
         return Inertia::render('Shop', [
             'products' => $products,
-            'filters' => $request->only(['category', 'subcategory', 'search'])
+            'brands' => $brands,
+            'filters' => $request->only(['category', 'subcategory', 'search', 'min_price', 'max_price', 'sort', 'brand'])
         ]);
     }
 

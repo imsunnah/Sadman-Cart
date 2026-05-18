@@ -88,19 +88,13 @@
                             </div>
 
                             <!-- Support Action Buttons -->
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="w-full">
                                 <a 
                                     :href="`https://wa.me/${$page.props.settings.footer_phone}?text=Hi, I want to order ${combo.name}`"
                                     target="_blank"
-                                    class="h-12 bg-[#25D366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#128C7E] transition-all active:scale-95 flex items-center justify-center gap-3"
+                                    class="h-12 bg-[#25D366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#128C7E] transition-all active:scale-95 flex items-center justify-center gap-3 w-full"
                                 >
                                     <MessageSquare class="w-4 h-4" /> Order On WhatsApp
-                                </a>
-                                <a 
-                                    :href="`tel:${$page.props.settings.footer_phone}`"
-                                    class="h-12 bg-[#003366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all active:scale-95 flex items-center justify-center gap-3"
-                                >
-                                    <Phone class="w-4 h-4" /> Call For Order
                                 </a>
                             </div>
                         </div>

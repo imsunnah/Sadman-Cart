@@ -68,8 +68,10 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::with('subCategories')->get();
+        $brands = \App\Models\Brand::where('is_active', true)->orderBy('name', 'asc')->get();
         return Inertia::render('Admin/Product/Create', [
-            'categories' => $categories
+            'categories' => $categories,
+            'brands' => $brands
         ]);
     }
 
@@ -91,6 +93,7 @@ class ProductController extends Controller
             'discount_type' => 'nullable|string|in:percentage,fixed',
             'discount_value' => 'nullable|numeric|min:0',
             'remarks' => 'nullable|string',
+            'brand_id' => 'nullable|exists:brands,id',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
@@ -127,9 +130,11 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::with('subCategories')->get();
+        $brands = \App\Models\Brand::where('is_active', true)->orderBy('name', 'asc')->get();
         return Inertia::render('Admin/Product/Edit', [
             'product' => $product->load('gallery'),
-            'categories' => $categories
+            'categories' => $categories,
+            'brands' => $brands
         ]);
     }
 
@@ -151,6 +156,7 @@ class ProductController extends Controller
             'discount_type' => 'nullable|string|in:percentage,fixed',
             'discount_value' => 'nullable|numeric|min:0',
             'remarks' => 'nullable|string',
+            'brand_id' => 'nullable|exists:brands,id',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);

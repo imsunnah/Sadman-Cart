@@ -198,6 +198,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     
     Route::resource('subcategories', \App\Http\Controllers\Admin\SubCategoryController::class);
     Route::put('/subcategories/{subcategory}/toggle-active', [\App\Http\Controllers\Admin\SubCategoryController::class, 'toggleActive'])->name('subcategories.toggle-active');
+
+    Route::resource('brands', \App\Http\Controllers\Admin\BrandController::class);
+    Route::put('/brands/{brand}/toggle-active', [\App\Http\Controllers\Admin\BrandController::class, 'toggleActive'])->name('brands.toggle-active');
     
     Route::get('/customers', function () {
         $customers = \App\Models\User::where('role', 'user')->latest()->paginate(15);

@@ -1,94 +1,227 @@
 <template>
     <StoreLayout>
-        <div class="bg-white min-h-screen py-12 font-sans">
+        <div class="bg-[#F8F9FA] min-h-screen py-10 font-sans">
             <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
                 
-                <div class="mb-12">
-                    <h1 class="text-3xl font-black text-slate-900 tracking-tight uppercase italic">Shop <span class="text-[#FF6600]">Products</span></h1>
-                    <p class="text-slate-500 mt-2 font-bold text-sm uppercase tracking-widest">Find your perfect organic selection</p>
+                <!-- Header Page Title & Breadcrumbs -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <div>
+                        <h1 class="text-2xl font-black text-slate-800 tracking-tight uppercase">
+                            {{ activeCategoryName }}
+                        </h1>
+                        <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">
+                            Browse through our premium selection
+                        </p>
+                    </div>
+                    <div class="mt-4 md:mt-0 text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                        <Link href="/" class="hover:text-[#FF6600]">Home</Link>
+                        <span>&gt;</span>
+                        <span class="text-slate-600">{{ activeCategoryName }}</span>
+                    </div>
                 </div>
 
-                <div class="flex flex-col lg:flex-row gap-12">
+                <div class="flex flex-col lg:flex-row gap-8">
                     
-                    <!-- Sidebar Filters -->
+                    <!-- Left Sidebar Filters -->
                     <div class="w-full lg:w-72 flex-shrink-0">
-                        <div class="sticky top-32 space-y-10">
-                            <!-- Category Filter -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-8 sticky top-24">
+                            
+                            <!-- Filter By Category -->
                             <div>
-                                <h3 class="text-[10px] font-black text-[#003366] uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                                    <span class="w-2 h-2 bg-[#FF6600] rounded-full"></span>
-                                    Catalog Collections
+                                <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
+                                    Filter By Category
                                 </h3>
-                                <ul class="space-y-1">
-                                    <li>
-                                        <Link href="/shop" :class="[!filters.category && !filters.subcategory ? 'bg-[#003366] text-white shadow-lg shadow-blue-900/10' : 'text-slate-500 hover:bg-slate-50']" class="flex items-center text-[10px] px-4 py-3 rounded-xl transition-all uppercase tracking-[0.2em] font-black italic">
-                                            All Entities
-                                        </Link>
-                                    </li>
-                                    <li v-for="category in $page.props.categories" :key="category.id" class="pt-2">
-                                        <Link :href="`/shop?category=${category.slug}`" :class="[filters.category === category.slug ? 'text-[#FF6600] font-black' : 'text-slate-600 hover:text-[#003366] font-bold']" class="text-[10px] px-4 py-2 flex items-center justify-between transition-all uppercase tracking-widest group">
-                                            {{ category.name }}
-                                            <ChevronRight class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        </Link>
-                                        <!-- Subcategories -->
-                                        <ul v-if="category.sub_categories && category.sub_categories.length > 0 && (filters.category === category.slug || category.sub_categories.some(s => s.slug === filters.subcategory))" class="pl-6 space-y-1 mt-2 border-l-2 border-slate-100 ml-4">
-                                            <li v-for="child in category.sub_categories" :key="child.id">
-                                                <Link :href="`/shop?subcategory=${child.slug}`" :class="[filters.subcategory === child.slug ? 'text-[#FF6600] font-black' : 'text-slate-400 hover:text-[#003366] font-bold']" class="text-[9px] block py-1.5 transition-all uppercase tracking-widest">
-                                                    {{ child.name }}
-                                                </Link>
-                                            </li>
-                                        </ul>
+                                <ul class="space-y-2">
+                                    <li v-for="cat in $page.props.categories" :key="cat.id" class="flex items-center gap-2">
+                                        <input 
+                                            type="checkbox" 
+                                            :id="'cat-' + cat.id" 
+                                            :value="cat.slug" 
+                                            v-model="selectedCategories"
+                                            class="rounded text-[#FF6600] focus:ring-[#FF6600]/20 border-slate-200 w-4 h-4 cursor-pointer"
+                                        />
+                                        <label :for="'cat-' + cat.id" class="text-xs font-bold text-slate-650 cursor-pointer select-none hover:text-[#FF6600]">
+                                            {{ cat.name }}
+                                        </label>
                                     </li>
                                 </ul>
                             </div>
 
-                            <!-- Trust Info -->
-                            <div class="p-6 bg-[#003366]/5 rounded-3xl border border-[#003366]/5">
-                                <h4 class="text-[10px] font-black text-[#003366] uppercase tracking-widest mb-4 italic">Premium Quality</h4>
-                                <p class="text-[9px] font-bold text-slate-500 leading-relaxed uppercase tracking-tighter">Every item in our catalog is hand-verified for 100% authenticity and freshness.</p>
+                            <!-- Price Range Slider -->
+                            <div>
+                                <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
+                                    Price Range
+                                </h3>
+                                <div class="space-y-6">
+                                    <!-- Double slider bar container -->
+                                    <div class="relative w-full h-2 bg-slate-100 rounded-lg mt-4 mb-6">
+                                        <!-- Active track color bar between min and max handles -->
+                                        <div 
+                                            class="absolute h-full bg-[#FF6600] rounded-lg"
+                                            :style="{
+                                                left: (minPrice / 15000) * 100 + '%',
+                                                width: ((maxPrice - minPrice) / 15000) * 100 + '%'
+                                            }"
+                                        ></div>
+                                        
+                                        <!-- Min Handle Range slider -->
+                                        <input 
+                                            type="range" 
+                                            min="0" 
+                                            max="15000" 
+                                            step="100"
+                                            v-model.number="minPrice"
+                                            @input="handleMinPriceInput"
+                                            class="absolute w-full h-1 bg-transparent pointer-events-none appearance-none -top-0.5 left-0 cursor-pointer accent-[#FF6600] [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-runnable-track]:bg-transparent [&::-moz-range-track]:bg-transparent focus:outline-none"
+                                        />
+                                        
+                                        <!-- Max Handle Range slider -->
+                                        <input 
+                                            type="range" 
+                                            min="0" 
+                                            max="15000" 
+                                            step="100"
+                                            v-model.number="maxPrice"
+                                            @input="handleMaxPriceInput"
+                                            class="absolute w-full h-1 bg-transparent pointer-events-none appearance-none -top-0.5 left-0 cursor-pointer accent-[#FF6600] [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-runnable-track]:bg-transparent [&::-moz-range-track]:bg-transparent focus:outline-none"
+                                        />
+                                    </div>
+                                    
+                                    <!-- Text inputs side-by-side -->
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Min Price</span>
+                                            <div class="relative flex items-center">
+                                                <span class="absolute left-2 text-[9px] font-bold text-slate-400">Tk</span>
+                                                <input 
+                                                    type="number" 
+                                                    v-model.number="minPrice"
+                                                    @input="handleMinPriceInput"
+                                                    class="w-full text-[10px] font-black text-slate-700 bg-slate-50 border border-slate-200 rounded-lg pl-6 pr-1 py-1.5 focus:ring-1 focus:ring-[#FF6600]/20 outline-none"
+                                                />
+                                            </div>
+                                        </div>
+                                        <span class="text-slate-350 font-bold self-end mb-1.5">-</span>
+                                        <div class="flex-1">
+                                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Max Price</span>
+                                            <div class="relative flex items-center">
+                                                <span class="absolute left-2 text-[9px] font-bold text-slate-400">Tk</span>
+                                                <input 
+                                                    type="number" 
+                                                    v-model.number="maxPrice"
+                                                    @input="handleMaxPriceInput"
+                                                    class="w-full text-[10px] font-black text-slate-700 bg-slate-50 border border-slate-200 rounded-lg pl-6 pr-1 py-1.5 focus:ring-1 focus:ring-[#FF6600]/20 outline-none"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Brands Filter -->
+                            <div v-if="brands && brands.length > 0">
+                                <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
+                                    Brands
+                                </h3>
+                                <ul class="space-y-2">
+                                    <li v-for="brand in brands" :key="brand.id" class="flex items-center gap-2">
+                                        <input 
+                                            type="checkbox" 
+                                            :id="'brand-' + brand.slug" 
+                                            :value="brand.slug" 
+                                            v-model="selectedBrands"
+                                            class="rounded text-[#FF6600] focus:ring-[#FF6600]/20 border-slate-200 w-4 h-4 cursor-pointer"
+                                        />
+                                        <label :for="'brand-' + brand.slug" class="text-xs font-bold text-slate-650 cursor-pointer select-none hover:text-[#FF6600]">
+                                            {{ brand.name }}
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Product Flags Filter -->
+                            <div>
+                                <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
+                                    Product Flags
+                                </h3>
+                                <ul class="space-y-2">
+                                    <li class="flex items-center gap-2">
+                                        <input 
+                                            type="checkbox" 
+                                            id="flag-best" 
+                                            value="best-selling" 
+                                            v-model="selectedFlags"
+                                            class="rounded text-[#FF6600] focus:ring-[#FF6600]/20 border-slate-200 w-4 h-4 cursor-pointer"
+                                        />
+                                        <label for="flag-best" class="text-xs font-bold text-slate-650 cursor-pointer select-none hover:text-[#FF6600]">
+                                            Best Selling
+                                        </label>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <input 
+                                            type="checkbox" 
+                                            id="flag-new" 
+                                            value="new-arrival" 
+                                            v-model="selectedFlags"
+                                            class="rounded text-[#FF6600] focus:ring-[#FF6600]/20 border-slate-200 w-4 h-4 cursor-pointer"
+                                        />
+                                        <label for="flag-new" class="text-xs font-bold text-slate-650 cursor-pointer select-none hover:text-[#FF6600]">
+                                            New Arrival
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+
                         </div>
                     </div>
 
-                    <!-- Products Grid -->
+                    <!-- Right Products Area -->
                     <div class="flex-grow">
-                        <div class="flex justify-between items-center mb-10 pb-6 border-b border-slate-50">
-                            <div class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic">
-                                Inventory Census: <span class="text-[#003366]">{{ products.total }}</span> Items Available
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Sort By:</span>
-                                <select class="text-[10px] font-black text-[#003366] uppercase tracking-widest border-none bg-transparent focus:ring-0 cursor-pointer">
-                                    <option>Latest Arrival</option>
-                                    <option>Price: Low to High</option>
-                                    <option>Price: High to Low</option>
+                        
+                        <!-- Top Sort Bar -->
+                        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm mb-6 flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sort By:</span>
+                                <select 
+                                    v-model="sortBy"
+                                    class="text-[10px] font-black text-[#003366] uppercase tracking-widest border border-slate-200 rounded-lg px-3 py-1.5 bg-slate-50 focus:ring-1 focus:ring-[#FF6600]/20 cursor-pointer outline-none"
+                                >
+                                    <option value="Latest Arrival">Latest Arrival</option>
+                                    <option value="Price: Low to High">Price: Low to High</option>
+                                    <option value="Price: High to Low">Price: High to Low</option>
                                 </select>
+                            </div>
+                            <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                Showing <span class="text-[#FF6600]">{{ filteredProducts.length }}</span> products
                             </div>
                         </div>
 
-                        <div v-if="products.data.length > 0" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-6">
-                            <ProductCard v-for="product in products.data" :key="product.id" :product="product" @view-image="openLightbox" />
+                        <!-- Products Grid (4 Columns on Desktop) -->
+                        <div v-if="filteredProducts.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product" @view-image="openLightbox" />
                         </div>
 
                         <!-- Empty State -->
-                        <div v-else class="py-32 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100 shadow-inner">
-                            <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                                <Package class="w-10 h-10 text-slate-200" />
+                        <div v-else class="py-24 text-center bg-white rounded-3xl border border-dashed border-slate-200 shadow-sm">
+                            <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <Package class="w-8 h-8 text-slate-300" />
                             </div>
-                            <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tighter italic">No Products Found</h2>
-                            <p class="mt-2 text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">Your search criteria returned zero entities</p>
-                            <Link href="/shop" class="mt-8 inline-block px-8 py-4 bg-[#003366] text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-black transition-all shadow-xl shadow-blue-900/10">Reset Filters</Link>
+                            <h2 class="text-lg font-black text-slate-800 uppercase tracking-tight">No Products Match Filters</h2>
+                            <p class="mt-1 text-slate-400 font-bold uppercase tracking-[0.2em] text-[8px]">Try resetting your sidebar checkboxes or slide price limit higher</p>
+                            <button @click="resetFilters" class="mt-6 px-6 py-3 bg-[#003366] text-white rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-black transition-all">Reset Filters</button>
                         </div>
 
                         <!-- Pagination -->
-                        <div v-if="products.last_page > 1" class="mt-20 flex justify-center space-x-3">
+                        <div v-if="products.last_page > 1" class="mt-16 flex justify-center space-x-2">
                             <Link v-for="link in products.links" :key="link.label" :href="link.url || '#'" v-html="link.label" 
-                                :class="[link.active ? 'bg-[#FF6600] text-white shadow-2xl shadow-orange-500/20 scale-110' : 'bg-white text-slate-400 hover:bg-slate-50 border border-slate-100', !link.url ? 'opacity-30 cursor-not-allowed' : '']"
-                                class="w-12 h-12 rounded-2xl flex items-center justify-center text-[10px] font-black transition-all uppercase tracking-widest active:scale-90">
+                                :class="[link.active ? 'bg-[#FF6600] text-white shadow-lg' : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100', !link.url ? 'opacity-30 cursor-not-allowed' : '']"
+                                class="w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black transition-all uppercase tracking-widest active:scale-95">
                             </Link>
                         </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -101,20 +234,132 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { ref, computed, watch } from 'vue';
+import { Link, router } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
 import ProductCard from '@/Components/ProductCard.vue';
 import ImageLightbox from '@/Components/ImageLightbox.vue';
-import { Package, ChevronRight } from 'lucide-vue-next';
+import { Package } from 'lucide-vue-next';
 
-defineProps({
+const props = defineProps({
     products: Object,
-    filters: Object
+    filters: Object,
+    categories: Array,
+    brands: Array
 });
 
 const showLightbox = ref(false);
 const lightboxProduct = ref(null);
+
+// Filters State
+const selectedCategories = ref(props.filters.category ? props.filters.category.split(',') : []);
+const minPrice = ref(props.filters.min_price ? parseInt(props.filters.min_price) : 0);
+const maxPrice = ref(props.filters.max_price ? parseInt(props.filters.max_price) : 15000);
+const selectedBrands = ref(props.filters.brand ? props.filters.brand.split(',') : []);
+const selectedFlags = ref([]);
+const sortBy = ref(props.filters.sort || 'Latest Arrival');
+
+const handleMinPriceInput = () => {
+    if (minPrice.value > maxPrice.value - 100) {
+        minPrice.value = maxPrice.value - 100;
+    }
+    if (minPrice.value < 0 || isNaN(minPrice.value)) minPrice.value = 0;
+};
+
+const handleMaxPriceInput = () => {
+    if (maxPrice.value < minPrice.value + 100) {
+        maxPrice.value = minPrice.value + 100;
+    }
+    if (maxPrice.value > 15000 || isNaN(maxPrice.value)) maxPrice.value = 15000;
+};
+
+const activeCategoryName = computed(() => {
+    if (selectedCategories.value.length > 0) {
+        return selectedCategories.value.map(slug => {
+            const found = props.categories?.find(c => c.slug === slug);
+            return found ? found.name : slug;
+        }).join(', ');
+    }
+    return 'All Products';
+});
+
+const filteredProducts = computed(() => {
+    let result = [...props.products.data];
+
+    // 1. Category Filter
+    if (selectedCategories.value.length > 0) {
+        result = result.filter(p => selectedCategories.value.includes(p.category?.slug));
+    }
+
+    // 2. Price Filter
+    result = result.filter(p => {
+        const price = parseFloat(p.discounted_price || p.price);
+        return price >= minPrice.value && price <= maxPrice.value;
+    });
+
+    // 3. Brand Filter
+    if (selectedBrands.value.length > 0) {
+        result = result.filter(p => selectedBrands.value.includes(p.brand?.slug));
+    }
+
+    // 4. Flags Filter
+    if (selectedFlags.value.length > 0) {
+        result = result.filter(p => {
+            let match = false;
+            if (selectedFlags.value.includes('best-selling') && p.discount_type) {
+                match = true;
+            }
+            if (selectedFlags.value.includes('new-arrival') && !p.discount_type) {
+                match = true;
+            }
+            return match;
+        });
+    }
+
+    // 5. Sort By
+    if (sortBy.value === 'Price: Low to High') {
+        result.sort((a, b) => parseFloat(a.discounted_price) - parseFloat(b.discounted_price));
+    } else if (sortBy.value === 'Price: High to Low') {
+        result.sort((a, b) => parseFloat(b.discounted_price) - parseFloat(a.discounted_price));
+    } else {
+        result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+
+    return result;
+});
+
+// Watcher with 300ms Debounce to fetch matching products from backend
+let timeoutId = null;
+
+const triggerSearch = () => {
+    if (timeoutId) clearTimeout(timeoutId);
+    
+    timeoutId = setTimeout(() => {
+        router.get('/shop', {
+            category: selectedCategories.value.join(','),
+            min_price: minPrice.value,
+            max_price: maxPrice.value,
+            sort: sortBy.value,
+            brand: selectedBrands.value.join(','),
+            search: props.filters.search || ''
+        }, {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['products']
+        });
+    }, 300);
+};
+
+watch([selectedCategories, minPrice, maxPrice, sortBy, selectedBrands], triggerSearch);
+
+const resetFilters = () => {
+    selectedCategories.value = [];
+    minPrice.value = 0;
+    maxPrice.value = 15000;
+    selectedBrands.value = [];
+    selectedFlags.value = [];
+    sortBy.value = 'Latest Arrival';
+};
 
 const openLightbox = (product) => {
     lightboxProduct.value = product;

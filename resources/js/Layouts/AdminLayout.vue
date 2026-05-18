@@ -55,6 +55,12 @@
                         </Link>
                     </li>
                     <li>
+                        <Link href="/admin/brands" :class="[$page.url.startsWith('/admin/brands') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                            <Award class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/brands') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                            <span class="font-bold text-sm">{{ $t('Brands') }}</span>
+                        </Link>
+                    </li>
+                    <li>
                         <Link href="/admin/subcategories" :class="[$page.url.startsWith('/admin/subcategories') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
                             <ListTree class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/subcategories') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
                             <span class="font-bold text-sm">{{ $t('Subcategories') }}</span>
@@ -152,7 +158,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image, FileText } from 'lucide-vue-next';
+import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image, FileText, Award } from 'lucide-vue-next';
 
 const isSidebarOpen = ref(false);
 </script>

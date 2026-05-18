@@ -258,7 +258,7 @@
                                     <Truck class="w-5 h-5 text-white" />
                                 </div>
                                 <div class="flex-1">
-                                    <p class="text-[11px] font-black uppercase tracking-widest">Free Express Delivery</p>
+                                    <p class="text-[11px] font-black uppercase tracking-widest">Steadfast Delivery</p>
                                     <p class="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-0.5">Estimated 2-3 business days</p>
                                 </div>
                             </div>
