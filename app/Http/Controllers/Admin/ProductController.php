@@ -16,20 +16,52 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $categoryId = $request->query('category_id');
+        $tab = $request->query('tab', 'all');
+        $search = $request->query('search');
         
         $query = Product::with(['category', 'subCategory', 'gallery'])->latest();
         
+        // Tab Filtering
+        if ($tab === 'low_stock') {
+            $query->where('stock', '<', 10);
+        } elseif ($tab === 'discounted') {
+            $query->whereNotNull('discount_type')
+                  ->where('discount_value', '>', 0);
+        }
+        
+        // Category Filtering
         if ($categoryId && $categoryId !== 'all') {
             $query->where('category_id', $categoryId);
+        }
+        
+        // Search Filtering
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('sku', 'like', '%' . $search . '%');
+            });
         }
         
         $products = $query->paginate(10)->withQueryString();
         $categories = Category::all();
         
+        // Counts for tabs
+        $allCount = Product::count();
+        $lowStockCount = Product::where('stock', '<', 10)->count();
+        $discountedCount = Product::whereNotNull('discount_type')
+                                   ->where('discount_value', '>', 0)->count();
+        
         return Inertia::render('Admin/Product/Index', [
             'products' => $products,
             'categories' => $categories,
-            'currentCategoryId' => $categoryId ?? 'all'
+            'currentCategoryId' => $categoryId ?? 'all',
+            'currentTab' => $tab,
+            'searchFilter' => $search ?? '',
+            'counts' => [
+                'all' => $allCount,
+                'low_stock' => $lowStockCount,
+                'discounted' => $discountedCount,
+            ]
         ]);
     }
 

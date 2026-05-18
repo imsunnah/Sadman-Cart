@@ -28,6 +28,10 @@ class Product extends Model
         'is_active' => 'boolean',
     ];
 
+    protected $appends = [
+        'discounted_price',
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
