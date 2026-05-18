@@ -14,9 +14,43 @@ Route::get('/setup-production', function () {
         $link = public_path('storage');
         
         if (file_exists($link)) {
-            @unlink($link);
+            if (is_link($link)) {
+                @unlink($link);
+            } else {
+                // If public/storage is a real directory, copy its files to storage/app/public so no files are lost
+                $copyDir = function ($src, $dst) use (&$copyDir) {
+                    if (!file_exists($src)) return;
+                    @mkdir($dst, 0755, true);
+                    foreach (scandir($src) as $item) {
+                        if ($item == '.' || $item == '..') continue;
+                        $srcPath = $src . '/' . $item;
+                        $dstPath = $dst . '/' . $item;
+                        if (is_dir($srcPath)) {
+                            $copyDir($srcPath, $dstPath);
+                        } else {
+                            if (!file_exists($dstPath)) {
+                                @copy($srcPath, $dstPath);
+                            }
+                        }
+                    }
+                };
+                $copyDir($link, $target);
+
+                // Recursively delete the physical public/storage folder
+                $deleteDir = function ($dir) use (&$deleteDir) {
+                    if (!file_exists($dir)) return true;
+                    if (!is_dir($dir)) return @unlink($dir);
+                    foreach (scandir($dir) as $item) {
+                        if ($item == '.' || $item == '..') continue;
+                        if (!$deleteDir($dir . DIRECTORY_SEPARATOR . $item)) return false;
+                    }
+                    return @rmdir($dir);
+                };
+                $deleteDir($link);
+            }
         }
-        symlink($target, $link);
+        
+        @symlink($target, $link);
         
         \Illuminate\Support\Facades\Artisan::call('optimize:clear');
         return 'Production setup completed: Storage linked and cache cleared successfully!';
