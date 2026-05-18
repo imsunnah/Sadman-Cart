@@ -18,12 +18,12 @@
         </div>
 
         <!-- Image — click → detail page -->
-        <Link :href="`/products/${product.slug}`" class="block relative w-full bg-slate-50/50 overflow-hidden p-6 border-b border-slate-100/50" style="aspect-ratio:1/1;">
+        <Link :href="`/products/${product.slug}`" class="block relative w-full bg-slate-50/50 overflow-hidden p-0 border-b border-slate-100/50" style="aspect-ratio:1/1;">
             <img
                 v-if="product.image"
                 :src="product.image"
                 :alt="product.name"
-                class="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-105"
+                class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 loading="lazy"
             />
             <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-200">
@@ -66,14 +66,14 @@
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleAddToCart"
-                    class="py-2.5 px-1 border border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed font-sans cursor-pointer active:scale-95"
+                    class="py-2.5 px-1 bg-[#003366] text-white hover:bg-[#FF6600] transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed font-sans cursor-pointer active:scale-95 shadow-sm"
                 >
-                    <ShoppingCart class="w-3 h-3" /> Cart
+                    <ShoppingCart class="w-3 h-3" /> Add to Cart
                 </button>
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleBuyNow"
-                    class="py-2.5 px-1 bg-[#FF6600] text-white hover:bg-[#e55c00] transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm font-sans cursor-pointer active:scale-95"
+                    class="py-2.5 px-1 bg-[#FF6600] text-white hover:bg-[#003366] transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm font-sans cursor-pointer active:scale-95"
                 >
                     <Zap class="w-3 h-3" /> Buy Now
                 </button>

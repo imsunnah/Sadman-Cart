@@ -121,8 +121,8 @@
                                         <input v-model="form.village" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="Detailed address details">
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Full Address (Summary)</label>
-                                        <textarea v-model="form.shipping_address" rows="2" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="Enter your full searchable address"></textarea>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Customer Note / Special Remarks (Optional)</label>
+                                        <textarea v-model="form.customer_remarks" rows="2" class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="e.g. Delivery timing instructions, call preferences, etc."></textarea>
                                     </div>
                                 </div>
 
@@ -319,7 +319,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
 import { useCart } from '@/Composables/useCart';
@@ -347,6 +347,14 @@ const form = useForm({
     selected_items: props.selectedItemIds ? props.selectedItemIds.join(',') : '',
     customer_remarks: ''
 });
+
+// Automatically sync the shipping_address value from village, upazila, and district
+watch(
+    () => [form.village, form.upazila, form.district],
+    ([village, upazila, district]) => {
+        form.shipping_address = [village, upazila, district].filter(Boolean).join(', ');
+    }
+);
 
 const currentDeliveryCharge = computed(() => {
     return form.delivery_location === 'Inside Dhaka' 
