@@ -132,51 +132,85 @@
             </section>
         </template>
 
-        <!-- ─── CUSTOMER REVIEWS ──────────────────────────────── -->
-        <section class="py-24 bg-white border-t border-slate-100">
+        <!-- ─── CUSTOMER REVIEWS CAROUSEL ──────────────────────── -->
+        <section class="py-20 bg-white border-t border-slate-100">
             <div class="max-w-[1550px] mx-auto px-4">
-                <div class="text-center mb-16">
+                <!-- Header -->
+                <div class="text-center mb-14">
                     <p class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.4em] mb-2">Real Experiences</p>
                     <h2 class="text-3xl font-black text-[#003366] uppercase tracking-tighter italic">Customer Reviews</h2>
                     <div class="w-12 h-1 bg-[#FF6600] mx-auto mt-4 rounded-full"></div>
                 </div>
-                
-                <div v-if="reviews && reviews.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div v-for="review in reviews.slice(0, 3)" :key="review.id" class="bg-slate-50 border border-slate-100 rounded-[2rem] p-8 relative group hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500">
-                        <Quote class="absolute top-6 right-8 w-10 h-10 text-slate-200 opacity-50 group-hover:text-[#FF6600] group-hover:opacity-20 transition-all" />
-                        
-                        <div class="flex gap-1 mb-6">
-                            <Star v-for="i in 5" :key="i" class="w-4 h-4" :class="i <= review.rating ? 'text-[#FF6600] fill-[#FF6600]' : 'text-slate-200'" />
-                        </div>
-                        
-                        <p class="text-[13px] text-slate-600 font-bold italic leading-relaxed mb-8">"{{ review.comment }}"</p>
-                        
-                        <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
-                            <div class="w-11 h-11 rounded-2xl bg-[#003366] flex items-center justify-center text-white font-black text-sm italic shadow-lg shadow-[#003366]/20">
-                                {{ review.customer_name ? review.customer_name.charAt(0).toUpperCase() : 'A' }}
-                            </div>
-                            <div>
-                                <p class="text-[11px] font-black text-[#003366] uppercase tracking-widest">{{ review.customer_name || 'Anonymous' }}</p>
-                                <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">Verified Purchase</p>
+
+                <!-- Carousel -->
+                <div v-if="reviews && reviews.length" class="relative">
+                    <!-- Slide wrapper with overflow hidden -->
+                    <div class="overflow-hidden">
+                        <div
+                            class="flex transition-transform duration-700 ease-in-out"
+                            :style="{ transform: `translateX(-${reviewSlide * 100}%)` }"
+                        >
+                            <!-- Each slide: groups of 3 (or fewer on mobile) -->
+                            <div
+                                v-for="(chunk, ci) in reviewChunks"
+                                :key="ci"
+                                class="min-w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                            >
+                                <div
+                                    v-for="review in chunk"
+                                    :key="review.id"
+                                    class="bg-slate-50 border border-slate-100 rounded-[2rem] p-8 relative group hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500"
+                                >
+                                    <Quote class="absolute top-6 right-8 w-10 h-10 text-slate-200 opacity-50 group-hover:text-[#FF6600] group-hover:opacity-20 transition-all" />
+
+                                    <!-- Stars -->
+                                    <div class="flex gap-1 mb-5">
+                                        <Star v-for="i in 5" :key="i" class="w-4 h-4"
+                                            :class="i <= review.rating ? 'text-[#FF6600] fill-[#FF6600]' : 'text-slate-200'" />
+                                    </div>
+
+                                    <!-- Comment -->
+                                    <p class="text-[13px] text-slate-600 font-bold italic leading-relaxed mb-8">&ldquo;{{ review.comment }}&rdquo;</p>
+
+                                    <!-- Author -->
+                                    <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
+                                        <div class="w-10 h-10 rounded-2xl bg-[#003366] flex items-center justify-center text-white font-black text-sm shadow-lg shadow-[#003366]/20">
+                                            {{ review.customer_name ? review.customer_name.charAt(0).toUpperCase() : 'A' }}
+                                        </div>
+                                        <div>
+                                            <p class="text-[11px] font-black text-[#003366] uppercase tracking-widest">{{ review.customer_name || 'Anonymous' }}</p>
+                                            <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">Verified Purchase</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Dot navigation -->
+                    <div class="flex justify-center gap-2.5 mt-10">
+                        <button
+                            v-for="(_, di) in reviewChunks"
+                            :key="di"
+                            @click="goToReviewSlide(di)"
+                            :class="reviewSlide === di
+                                ? 'w-6 h-2.5 bg-[#FF6600]'
+                                : 'w-2.5 h-2.5 bg-slate-200 hover:bg-slate-300'"
+                            class="rounded-full transition-all duration-300"
+                        />
+                    </div>
+
+                    <!-- See All link -->
+                    <div class="mt-10 text-center">
+                        <Link href="/reviews" class="inline-flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] hover:text-[#FF6600] transition-colors">
+                            See All Reviews <ArrowRight class="w-3.5 h-3.5" />
+                        </Link>
+                    </div>
                 </div>
 
+                <!-- Empty state -->
                 <div v-else class="text-center py-12 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">No customer reviews yet. Purchase a product and be the first to leave a review!</p>
-                </div>
-
-                <!-- Show More Link -->
-                <div v-if="reviews && reviews.length > 3" class="mt-16 text-center">
-                    <Link href="/reviews" class="inline-flex flex-col items-center group">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2 group-hover:text-[#FF6600] transition-colors">See all experiences</span>
-                        <div class="flex gap-1">
-                            <div class="w-1.5 h-1.5 rounded-full bg-slate-200 group-hover:bg-[#FF6600] transition-all duration-300"></div>
-                            <div class="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-[#FF6600] transition-all duration-500"></div>
-                            <div class="w-1.5 h-1.5 rounded-full bg-slate-400 group-hover:bg-[#FF6600] transition-all duration-700"></div>
-                        </div>
-                    </Link>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">No customer reviews yet. Be the first to leave one!</p>
                 </div>
             </div>
         </section>
@@ -186,10 +220,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, defineComponent, h } from 'vue';
+import { ref, computed, onMounted, onUnmounted, defineComponent, h } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
-import { ChevronLeft, ChevronRight, Truck, ShieldCheck, RotateCcw, ShoppingCart, ArrowRight, Quote, Star, ShoppingBag, Leaf } from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight, Truck, ShieldCheck, RotateCcw, ShoppingCart, ArrowRight, Quote, Star, ShoppingBag } from 'lucide-vue-next';
 import ProductCard from '@/Components/ProductCard.vue';
 import ComboCard from '@/Components/ComboCard.vue';
 import ImageLightbox from '@/Components/ImageLightbox.vue';
@@ -232,21 +266,55 @@ const nextSlide = () => { if (sliderImages.value.length > 0) currentSlide.value 
 const prevSlide = () => { if (sliderImages.value.length > 0) currentSlide.value = (currentSlide.value - 1 + sliderImages.value.length) % sliderImages.value.length; };
 
 const badges = [
-    { title: 'Fresh & Organic', desc: 'Direct from the farm', icon: Leaf, color: 'bg-green-500' },
     { title: 'Fast Delivery', desc: 'Across the country', icon: Truck, color: 'bg-[#FF6600]' },
     { title: 'Secured Payment', desc: '100% safe checkout', icon: ShieldCheck, color: 'bg-[#003366]' },
     { title: 'Easy Returns', desc: '7 days return policy', icon: RotateCcw, color: 'bg-blue-500' },
+    { title: 'Quality Products', desc: 'Premium selections', icon: ShoppingCart, color: 'bg-green-500' },
 ];
+
+// ── Review carousel ──────────────────────────────────────────────────────────
+const REVIEWS_PER_PAGE = 3;
+const reviewSlide = ref(0);
+
+const reviewChunks = computed(() => {
+    if (!props.reviews || !props.reviews.length) return [];
+    const chunks = [];
+    for (let i = 0; i < props.reviews.length; i += REVIEWS_PER_PAGE) {
+        chunks.push(props.reviews.slice(i, i + REVIEWS_PER_PAGE));
+    }
+    return chunks;
+});
+
+const goToReviewSlide = (index) => {
+    reviewSlide.value = index;
+    resetReviewTimer();
+};
+
+let reviewTimer;
+const startReviewTimer = () => {
+    reviewTimer = setInterval(() => {
+        if (reviewChunks.value.length > 1) {
+            reviewSlide.value = (reviewSlide.value + 1) % reviewChunks.value.length;
+        }
+    }, 5000);
+};
+const resetReviewTimer = () => {
+    clearInterval(reviewTimer);
+    startReviewTimer();
+};
+// ─────────────────────────────────────────────────────────────────────────────
 
 let autoSlide;
 onMounted(() => {
     if (sliderImages.value.length > 1) {
         autoSlide = setInterval(nextSlide, 6000);
     }
+    startReviewTimer();
 });
 
 onUnmounted(() => {
     if (autoSlide) clearInterval(autoSlide);
+    clearInterval(reviewTimer);
 });
 </script>
 
