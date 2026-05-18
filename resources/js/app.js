@@ -6,7 +6,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
-const appName = 'sadmancart.com';
+const appName = 'Sadman Cart';
 
 createInertiaApp({
     title: (title) => title ? `${title} - ${appName}` : appName,
