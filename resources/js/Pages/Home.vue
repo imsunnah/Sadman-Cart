@@ -133,7 +133,7 @@
         </template>
 
         <!-- ─── CUSTOMER REVIEWS ──────────────────────────────── -->
-        <section v-if="reviews && reviews.length" class="py-24 bg-white border-t border-slate-100">
+        <section class="py-24 bg-white border-t border-slate-100">
             <div class="max-w-[1550px] mx-auto px-4">
                 <div class="text-center mb-16">
                     <p class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.4em] mb-2">Real Experiences</p>
@@ -141,7 +141,7 @@
                     <div class="w-12 h-1 bg-[#FF6600] mx-auto mt-4 rounded-full"></div>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div v-if="reviews && reviews.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <div v-for="review in reviews.slice(0, 3)" :key="review.id" class="bg-slate-50 border border-slate-100 rounded-[2rem] p-8 relative group hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500">
                         <Quote class="absolute top-6 right-8 w-10 h-10 text-slate-200 opacity-50 group-hover:text-[#FF6600] group-hover:opacity-20 transition-all" />
                         
@@ -153,18 +153,22 @@
                         
                         <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
                             <div class="w-11 h-11 rounded-2xl bg-[#003366] flex items-center justify-center text-white font-black text-sm italic shadow-lg shadow-[#003366]/20">
-                                {{ review.customer_name.charAt(0).toUpperCase() }}
+                                {{ review.customer_name ? review.customer_name.charAt(0).toUpperCase() : 'A' }}
                             </div>
                             <div>
-                                <p class="text-[11px] font-black text-[#003366] uppercase tracking-widest">{{ review.customer_name }}</p>
+                                <p class="text-[11px] font-black text-[#003366] uppercase tracking-widest">{{ review.customer_name || 'Anonymous' }}</p>
                                 <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">Verified Purchase</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div v-else class="text-center py-12 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">No customer reviews yet. Purchase a product and be the first to leave a review!</p>
+                </div>
+
                 <!-- Show More Link -->
-                <div v-if="reviews.length > 3" class="mt-16 text-center">
+                <div v-if="reviews && reviews.length > 3" class="mt-16 text-center">
                     <Link href="/reviews" class="inline-flex flex-col items-center group">
                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2 group-hover:text-[#FF6600] transition-colors">See all experiences</span>
                         <div class="flex gap-1">
