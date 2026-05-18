@@ -58,6 +58,25 @@
             <ImageIcon class="w-20 h-20 mb-6 text-slate-300" />
             <p class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">No media assets found</p>
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div v-if="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all">
+            <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-100 transform transition-all duration-300 scale-100">
+                <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-red-500 mb-6 mx-auto">
+                    <Trash2 class="w-8 h-8" />
+                </div>
+                <h3 class="text-lg font-black text-[#003366] text-center mb-2 uppercase tracking-wide">Delete Asset?</h3>
+                <p class="text-xs text-slate-500 text-center mb-8 font-medium leading-relaxed">Are you sure you want to permanently delete this media asset? This might break existing product displays.</p>
+                <div class="flex gap-4">
+                    <button @click="showDeleteConfirm = false" class="flex-1 py-3 px-4 bg-slate-50 hover:bg-slate-100 text-[#003366] font-bold text-xs uppercase tracking-widest rounded-xl transition-all border border-slate-200">
+                        Cancel
+                    </button>
+                    <button @click="confirmDelete" class="flex-1 py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-red-500/20 transition-all">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
     </AdminLayout>
 </template>
 
@@ -73,6 +92,8 @@ const props = defineProps({
 
 const searchQuery = ref('');
 const success = ref('');
+const showDeleteConfirm = ref(false);
+const pathToDelete = ref('');
 
 const filteredMedia = computed(() => {
     if (!searchQuery.value) return props.media;
@@ -100,18 +121,23 @@ const handleUpload = (e) => {
 const copyUrl = (url) => {
     const fullUrl = window.location.origin + url;
     navigator.clipboard.writeText(fullUrl);
-    alert('URL copied to clipboard!');
+    success.value = 'URL copied to clipboard!';
+    setTimeout(() => success.value = '', 3000);
 };
 
 const deleteMedia = (path) => {
-    if (confirm('Are you sure you want to delete this file? This might break existing product displays.')) {
-        router.delete('/admin/gallery', {
-            data: { path },
-            onSuccess: () => {
-                success.value = 'File deleted';
-                setTimeout(() => success.value = '', 3000);
-            }
-        });
-    }
+    pathToDelete.value = path;
+    showDeleteConfirm.value = true;
+};
+
+const confirmDelete = () => {
+    showDeleteConfirm.value = false;
+    router.delete('/admin/gallery', {
+        data: { path: pathToDelete.value },
+        onSuccess: () => {
+            success.value = 'File deleted successfully';
+            setTimeout(() => success.value = '', 3000);
+        }
+    });
 };
 </script>
