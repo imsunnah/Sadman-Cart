@@ -10,50 +10,40 @@ Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('l
 // Setup route for Hostinger/Shared Hosting (Run this once on live server to fix images)
 Route::get('/setup-production', function () {
     try {
-        $target = storage_path('app/public');
-        $link = public_path('storage');
+        $storagePublic = storage_path('app/public');
+        $publicStorage = public_path('storage');
         
-        if (file_exists($link)) {
-            if (is_link($link)) {
-                @unlink($link);
-            } else {
-                // If public/storage is a real directory, copy its files to storage/app/public so no files are lost
-                $copyDir = function ($src, $dst) use (&$copyDir) {
-                    if (!file_exists($src)) return;
-                    @mkdir($dst, 0755, true);
-                    foreach (scandir($src) as $item) {
-                        if ($item == '.' || $item == '..') continue;
-                        $srcPath = $src . '/' . $item;
-                        $dstPath = $dst . '/' . $item;
-                        if (is_dir($srcPath)) {
-                            $copyDir($srcPath, $dstPath);
-                        } else {
-                            if (!file_exists($dstPath)) {
-                                @copy($srcPath, $dstPath);
-                            }
-                        }
-                    }
-                };
-                $copyDir($link, $target);
-
-                // Recursively delete the physical public/storage folder
-                $deleteDir = function ($dir) use (&$deleteDir) {
-                    if (!file_exists($dir)) return true;
-                    if (!is_dir($dir)) return @unlink($dir);
-                    foreach (scandir($dir) as $item) {
-                        if ($item == '.' || $item == '..') continue;
-                        if (!$deleteDir($dir . DIRECTORY_SEPARATOR . $item)) return false;
-                    }
-                    return @rmdir($dir);
-                };
-                $deleteDir($link);
-            }
+        // If public/storage is a symlink, delete it
+        if (file_exists($publicStorage) && is_link($publicStorage)) {
+            @unlink($publicStorage);
         }
         
-        @symlink($target, $link);
+        // Ensure public/storage is a real directory
+        if (!file_exists($publicStorage)) {
+            @mkdir($publicStorage, 0755, true);
+        }
+        
+        // Copy any existing files from storage/app/public into the physical public/storage
+        $copyDir = function ($src, $dst) use (&$copyDir) {
+            if (!file_exists($src)) return;
+            @mkdir($dst, 0755, true);
+            foreach (scandir($src) as $item) {
+                if ($item == '.' || $item == '..') continue;
+                $srcPath = $src . '/' . $item;
+                $dstPath = $dst . '/' . $item;
+                if (is_dir($srcPath)) {
+                    $copyDir($srcPath, $dstPath);
+                } else {
+                    if (!file_exists($dstPath)) {
+                        @copy($srcPath, $dstPath);
+                    }
+                }
+            }
+        };
+        $copyDir($storagePublic, $publicStorage);
         
         \Illuminate\Support\Facades\Artisan::call('optimize:clear');
-        return 'Production setup completed: Storage linked and cache cleared successfully!';
+        return 'Production setup completed: All images successfully moved to physical public/storage! Cache cleared.';
     } catch (\Throwable $e) {
         return 'Error during setup: ' . $e->getMessage();
     }
