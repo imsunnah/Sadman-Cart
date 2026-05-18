@@ -82,6 +82,10 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="flex items-center gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <input v-model="createForm.is_active" type="checkbox" id="create_active" class="w-4 h-4 text-[#003366] rounded border-slate-300 focus:ring-[#003366]/20">
+                            <label for="create_active" class="text-xs font-bold text-slate-700 select-none cursor-pointer">Activate immediately (Show on storefront)</label>
+                        </div>
                         <div class="pt-4 flex gap-4">
                             <button type="button" @click="showCreateModal = false" class="flex-1 py-4 rounded-2xl border border-slate-100 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50">Cancel</button>
                             <button type="submit" :disabled="createForm.processing" class="flex-1 py-4 rounded-2xl bg-[#003366] text-white font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all disabled:opacity-50">Save Review</button>
@@ -112,6 +116,10 @@
                                     <Star class="w-7 h-7 fill-current" />
                                 </button>
                             </div>
+                        </div>
+                        <div class="flex items-center gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <input v-model="editForm.is_active" type="checkbox" id="edit_active" class="w-4 h-4 text-[#FF6600] rounded border-slate-300 focus:ring-[#FF6600]/20">
+                            <label for="edit_active" class="text-xs font-bold text-slate-700 select-none cursor-pointer">Active / Visible on storefront</label>
                         </div>
                         <div class="pt-4 flex gap-4">
                             <button type="button" @click="showEditModal = false" class="flex-1 py-4 rounded-2xl border border-slate-100 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50">Cancel</button>
@@ -151,8 +159,8 @@ const showEditModal   = ref(false);
 const showDeleteModal = ref(false);
 const reviewToDelete  = ref(null);
 
-const createForm = useForm({ customer_name: '', comment: '', rating: 5 });
-const editForm   = useForm({ id: null, customer_name: '', comment: '', rating: 5 });
+const createForm = useForm({ customer_name: '', comment: '', rating: 5, is_active: true });
+const editForm   = useForm({ id: null, customer_name: '', comment: '', rating: 5, is_active: true });
 
 const submitCreate = () => {
     createForm.post('/admin/reviews', {
@@ -165,6 +173,7 @@ const openEdit = (review) => {
     editForm.customer_name = review.customer_name;
     editForm.comment = review.comment;
     editForm.rating = review.rating;
+    editForm.is_active = !!review.is_active;
     showEditModal.value = true;
 };
 

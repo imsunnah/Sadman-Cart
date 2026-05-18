@@ -21,13 +21,14 @@ class ReviewController extends Controller
             'customer_name' => 'required|string|max:255',
             'comment'       => 'required|string',
             'rating'        => 'required|integer|min:1|max:5',
+            'is_active'     => 'nullable|boolean',
         ]);
 
         Review::create([
             'customer_name' => $request->customer_name,
             'comment'       => $request->comment,
             'rating'        => $request->rating,
-            'is_active'     => true,
+            'is_active'     => $request->has('is_active') ? (bool)$request->is_active : true,
         ]);
 
         return redirect()->route('admin.reviews.index')->with('success', 'Review added successfully.');
@@ -39,9 +40,15 @@ class ReviewController extends Controller
             'customer_name' => 'required|string|max:255',
             'comment'       => 'required|string',
             'rating'        => 'required|integer|min:1|max:5',
+            'is_active'     => 'nullable|boolean',
         ]);
 
-        $review->update($request->only('customer_name', 'comment', 'rating'));
+        $review->update([
+            'customer_name' => $request->customer_name,
+            'comment'       => $request->comment,
+            'rating'        => $request->rating,
+            'is_active'     => $request->has('is_active') ? (bool)$request->is_active : $review->is_active,
+        ]);
         return redirect()->route('admin.reviews.index')->with('success', 'Review updated.');
     }
 

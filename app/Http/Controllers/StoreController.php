@@ -236,6 +236,7 @@ class StoreController extends Controller
         $totalAmount += $validated['delivery_charge'];
 
         $order = \App\Models\Order::create([
+            'id' => \App\Models\Order::generateUniqueDateTimeId(),
             'user_id' => Auth::id(), // null for guests — column is nullable
             'customer_name' => $validated['customer_name'],
             'customer_email' => $validated['customer_email'],
