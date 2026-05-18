@@ -40,7 +40,7 @@ class SubCategoryController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/subcategories', 'public');
+            $path = $request->file('image')->store('uploads/gallery', 'public');
             $validated['image'] = '/storage/' . $path;
         }
 
@@ -71,7 +71,7 @@ class SubCategoryController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/subcategories', 'public');
+            $path = $request->file('image')->store('uploads/gallery', 'public');
             $validated['image'] = '/storage/' . $path;
         }
 

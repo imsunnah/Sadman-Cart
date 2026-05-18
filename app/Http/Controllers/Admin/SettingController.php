@@ -22,7 +22,7 @@ class SettingController extends Controller
     {
         // Handle Site Logo
         if ($request->hasFile('site_logo')) {
-            $path = $request->file('site_logo')->store('uploads/settings', 'public');
+            $path = $request->file('site_logo')->store('uploads/gallery', 'public');
             Setting::where('key', 'site_logo')->update(['value' => '/storage/' . $path]);
         } elseif ($request->filled('site_logo') && is_string($request->site_logo)) {
             Setting::where('key', 'site_logo')->update(['value' => $request->site_logo]);
@@ -32,7 +32,7 @@ class SettingController extends Controller
         if ($request->hasFile('slider_upload')) {
             $currentSliders = json_decode(Setting::where('key', 'slider_images')->first()->value ?? '[]', true);
             foreach ($request->file('slider_upload') as $file) {
-                $path = $file->store('uploads/settings/sliders', 'public');
+                $path = $file->store('uploads/gallery', 'public');
                 $currentSliders[] = '/storage/' . $path;
             }
             Setting::where('key', 'slider_images')->update(['value' => json_encode($currentSliders)]);
@@ -40,7 +40,7 @@ class SettingController extends Controller
 
         // Handle Hero Static Image
         if ($request->hasFile('hero_static_image')) {
-            $path = $request->file('hero_static_image')->store('uploads/settings', 'public');
+            $path = $request->file('hero_static_image')->store('uploads/gallery', 'public');
             Setting::updateOrCreate(
                 ['key' => 'hero_static_image'],
                 ['value' => '/storage/' . $path, 'group' => 'general']

@@ -36,7 +36,7 @@ class CategoryController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/categories', 'public');
+            $path = $request->file('image')->store('uploads/gallery', 'public');
             $validated['image'] = '/storage/' . $path;
         }
 
@@ -64,7 +64,7 @@ class CategoryController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/categories', 'public');
+            $path = $request->file('image')->store('uploads/gallery', 'public');
             $validated['image'] = '/storage/' . $path;
         } else {
             // Remove image from validated data so it doesn't overwrite existing image with null

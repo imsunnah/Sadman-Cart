@@ -65,7 +65,7 @@ class ProductController extends Controller
         $validated['sku'] = 'PRD-' . strtoupper(substr(uniqid(), -5));
         
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/products', 'public');
+            $path = $request->file('image')->store('uploads/gallery', 'public');
             $validated['image'] = '/storage/' . $path;
         } elseif (is_string($request->image)) {
             $validated['image'] = $request->image;
@@ -76,7 +76,7 @@ class ProductController extends Controller
         if ($request->has('gallery_images')) {
             foreach ($request->gallery_images as $img) {
                 if ($img instanceof \Illuminate\Http\UploadedFile) {
-                    $path = $img->store('uploads/products/gallery', 'public');
+                    $path = $img->store('uploads/gallery', 'public');
                     $imagePath = '/storage/' . $path;
                 } else {
                     $imagePath = $img;
@@ -125,7 +125,7 @@ class ProductController extends Controller
 
         // Handle Featured Image update safely
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/products', 'public');
+            $path = $request->file('image')->store('uploads/gallery', 'public');
             $validated['image'] = '/storage/' . $path;
         } elseif ($request->filled('image') && is_string($request->image)) {
             // If it's a string, only update if it looks like a valid path or URL
@@ -147,7 +147,7 @@ class ProductController extends Controller
         if ($request->has('gallery_images')) {
             foreach ($request->gallery_images as $img) {
                 if ($img instanceof \Illuminate\Http\UploadedFile) {
-                    $path = $img->store('uploads/products/gallery', 'public');
+                    $path = $img->store('uploads/gallery', 'public');
                     $imagePath = '/storage/' . $path;
                 } elseif (is_string($img)) {
                     $imagePath = $img;

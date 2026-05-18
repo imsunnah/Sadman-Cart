@@ -37,7 +37,7 @@ class PageController extends Controller
         $validated['slug'] = Str::slug($validated['title']);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/pages', 'public');
+            $path = $request->file('image')->store('uploads/gallery', 'public');
             $validated['image'] = '/storage/' . $path;
         }
 
@@ -67,7 +67,7 @@ class PageController extends Controller
         $validated['slug'] = Str::slug($validated['title']);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/pages', 'public');
+            $path = $request->file('image')->store('uploads/gallery', 'public');
             $validated['image'] = '/storage/' . $path;
         } else {
             unset($validated['image']);
