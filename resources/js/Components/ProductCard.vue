@@ -1,29 +1,29 @@
 <template>
-    <div class="group relative bg-white rounded-2xl overflow-hidden border border-slate-150 flex flex-col transition-all duration-500 hover:shadow-xl hover:border-[#FF6600]/35">
+    <div class="group relative bg-white rounded-2xl overflow-hidden border border-slate-100 flex flex-col transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_-12px_rgba(0,0,0,0.06)] hover:border-[#003366]/20">
         
         <!-- Badges -->
         <div class="absolute top-3 inset-x-3 z-10 flex justify-between items-start pointer-events-none">
             <!-- Left Badge -->
-            <span v-if="product.stock > 0" class="bg-[#FF6600] text-white text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">
-                {{ product.discount_type ? 'Best Seller' : 'New Arrival' }}
+            <span v-if="product.stock > 0" class="bg-[#FF6600] text-white text-[8px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm">
+                {{ product.discount_type ? 'Sale' : 'New' }}
             </span>
-            <span v-else class="bg-red-500 text-white text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">
+            <span v-else class="bg-red-500 text-white text-[8px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm">
                 Sold Out
             </span>
             
             <!-- Right Badge -->
-            <span v-if="product.discount_type" class="bg-[#2E7D32] text-white text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">
-                Save {{ product.discount_type === 'percentage' ? product.discount_value + '%' : '৳' + product.discount_value }}
+            <span v-if="product.discount_type" class="bg-green-600 text-white text-[8px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm">
+                {{ product.discount_type === 'percentage' ? product.discount_value + '% OFF' : '৳' + product.discount_value + ' OFF' }}
             </span>
         </div>
 
         <!-- Image — click → detail page -->
-        <Link :href="`/products/${product.slug}`" class="block relative w-full bg-white overflow-hidden p-4 border-b border-slate-50" style="aspect-ratio:1/1;">
+        <Link :href="`/products/${product.slug}`" class="block relative w-full bg-slate-50/50 overflow-hidden p-6 border-b border-slate-100/50" style="aspect-ratio:1/1;">
             <img
                 v-if="product.image"
                 :src="product.image"
                 :alt="product.name"
-                class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                class="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-105"
                 loading="lazy"
             />
             <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-200">
@@ -33,20 +33,20 @@
         </Link>
 
         <!-- Card Body -->
-        <div class="flex flex-col flex-grow p-4">
+        <div class="flex flex-col flex-grow p-5">
             <!-- Category & Brand -->
             <div class="flex items-center justify-between mb-2">
                 <span v-if="product.category" class="text-[8px] font-black text-slate-400 uppercase tracking-widest">
                     {{ product.category.name }}
                 </span>
-                <span v-if="product.brand" class="text-[8px] font-black text-[#FF6600] uppercase tracking-widest bg-orange-50 px-1.5 py-0.5 rounded">
+                <span v-if="product.brand" class="text-[8px] font-black text-[#FF6600] uppercase tracking-widest bg-orange-50/60 px-2 py-0.5 rounded-md border border-orange-100/40">
                     {{ product.brand.name }}
                 </span>
             </div>
 
             <!-- Name — click → detail page -->
             <Link :href="`/products/${product.slug}`" class="flex-grow mb-3 block">
-                <h3 class="text-xs font-bold text-slate-700 leading-snug line-clamp-2 group-hover:text-[#FF6600] transition-colors duration-300">
+                <h3 class="text-xs font-black text-slate-800 leading-snug line-clamp-2 group-hover:text-[#FF6600] transition-colors duration-300 uppercase tracking-tight font-sans">
                     {{ product.name }}
                 </h3>
             </Link>
@@ -62,18 +62,18 @@
             </div>
 
             <!-- Add to Cart & Buy Now Buttons -->
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 gap-2 mt-auto">
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleAddToCart"
-                    class="py-2.5 px-1 border border-[#FF6600] text-[#FF6600] hover:bg-[#FF6600] hover:text-white transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed font-sans"
+                    class="py-2.5 px-1 border border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed font-sans cursor-pointer active:scale-95"
                 >
                     <ShoppingCart class="w-3 h-3" /> Cart
                 </button>
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleBuyNow"
-                    class="py-2.5 px-1 bg-[#FF6600] text-white hover:bg-[#e55c00] transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm font-sans"
+                    class="py-2.5 px-1 bg-[#FF6600] text-white hover:bg-[#e55c00] transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm font-sans cursor-pointer active:scale-95"
                 >
                     <Zap class="w-3 h-3" /> Buy Now
                 </button>

@@ -325,6 +325,31 @@ class StoreController extends Controller
         return Inertia::render('Policies/Terms');
     }
 
+    public function reviewsPage()
+    {
+        $reviews = Review::with('product')
+            ->where('is_active', true)
+            ->latest()
+            ->paginate(12);
+
+        $averageRating = Review::where('is_active', true)->avg('rating') ?? 5;
+        $totalCount = Review::where('is_active', true)->count();
+
+        // Calculate stars breakdown
+        $starsBreakdown = [];
+        for ($i = 5; $i >= 1; $i--) {
+            $count = Review::where('is_active', true)->where('rating', $i)->count();
+            $starsBreakdown[$i] = $totalCount > 0 ? ($count / $totalCount) * 100 : 0;
+        }
+
+        return Inertia::render('Reviews', [
+            'reviews' => $reviews,
+            'averageRating' => round($averageRating, 1),
+            'totalCount' => $totalCount,
+            'starsBreakdown' => $starsBreakdown
+        ]);
+    }
+
     /**
      * Retrieve the cart for the current user or guest session.
      */

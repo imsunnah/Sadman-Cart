@@ -92,6 +92,7 @@ Route::get('/storage/{path}', function ($path) {
 Route::get('/', [StoreController::class, 'home'])->name('home');
 Route::get('/shop', [StoreController::class, 'shop'])->name('shop');
 Route::get('/categories', [StoreController::class, 'categories'])->name('categories');
+Route::get('/reviews', [StoreController::class, 'reviewsPage'])->name('reviews');
 Route::get('/products/{product:slug}', [StoreController::class, 'product'])->name('product.show');
 Route::post('/products/{product:slug}/reviews', [StoreController::class, 'storeProductReview'])->name('product.reviews.store');
 Route::get('/combos/{combo:slug}', [StoreController::class, 'combo'])->name('combo.show');

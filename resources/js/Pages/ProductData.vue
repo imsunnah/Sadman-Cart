@@ -90,14 +90,14 @@
                                 <button 
                                     @click="handleAddToCart"
                                     :disabled="product.stock <= 0"
-                                    class="h-14 bg-[#FF6600] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#003366] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-orange-900/10"
+                                    class="h-14 bg-[#003366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0f172a] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-900/10 font-sans cursor-pointer"
                                 >
                                     <ShoppingCart class="w-4 h-4" /> Add To Cart
                                 </button>
                                 <button 
                                     @click="handleBuyNow"
                                     :disabled="product.stock <= 0"
-                                    class="h-14 bg-[#003366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-900/10"
+                                    class="h-14 bg-[#FF6600] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-orange-950/15 font-sans cursor-pointer"
                                 >
                                     <Zap class="w-4 h-4" /> Buy Now
                                 </button>

@@ -349,6 +349,9 @@
                         <li v-for="page in ($page.props.activePages || []).filter(p => p.group === 'support')" :key="page.id">
                             <Link :href="`/pages/${page.slug}`" class="hover:text-[#FF6600] transition-colors">{{ page.title }}</Link>
                         </li>
+                        <li>
+                            <Link href="/reviews" class="hover:text-[#FF6600] transition-colors">Customer Reviews</Link>
+                        </li>
                     </ul>
                 </div>
 
