@@ -348,7 +348,7 @@ const handleAddToCart = async () => {
 
 const handleBuyNow = async () => {
     await addToCart(props.product, quantity.value);
-    router.visit('/cart');
+    router.visit('/checkout');
 };
 
 const openLightboxMain = () => {

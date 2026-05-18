@@ -61,14 +61,23 @@
                 </span>
             </div>
 
-            <!-- Single Full-width Action Button -->
-            <button
-                :disabled="product.stock <= 0"
-                @click.prevent="handleAddToCart"
-                class="w-full py-2 border border-[#FF6600] text-[#FF6600] hover:bg-[#FF6600] hover:text-white transition-all duration-300 text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-                <ShoppingCart class="w-3.5 h-3.5" /> Add To Cart
-            </button>
+            <!-- Add to Cart & Buy Now Buttons -->
+            <div class="grid grid-cols-2 gap-2">
+                <button
+                    :disabled="product.stock <= 0"
+                    @click.prevent="handleAddToCart"
+                    class="py-2.5 px-1 border border-[#FF6600] text-[#FF6600] hover:bg-[#FF6600] hover:text-white transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed font-sans"
+                >
+                    <ShoppingCart class="w-3 h-3" /> Cart
+                </button>
+                <button
+                    :disabled="product.stock <= 0"
+                    @click.prevent="handleBuyNow"
+                    class="py-2.5 px-1 bg-[#FF6600] text-white hover:bg-[#e55c00] transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm font-sans"
+                >
+                    <Zap class="w-3 h-3" /> Buy Now
+                </button>
+            </div>
         </div>
     </div>
 </template>

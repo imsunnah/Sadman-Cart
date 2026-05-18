@@ -138,6 +138,6 @@ const handleAddToCart = async () => {
 
 const handleBuyNow = async () => {
     await addToCart(props.combo, quantity.value);
-    router.visit('/cart');
+    router.visit('/checkout');
 };
 </script>
