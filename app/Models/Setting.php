@@ -29,7 +29,7 @@ class Setting extends Model
         }
 
         $key = $this->attributes['key'] ?? null;
-        if (in_array($key, ['site_logo', 'hero_static_image'])) {
+        if (in_array($key, ['site_logo', 'hero_static_image', 'site_favicon'])) {
             return $this->resolveImageUrl($value);
         }
 
