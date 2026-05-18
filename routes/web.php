@@ -54,7 +54,7 @@ Route::get('/setup-production', function () {
         
         \Illuminate\Support\Facades\Artisan::call('optimize:clear');
         return 'Production setup completed: Storage linked and cache cleared successfully!';
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         return 'Error during setup: ' . $e->getMessage();
     }
 });
