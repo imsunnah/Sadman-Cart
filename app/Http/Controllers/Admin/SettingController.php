@@ -28,6 +28,20 @@ class SettingController extends Controller
             Setting::where('key', 'site_logo')->update(['value' => $request->site_logo]);
         }
 
+        // Handle Site Favicon
+        if ($request->hasFile('site_favicon')) {
+            $path = $request->file('site_favicon')->store('uploads/gallery', 'public');
+            Setting::updateOrCreate(
+                ['key' => 'site_favicon'],
+                ['value' => '/storage/' . $path, 'group' => 'general']
+            );
+        } elseif ($request->filled('site_favicon') && is_string($request->site_favicon)) {
+            Setting::updateOrCreate(
+                ['key' => 'site_favicon'],
+                ['value' => $request->site_favicon, 'group' => 'general']
+            );
+        }
+
         // Handle Slider Images (Appending new ones)
         if ($request->hasFile('slider_upload')) {
             $currentSliders = json_decode(Setting::where('key', 'slider_images')->first()->value ?? '[]', true);

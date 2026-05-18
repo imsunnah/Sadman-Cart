@@ -45,6 +45,21 @@
                             </button>
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Favicon (Browser Tab Icon)</label>
+                        <div class="flex flex-col gap-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border border-slate-200">
+                                    <img v-if="faviconPreview || form.existing_site_favicon" :src="faviconPreview || form.existing_site_favicon" class="h-10 w-10 object-contain" />
+                                    <ImageIcon v-else class="w-6 h-6 text-slate-300" />
+                                </div>
+                                <input type="file" @input="handleFaviconUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white" />
+                            </div>
+                            <button @click.prevent="openGallery('favicon')" class="w-full py-2 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-black uppercase tracking-widest text-[#003366] hover:bg-[#003366] hover:text-white transition-all flex items-center justify-center gap-2">
+                                <ImageIcon class="w-3 h-3" /> Select From Gallery
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -203,15 +218,18 @@ const getVal = (key) => {
 
 const sliderImages = ref(JSON.parse(getVal('slider_images') || '[]'));
 const logoPreview = ref(null);
+const faviconPreview = ref(null);
 const heroStaticPreview = ref(null);
 const sliderInput = ref(null);
 const showGallery = ref(false);
-const galleryTarget = ref(''); // 'logo', 'slider', 'hero'
+const galleryTarget = ref(''); // 'logo', 'favicon', 'slider', 'hero'
 
 const form = useForm({
     site_name: getVal('site_name'),
     site_logo: null,
     existing_site_logo: getVal('site_logo'),
+    site_favicon: null,
+    existing_site_favicon: getVal('site_favicon'),
     footer_about: getVal('footer_about'),
     footer_address: getVal('footer_address'),
     footer_phone: getVal('footer_phone'),
@@ -231,6 +249,14 @@ const handleLogoUpload = (e) => {
     if (file) {
         form.site_logo = file;
         logoPreview.value = URL.createObjectURL(file);
+    }
+};
+
+const handleFaviconUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        form.site_favicon = file;
+        faviconPreview.value = URL.createObjectURL(file);
     }
 };
 
@@ -270,6 +296,10 @@ const handleGallerySelection = (item) => {
         form.site_logo = url;
         form.existing_site_logo = url;
         logoPreview.value = null;
+    } else if (galleryTarget.value === 'favicon') {
+        form.site_favicon = url;
+        form.existing_site_favicon = url;
+        faviconPreview.value = null;
     } else if (galleryTarget.value === 'hero') {
         form.hero_static_image = url;
         form.existing_hero_static_image = url;
@@ -285,6 +315,7 @@ const saveSettings = () => {
     form.post('/admin/settings', {
         onSuccess: () => {
             logoPreview.value = null;
+            faviconPreview.value = null;
             form.slider_upload = [];
         }
     });
