@@ -59,6 +59,36 @@ Route::get('/setup-production', function () {
     }
 });
 
+Route::get('/test-storage', function () {
+    $target = storage_path('app/public');
+    $link = public_path('storage');
+    
+    $exists = file_exists($link);
+    $isLink = is_link($link);
+    $type = @filetype($link);
+    
+    $galleryFiles = [];
+    $galleryPath = storage_path('app/public/uploads/gallery');
+    if (file_exists($galleryPath)) {
+        $galleryFiles = scandir($galleryPath);
+    }
+    
+    $publicStorageFiles = [];
+    if (file_exists($link) && is_dir($link)) {
+        $publicStorageFiles = scandir($link);
+    }
+
+    return response()->json([
+        'link_exists' => $exists,
+        'link_is_symlink' => $isLink,
+        'link_type' => $type,
+        'gallery_files' => $galleryFiles,
+        'public_storage_files' => $publicStorageFiles,
+        'storage_path_app_public' => storage_path('app/public'),
+        'public_path_storage' => public_path('storage'),
+    ]);
+});
+
 // Fallback Route for Hostinger Images (Fixes broken symlink issues)
 Route::get('/storage/{path}', function ($path) {
     $filePath = storage_path('app/public/' . $path);
