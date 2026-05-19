@@ -58,6 +58,13 @@ class HandleInertiaRequests extends Middleware
             'pendingOrdersCount' => $request->user() && $request->user()->role === 'admin' 
                 ? \App\Models\Order::where('status', 'pending')->count() 
                 : 0,
+            'unreadChatCount' => $request->user() && $request->user()->role === 'admin'
+                ? \App\Models\CustomerMessage::whereIn('id', function($query) {
+                    $query->selectRaw('max(id)')
+                        ->from('customer_messages')
+                        ->groupBy('user_id');
+                })->where('is_from_admin', false)->count()
+                : 0,
             'settings' => \App\Models\Setting::all()->pluck('value', 'key'),
         ];
     }

@@ -23,8 +23,14 @@ class OrderController extends Controller
             ->latest()
             ->paginate(10);
 
+        $reviews = \App\Models\Review::where('user_id', $user->id)
+            ->with('product')
+            ->latest()
+            ->get();
+
         return Inertia::render('Customer/Orders/Index', [
             'orders' => $orders,
+            'reviews' => $reviews,
         ]);
     }
 

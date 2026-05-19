@@ -42,6 +42,16 @@
                     </div>
 
                     <div>
+                        <label for="mobile" class="block text-sm font-semibold text-gray-700 mb-2">Mobile Number</label>
+                        <div class="relative">
+                            <Phone class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <input id="mobile" v-model="form.mobile" type="text" required 
+                                class="block w-full rounded-xl bg-gray-50 border-gray-200 pl-12 py-3 text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none" 
+                                placeholder="017xxxxxxxx">
+                        </div>
+                    </div>
+
+                    <div>
                         <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
                         <div class="relative">
                             <Lock class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -78,11 +88,12 @@
 
 <script setup>
 import { useForm, Link } from '@inertiajs/vue3';
-import { User, Mail, Lock } from 'lucide-vue-next';
+import { User, Mail, Lock, Phone } from 'lucide-vue-next';
 
 const form = useForm({
     name: '',
     email: '',
+    mobile: '',
     password: '',
     password_confirmation: '',
 });

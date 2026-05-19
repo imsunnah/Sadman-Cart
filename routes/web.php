@@ -112,6 +112,9 @@ Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::get('/register', [\App\Http\Controllers\AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+Route::get('/forgot-password', [\App\Http\Controllers\AuthController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [\App\Http\Controllers\AuthController::class, 'sendResetOtp'])->name('password.otp');
+Route::post('/reset-password', [\App\Http\Controllers\AuthController::class, 'resetPassword'])->name('password.reset.submit');
 
 // Checkout routes (no login required — works for both guests and logged-in users)
 Route::get('/checkout', [StoreController::class, 'checkout'])->name('checkout');
@@ -133,6 +136,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/customer/orders/{order}', [\App\Http\Controllers\Customer\OrderController::class, 'show'])->name('customer.orders.show');
     Route::get('/api/customer/orders/{order}/messages', [\App\Http\Controllers\Customer\MessageController::class, 'index'])->name('customer.orders.messages');
     Route::post('/customer/orders/{order}/messages', [\App\Http\Controllers\Customer\MessageController::class, 'store'])->name('customer.orders.messages.store');
+    
+    // Support Chat
+    Route::get('/customer/chat', function () {
+        return redirect()->route('customer.orders');
+    })->name('customer.chat');
+    Route::get('/api/customer/chat/messages', [\App\Http\Controllers\Customer\ChatController::class, 'getMessages'])->name('customer.chat.messages');
+    Route::post('/api/customer/chat/messages', [\App\Http\Controllers\Customer\ChatController::class, 'sendMessage'])->name('customer.chat.send');
+    
+    // Change Password
+    Route::post('/change-password', [\App\Http\Controllers\AuthController::class, 'changePassword'])->name('password.change');
 });
 
 
@@ -213,8 +226,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::put('/brands/{brand}/toggle-active', [\App\Http\Controllers\Admin\BrandController::class, 'toggleActive'])->name('brands.toggle-active');
     
     Route::get('/customers', function () {
-        $customers = \App\Models\User::where('role', 'user')->latest()->paginate(15);
-        return Inertia::render('Admin/Customer/Index', ['customers' => $customers]);
+        $customers = \App\Models\User::where('role', 'user')
+            ->withCount('orders')
+            ->latest()
+            ->paginate(10);
+            
+        $repeatedCustomers = \App\Models\User::where('role', 'user')
+            ->has('orders', '>=', 2)
+            ->withCount('orders')
+            ->orderBy('orders_count', 'desc')
+            ->get();
+
+        return Inertia::render('Admin/Customer/Index', [
+            'customers' => $customers,
+            'repeatedCustomers' => $repeatedCustomers
+        ]);
     })->name('customers.index');
     
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
@@ -244,4 +270,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Admin Chat/Message Routes
     Route::get('/api/orders/{order}/messages', [\App\Http\Controllers\Admin\MessageController::class, 'index'])->name('orders.messages');
     Route::post('/orders/{order}/messages', [\App\Http\Controllers\Admin\MessageController::class, 'store'])->name('orders.messages.store');
+    
+    // General Support Chat Box
+    Route::get('/chat', [\App\Http\Controllers\Admin\AdminChatController::class, 'index'])->name('chat.index');
+    Route::get('/api/chat/threads', [\App\Http\Controllers\Admin\AdminChatController::class, 'getThreads'])->name('chat.threads');
+    Route::get('/api/chat/threads/{user}/messages', [\App\Http\Controllers\Admin\AdminChatController::class, 'getMessages'])->name('chat.messages');
+    Route::post('/api/chat/threads/{user}/messages', [\App\Http\Controllers\Admin\AdminChatController::class, 'sendMessage'])->name('chat.send');
 });

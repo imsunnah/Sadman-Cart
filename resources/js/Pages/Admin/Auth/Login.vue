@@ -16,6 +16,11 @@
                 </ul>
             </div>
 
+            <!-- Success Alert -->
+            <div v-if="$page.props.flash?.success" class="bg-emerald-50 p-4 rounded-xl text-xs font-bold border border-emerald-100 text-emerald-800 mb-4">
+                {{ $page.props.flash.success }}
+            </div>
+
             <form class="mt-8 space-y-6" @submit.prevent="submit">
                 <div class="space-y-4">
                     <div>
@@ -26,7 +31,10 @@
                     </div>
 
                     <div>
-                        <label for="password" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Access Key</label>
+                        <label for="password" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1 font-bold flex justify-between items-center">
+                            <span>Access Key</span>
+                            <Link href="/forgot-password" class="text-indigo-600 hover:underline normal-case">Forgot password?</Link>
+                        </label>
                         <input id="password" v-model="form.password" type="password" required 
                             class="block w-full rounded-xl bg-slate-50 border-none px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-slate-900/10 outline-none transition-all" 
                             placeholder="••••••••">
@@ -40,6 +48,8 @@
 
                 <div class="text-center pt-6 border-t border-slate-50 flex items-center justify-center space-x-4">
                     <Link href="/login" class="text-[9px] font-black text-slate-300 hover:text-slate-600 uppercase tracking-widest transition-colors">Store Login</Link>
+                    <span class="w-1 h-1 bg-slate-100 rounded-full"></span>
+                    <Link href="/forgot-password" class="text-[9px] font-black text-slate-300 hover:text-slate-600 uppercase tracking-widest transition-colors">Forgot Key</Link>
                     <span class="w-1 h-1 bg-slate-100 rounded-full"></span>
                     <Link href="/" class="text-[9px] font-black text-slate-300 hover:text-slate-600 uppercase tracking-widest transition-colors">Home</Link>
                 </div>

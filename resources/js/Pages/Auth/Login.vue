@@ -19,6 +19,11 @@
                 </ul>
             </div>
 
+            <!-- Success Alert -->
+            <div v-if="$page.props.flash?.success" class="bg-emerald-50 p-4 rounded-xl text-sm border border-emerald-100 text-emerald-800 font-bold mb-4">
+                {{ $page.props.flash.success }}
+            </div>
+
             <form class="mt-8 space-y-5" @submit.prevent="submit">
                 <div class="space-y-4">
                     <div>
@@ -48,6 +53,7 @@
                             class="h-4 w-4 rounded text-blue-600 border-gray-300 focus:ring-blue-500">
                         <span class="text-sm text-gray-600">Remember me</span>
                     </label>
+                    <Link href="/forgot-password" class="text-sm text-blue-600 font-bold hover:underline">Forgot password?</Link>
                 </div>
 
                 <button type="submit" :disabled="form.processing"

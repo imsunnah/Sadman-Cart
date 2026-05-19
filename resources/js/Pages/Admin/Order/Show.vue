@@ -85,74 +85,7 @@
                     </div>
                 </div>
 
-                <!-- Customer Support Dispatch Chat -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden p-6 sm:p-8 flex flex-col h-[500px]">
-                    <div class="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
-                        <h2 class="font-black text-[#003366] uppercase tracking-wider text-sm flex items-center">
-                            <MessageSquare class="w-5 h-5 mr-2 text-[#FF6600]" /> Communication Dispatch with Customer
-                        </h2>
-                        <span class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full" :class="order.user_id ? 'bg-green-500 animate-pulse' : 'bg-slate-300'"></span>
-                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest">
-                                {{ order.user_id ? 'Registered User Portal' : 'Guest - Chat Offline' }}
-                            </span>
-                        </span>
-                    </div>
 
-                    <!-- Messages Area -->
-                    <div 
-                        ref="adminMessageContainer"
-                        class="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 custom-scrollbar"
-                    >
-                        <div v-if="adminMessagesList.length === 0" class="text-center py-12 text-slate-400 font-bold text-xs uppercase tracking-widest">
-                            <Send class="w-8 h-8 text-slate-200 mx-auto mb-3" />
-                            No dispatch protocols established. Send a transmission below.
-                        </div>
-                        <div 
-                            v-else 
-                            v-for="msg in adminMessagesList" 
-                            :key="msg.id"
-                            class="flex"
-                            :class="msg.is_from_admin ? 'justify-end' : 'justify-start'"
-                        >
-                            <div 
-                                class="max-w-[80%] rounded-2xl p-4 shadow-sm border"
-                                :class="msg.is_from_admin 
-                                    ? 'bg-[#003366] text-white border-[#003366] rounded-tr-none' 
-                                    : 'bg-slate-50 text-slate-800 border-slate-100 rounded-tl-none'"
-                            >
-                                <div class="flex items-center justify-between gap-4 mb-1">
-                                    <span class="text-[8px] font-black uppercase tracking-widest" :class="msg.is_from_admin ? 'text-orange-200' : 'text-[#FF6600]'">
-                                        {{ msg.is_from_admin ? 'You (Admin Support)' : order.customer_name }}
-                                    </span>
-                                    <span class="text-[7px] font-bold opacity-60">
-                                        {{ formatTime(msg.created_at) }}
-                                    </span>
-                                </div>
-                                <p class="text-xs font-bold whitespace-pre-wrap leading-relaxed">{{ msg.message }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Form -->
-                    <form @submit.prevent="sendAdminMessage" class="flex gap-3 items-end pt-4 border-t border-slate-100">
-                        <textarea 
-                            v-model="newAdminMessage"
-                            placeholder="Type a communication update..."
-                            rows="2"
-                            :disabled="!order.user_id"
-                            class="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs font-bold outline-none focus:bg-white focus:border-[#003366]/20 transition-all resize-none shadow-inner disabled:opacity-50 disabled:cursor-not-allowed"
-                            @keydown.enter.prevent="sendAdminMessage"
-                        ></textarea>
-                        <button 
-                            type="submit"
-                            :disabled="adminSending || !order.user_id"
-                            class="w-12 h-12 rounded-xl bg-[#003366] text-white flex items-center justify-center hover:bg-[#FF6600] active:scale-95 transition-all shadow-md shadow-blue-900/10 hover:shadow-orange-500/20 disabled:opacity-50 flex-shrink-0"
-                        >
-                            <Send class="w-4 h-4" />
-                        </button>
-                    </form>
-                </div>
 
                 <!-- Shipping Address -->
                 <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 space-y-6">
@@ -337,76 +270,7 @@ const showLocationModal = ref(false);
 const newStatus = ref('');
 const newLocation = ref('');
 
-// Admin Chat State
-const adminMessagesList = ref(props.order.messages || []);
-const newAdminMessage = ref('');
-const adminSending = ref(false);
-const adminMessageContainer = ref(null);
-let pollingInterval = null;
 
-const formatTime = (dateStr) => {
-    return new Date(dateStr).toLocaleTimeString(undefined, { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-    });
-};
-
-const scrollAdminToBottom = () => {
-    nextTick(() => {
-        if (adminMessageContainer.value) {
-            adminMessageContainer.value.scrollTop = adminMessageContainer.value.scrollHeight;
-        }
-    });
-};
-
-const fetchAdminMessages = async () => {
-    if (!props.order.user_id) return;
-    try {
-        const response = await axios.get(`/admin/api/orders/${props.order.id}/messages`);
-        const isNewMessage = response.data.length > adminMessagesList.value.length;
-        adminMessagesList.value = response.data;
-        if (isNewMessage) {
-            scrollAdminToBottom();
-        }
-    } catch (error) {
-        console.error("Error retrieving communication logs", error);
-    }
-};
-
-const sendAdminMessage = async () => {
-    if (!newAdminMessage.value.trim() || adminSending.value || !props.order.user_id) return;
-
-    adminSending.value = true;
-    const msgText = newAdminMessage.value;
-    newAdminMessage.value = '';
-
-    try {
-        await axios.post(`/admin/orders/${props.order.id}/messages`, {
-            message: msgText
-        });
-        
-        await fetchAdminMessages();
-        scrollAdminToBottom();
-    } catch (error) {
-        console.error("Error transmitting dispatch message", error);
-    } finally {
-        adminSending.value = false;
-    }
-};
-
-onMounted(() => {
-    scrollAdminToBottom();
-    if (props.order.user_id) {
-        pollingInterval = setInterval(fetchAdminMessages, 5000);
-    }
-});
-
-onBeforeUnmount(() => {
-    if (pollingInterval) {
-        clearInterval(pollingInterval);
-    }
-});
 
 const initiateStatusUpdate = (status, event) => {
     event.target.value = props.order.status; // Revert visually

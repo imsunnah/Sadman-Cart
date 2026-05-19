@@ -22,7 +22,11 @@
                             <a href="/language/bn" :class="$page.props.locale === 'bn' ? 'text-[#FF6600]' : 'text-slate-300 hover:text-white'" class="transition-colors">BN</a>
                         </div>
                         <div class="flex items-center gap-4 border-l border-slate-700 pl-4 md:pl-8">
-                            <Link v-if="!$page.props.auth.user" href="/login" class="hover:text-[#FF6600] transition-colors">Login</Link>
+                            <div v-if="!$page.props.auth.user" class="flex items-center gap-2">
+                                <Link href="/login" class="hover:text-[#FF6600] transition-colors">Login</Link>
+                                <span class="text-slate-500">/</span>
+                                <Link href="/register" class="hover:text-[#FF6600] transition-colors">Register</Link>
+                            </div>
                             <div v-else class="flex items-center gap-4">
                                 <span class="text-slate-400 hidden sm:inline">{{ $page.props.auth.user.name }}</span>
                                 <Link href="/customer/orders" class="hover:text-[#FF6600] transition-colors">My Orders</Link>
@@ -225,6 +229,20 @@
                     </div>
 
                     <div class="mt-auto pt-8 border-t border-slate-100 space-y-6">
+                        <div class="flex flex-col gap-3">
+                            <div v-if="!$page.props.auth.user" class="grid grid-cols-2 gap-3">
+                                <Link href="/login" @click="isMobileMenuOpen = false" class="w-full py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs uppercase tracking-widest text-center block">Login</Link>
+                                <Link href="/register" @click="isMobileMenuOpen = false" class="w-full py-3.5 bg-[#003366] text-white hover:bg-slate-800 rounded-xl font-bold text-xs uppercase tracking-widest text-center block">Register</Link>
+                            </div>
+                            <div v-else class="flex flex-col gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <span class="text-xs font-black text-[#003366] uppercase tracking-wider block mb-1">Hello, {{ $page.props.auth.user.name }}</span>
+                                <div class="flex gap-2">
+                                    <Link href="/customer/orders" @click="isMobileMenuOpen = false" class="flex-grow py-2.5 bg-[#003366] text-white rounded-lg text-[10px] font-black uppercase tracking-wider text-center">My Orders</Link>
+                                    <Link href="/logout" method="post" as="button" @click="isMobileMenuOpen = false" class="flex-grow py-2.5 bg-slate-200 text-slate-700 rounded-lg text-[10px] font-black uppercase tracking-wider text-center">Logout</Link>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="flex flex-col gap-4">
                             <a :href="`tel:${$page.props.settings.footer_phone}`" class="flex items-center gap-4 text-sm font-bold text-slate-600">
                                 <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-[#FF6600]"><Phone class="w-5 h-5" /></div>

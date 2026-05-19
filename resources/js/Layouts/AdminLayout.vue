@@ -73,6 +73,13 @@
                         </Link>
                     </li>
                     <li>
+                        <Link href="/admin/chat" :class="[$page.url.startsWith('/admin/chat') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                            <MessageSquare class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/chat') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                            <span class="font-bold text-sm">{{ $t('Support Inbox') }}</span>
+                            <span v-if="$page.props.unreadChatCount > 0" class="ml-auto bg-orange-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">{{ $page.props.unreadChatCount }}</span>
+                        </Link>
+                    </li>
+                    <li>
                         <Link href="/admin/gallery" :class="[$page.url.startsWith('/admin/gallery') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
                             <Image class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/gallery') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
                             <span class="font-bold text-sm">{{ $t('Media Gallery') }}</span>
@@ -129,6 +136,11 @@
                 </div>
                 
                 <div class="flex items-center space-x-5">
+                    <Link href="/admin/chat" class="flex items-center gap-2 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 rounded-lg text-indigo-700 transition-colors text-xs font-black uppercase tracking-wider relative" title="Support Inbox">
+                        <MessageSquare class="w-4 h-4 text-indigo-600" />
+                        <span>Support Chat</span>
+                        <span v-if="$page.props.unreadChatCount > 0" class="absolute -top-1.5 -right-1.5 w-4.5 h-4.5 bg-orange-500 text-white text-[8px] font-black rounded-full flex items-center justify-center border border-white">{{ $page.props.unreadChatCount }}</span>
+                    </Link>
                     <div class="flex items-center space-x-2">
                         <a href="/language/en" :class="$page.props.locale === 'en' ? 'bg-indigo-100 text-indigo-700' : 'text-slate-500 hover:bg-slate-100'" class="px-2 py-1 rounded text-xs font-bold transition-colors">EN</a>
                         <span class="text-slate-300">|</span>
@@ -158,7 +170,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image, FileText, Award } from 'lucide-vue-next';
+import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image, FileText, Award, MessageSquare } from 'lucide-vue-next';
 
 const isSidebarOpen = ref(false);
 </script>

@@ -63,12 +63,14 @@ class AuthController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'mobile' => 'required|string|max:20|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'mobile' => $validated['mobile'],
             'password' => Hash::make($validated['password']),
             'role' => 'user',
         ]);
@@ -85,5 +87,86 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    public function showForgotPassword()
+    {
+        if (Auth::check()) {
+            return redirect('/');
+        }
+        return Inertia::render('Auth/ForgotPassword');
+    }
+
+    public function sendResetOtp(Request $request)
+    {
+        $request->validate([
+            'identifier' => 'required|string',
+        ]);
+
+        $user = User::where('email', $request->identifier)
+            ->orWhere('mobile', $request->identifier)
+            ->first();
+
+        if (!$user) {
+            return back()->withErrors([
+                'identifier' => 'No account found with this email or mobile number.',
+            ]);
+        }
+
+        // Put a simulated OTP 123456 in the session
+        session([
+            'reset_otp' => '123456',
+            'reset_user_id' => $user->id,
+        ]);
+
+        return back()->with('success', 'Verification code generated. Use code 123456 to reset.');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'otp' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $savedOtp = session('reset_otp');
+        $userId = session('reset_user_id');
+
+        if (!$savedOtp || !$userId || $request->otp !== $savedOtp) {
+            return back()->withErrors([
+                'otp' => 'Invalid or expired verification code.',
+            ]);
+        }
+
+        $user = User::findOrFail($userId);
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        session()->forget(['reset_otp', 'reset_user_id']);
+
+        $loginRoute = $user->role === 'admin' ? '/admin/login' : '/login';
+
+        return redirect($loginRoute)->with('success', 'Password reset successfully. Please login.');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors([
+                'current_password' => 'The provided current password does not match.',
+            ]);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', 'Password changed successfully.');
     }
 }

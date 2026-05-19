@@ -142,6 +142,7 @@ class StoreController extends Controller
         ]);
 
         $product->reviews()->create([
+            'user_id' => Auth::id(),
             'customer_name' => $validated['customer_name'],
             'comment' => $validated['comment'],
             'rating' => $validated['rating'],
