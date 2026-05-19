@@ -11,13 +11,18 @@ class ReviewController extends Controller
 {
     public function index()
     {
-        $reviews = Review::latest()->paginate(15);
-        return Inertia::render('Admin/Reviews/Index', ['reviews' => $reviews]);
+        $reviews = Review::with('product')->latest()->paginate(15);
+        $products = \App\Models\Product::orderBy('name')->get();
+        return Inertia::render('Admin/Reviews/Index', [
+            'reviews' => $reviews,
+            'products' => $products
+        ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'product_id'    => 'nullable|exists:products,id',
             'customer_name' => 'required|string|max:255',
             'comment'       => 'required|string',
             'rating'        => 'required|integer|min:1|max:5',
@@ -25,6 +30,7 @@ class ReviewController extends Controller
         ]);
 
         Review::create([
+            'product_id'    => $request->product_id,
             'customer_name' => $request->customer_name,
             'comment'       => $request->comment,
             'rating'        => $request->rating,
@@ -37,6 +43,7 @@ class ReviewController extends Controller
     public function update(Request $request, Review $review)
     {
         $request->validate([
+            'product_id'    => 'nullable|exists:products,id',
             'customer_name' => 'required|string|max:255',
             'comment'       => 'required|string',
             'rating'        => 'required|integer|min:1|max:5',
@@ -44,6 +51,7 @@ class ReviewController extends Controller
         ]);
 
         $review->update([
+            'product_id'    => $request->product_id,
             'customer_name' => $request->customer_name,
             'comment'       => $request->comment,
             'rating'        => $request->rating,

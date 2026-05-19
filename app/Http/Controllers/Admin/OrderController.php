@@ -183,7 +183,7 @@ class OrderController extends Controller
         $totalAmount = $validated['delivery_charge'];
         
         $order = Order::create([
-            'id' => Order::generateUniqueDateTimeId(),
+            'id' => Order::generateUniqueId(),
             'customer_name' => $validated['customer_name'],
             'customer_phone' => $validated['customer_phone'],
             'customer_email' => $validated['customer_email'],

@@ -30,7 +30,12 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     <tr v-for="review in reviews.data" :key="review.id" class="hover:bg-slate-50 transition-colors">
-                        <td class="py-4 px-6 font-bold text-sm text-slate-900">{{ review.customer_name }}</td>
+                        <td class="py-4 px-6 font-bold text-sm text-slate-900">
+                            {{ review.customer_name }}
+                            <div v-if="review.product" class="text-[9px] font-black text-[#FF6600] uppercase tracking-widest mt-1">
+                                Product: {{ review.product.name }}
+                            </div>
+                        </td>
                         <td class="py-4 px-6 text-xs text-slate-500 max-w-xs">{{ review.comment.substring(0, 100) }}{{ review.comment.length > 100 ? '...' : '' }}</td>
                         <td class="py-4 px-6 text-center">
                             <div class="flex justify-center text-[#FF6600]">
@@ -82,6 +87,15 @@
                                 </button>
                             </div>
                         </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Associate with Product (Optional)</label>
+                            <select v-model="createForm.product_id" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition font-bold text-sm text-slate-700">
+                                <option value="">None - General Store Review</option>
+                                <option v-for="product in products" :key="product.id" :value="product.id">
+                                    {{ product.name }}
+                                </option>
+                            </select>
+                        </div>
                         <div class="flex items-center gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                             <input v-model="createForm.is_active" type="checkbox" id="create_active" class="w-4 h-4 text-[#003366] rounded border-slate-300 focus:ring-[#003366]/20">
                             <label for="create_active" class="text-xs font-bold text-slate-700 select-none cursor-pointer">Activate immediately (Show on storefront)</label>
@@ -116,6 +130,15 @@
                                     <Star class="w-7 h-7 fill-current" />
                                 </button>
                             </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Associate with Product (Optional)</label>
+                            <select v-model="editForm.product_id" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition font-bold text-sm text-slate-700">
+                                <option value="">None - General Store Review</option>
+                                <option v-for="product in products" :key="product.id" :value="product.id">
+                                    {{ product.name }}
+                                </option>
+                            </select>
                         </div>
                         <div class="flex items-center gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                             <input v-model="editForm.is_active" type="checkbox" id="edit_active" class="w-4 h-4 text-[#FF6600] rounded border-slate-300 focus:ring-[#FF6600]/20">
@@ -152,15 +175,15 @@ import { router, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Plus, Edit2, Trash2, Star, CheckCircle } from 'lucide-vue-next';
 
-defineProps({ reviews: Object });
+defineProps({ reviews: Object, products: Array });
 
 const showCreateModal = ref(false);
 const showEditModal   = ref(false);
 const showDeleteModal = ref(false);
 const reviewToDelete  = ref(null);
 
-const createForm = useForm({ customer_name: '', comment: '', rating: 5, is_active: true });
-const editForm   = useForm({ id: null, customer_name: '', comment: '', rating: 5, is_active: true });
+const createForm = useForm({ customer_name: '', comment: '', rating: 5, is_active: true, product_id: '' });
+const editForm   = useForm({ id: null, customer_name: '', comment: '', rating: 5, is_active: true, product_id: '' });
 
 const submitCreate = () => {
     createForm.post('/admin/reviews', {
@@ -174,6 +197,7 @@ const openEdit = (review) => {
     editForm.comment = review.comment;
     editForm.rating = review.rating;
     editForm.is_active = !!review.is_active;
+    editForm.product_id = review.product_id || '';
     showEditModal.value = true;
 };
 

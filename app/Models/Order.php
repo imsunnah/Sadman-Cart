@@ -30,13 +30,10 @@ class Order extends Model
         'is_active' => 'boolean',
     ];
 
-    public static function generateUniqueDateTimeId()
+    public static function generateUniqueId()
     {
         do {
-            // YYMMDDHHMMSS (12 digits) + 3 random digits = 15 digits total
-            $timestamp = now()->format('ymdHis');
-            $randomSuffix = str_pad(rand(100, 999), 3, '0', STR_PAD_LEFT);
-            $uniqueId = (int) ($timestamp . $randomSuffix);
+            $uniqueId = rand(100000, 999999);
         } while (static::where('id', $uniqueId)->exists());
 
         return $uniqueId;
@@ -46,7 +43,7 @@ class Order extends Model
     {
         static::creating(function ($order) {
             if (!$order->id) {
-                $order->id = static::generateUniqueDateTimeId();
+                $order->id = static::generateUniqueId();
             }
         });
     }

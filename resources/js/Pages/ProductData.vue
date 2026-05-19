@@ -231,6 +231,47 @@
                     </div>
                 </div>
 
+                <!-- Verified Reviews Showcase Below Tab Section -->
+                <div class="bg-white rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] border border-slate-100 p-8 md:p-12 mb-12">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-50">
+                        <div>
+                            <span class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.3em] block mb-1">Customer Testimonials</span>
+                            <h3 class="text-xl font-black text-[#003366] uppercase tracking-tighter italic">Latest Reviews for this Product</h3>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm font-black text-slate-800 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-100 flex items-center gap-1.5">
+                                <Star class="w-4 h-4 text-[#FF6600] fill-current" />
+                                {{ averageRating }} / 5
+                            </span>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                ({{ product.reviews ? product.reviews.length : 0 }} Verified Reviews)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Reviews Showcase List -->
+                    <div v-if="product.reviews && product.reviews.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div v-for="r in product.reviews" :key="r.id" class="p-6 bg-slate-50 rounded-3xl border border-slate-100 hover:shadow-md hover:border-[#FF6600]/20 transition-all duration-300 relative group">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider">{{ r.customer_name }}</h4>
+                                    <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                                        {{ new Date(r.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                                    </p>
+                                </div>
+                                <div class="flex gap-0.5 bg-white px-2.5 py-1.5 rounded-xl border border-slate-100">
+                                    <Star v-for="star in 5" :key="star" class="w-3 h-3" :class="star <= r.rating ? 'text-[#FF6600] fill-current' : 'text-slate-200'" />
+                                </div>
+                            </div>
+                            <p class="text-[13px] font-bold text-slate-600 leading-relaxed italic">"{{ r.comment }}"</p>
+                        </div>
+                    </div>
+                    <div v-else class="text-center py-12 bg-slate-50 rounded-[2rem] border border-dashed border-slate-200">
+                        <MessageSquare class="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest">No customer reviews yet. Be the first to share your opinion under the Reviews tab above!</p>
+                    </div>
+                </div>
+
                 <!-- Related Products -->
                 <div>
                     <div class="flex justify-between items-center mb-8 px-2">
