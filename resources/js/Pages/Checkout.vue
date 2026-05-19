@@ -243,10 +243,7 @@
                                 </div>
                             </div>       
                             <div class="mb-12">
-                                    <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
-                                        <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">4</span>
-                                        Payment Method
-                                    </h2>
+                                
                                     <div class="bg-slate-50 border-2 border-[#003366] rounded-2xl p-6 flex items-center justify-between">
                                         <div class="flex items-center">
                                             <div class="w-5 h-5 rounded-full border-4 border-[#003366] mr-4 flex-shrink-0"></div>
