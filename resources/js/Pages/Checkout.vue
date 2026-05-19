@@ -116,13 +116,9 @@
                                             <ChevronDown class="absolute right-4 bottom-4 w-4 h-4 text-slate-400 pointer-events-none" />
                                         </div>
                                     </div>
-                                    <div class="mb-6">
+                                    <div>
                                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Village / Area / House</label>
                                         <input v-model="form.village" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="Detailed address details">
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Customer Note / Special Remarks (Optional)</label>
-                                        <textarea v-model="form.customer_remarks" rows="2" class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="e.g. Delivery timing instructions, call preferences, etc."></textarea>
                                     </div>
                                 </div>
 
