@@ -127,6 +127,15 @@ Route::get('/terms', [StoreController::class, 'terms'])->name('terms');
 // Dynamic Custom Pages
 Route::get('/pages/{page:slug}', [\App\Http\Controllers\PageController::class, 'show'])->name('page.show');
 
+// Customer Panel Routes (Authenticated)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/customer/orders', [\App\Http\Controllers\Customer\OrderController::class, 'index'])->name('customer.orders');
+    Route::get('/customer/orders/{order}', [\App\Http\Controllers\Customer\OrderController::class, 'show'])->name('customer.orders.show');
+    Route::get('/api/customer/orders/{order}/messages', [\App\Http\Controllers\Customer\MessageController::class, 'index'])->name('customer.orders.messages');
+    Route::post('/customer/orders/{order}/messages', [\App\Http\Controllers\Customer\MessageController::class, 'store'])->name('customer.orders.messages.store');
+});
+
+
 // Admin Auth Routes
 Route::get('/admin/login', [\App\Http\Controllers\Admin\AdminAuthController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [\App\Http\Controllers\Admin\AdminAuthController::class, 'login']);
@@ -231,4 +240,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+
+    // Admin Chat/Message Routes
+    Route::get('/api/orders/{order}/messages', [\App\Http\Controllers\Admin\MessageController::class, 'index'])->name('orders.messages');
+    Route::post('/orders/{order}/messages', [\App\Http\Controllers\Admin\MessageController::class, 'store'])->name('orders.messages.store');
 });

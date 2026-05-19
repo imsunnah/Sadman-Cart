@@ -46,6 +46,24 @@ class Order extends Model
                 $order->id = static::generateUniqueId();
             }
         });
+
+        static::created(function ($order) {
+            $order->statusHistories()->create([
+                'status' => $order->status ?? 'pending',
+                'changed_by' => auth()->id(),
+                'note' => 'Order placed successfully.',
+            ]);
+        });
+
+        static::updated(function ($order) {
+            if ($order->wasChanged('status')) {
+                $order->statusHistories()->create([
+                    'status' => $order->status,
+                    'changed_by' => auth()->id(),
+                    'note' => 'Status updated to ' . $order->status,
+                ]);
+            }
+        });
     }
 
     public function items()
@@ -56,5 +74,15 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(CustomerMessage::class);
+    }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(OrderStatusHistory::class)->latest();
     }
 }

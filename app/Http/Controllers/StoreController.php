@@ -235,9 +235,17 @@ class StoreController extends Controller
         // Add delivery charge
         $totalAmount += $validated['delivery_charge'];
 
+        $userId = Auth::id();
+        if (!$userId && !empty($validated['customer_email'])) {
+            $user = \App\Models\User::where('email', $validated['customer_email'])->first();
+            if ($user) {
+                $userId = $user->id;
+            }
+        }
+
         $order = \App\Models\Order::create([
             'id' => \App\Models\Order::generateUniqueId(),
-            'user_id' => Auth::id(), // null for guests — column is nullable
+            'user_id' => $userId,
             'customer_name' => $validated['customer_name'],
             'customer_email' => $validated['customer_email'],
             'customer_phone' => $validated['customer_phone'],

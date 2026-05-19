@@ -15,13 +15,16 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $status = $request->query('status');
+        if ($status === null) {
+            $status = 'all';
+        }
         $categoryId = $request->query('category_id');
         $productId = $request->query('product_id');
         $comboId = $request->query('combo_id');
         
-        $query = Order::with('items')->latest();
+        $query = Order::with(['items.product', 'items.combo']);
         
-        if ($status && in_array($status, ['pending', 'processing', 'completed', 'cancelled'])) {
+        if ($status && $status !== 'all' && in_array($status, ['pending', 'processing', 'completed', 'cancelled'])) {
             $query->where('status', $status);
         }
 
@@ -43,20 +46,32 @@ class OrderController extends Controller
             });
         }
         
-        $orders = $query->paginate(15)->withQueryString();
+        if ($status === 'all') {
+            $query->orderByRaw("CASE WHEN status = 'pending' THEN 0 WHEN status = 'processing' THEN 1 WHEN status = 'completed' THEN 2 ELSE 3 END")
+                  ->orderBy('created_at', 'desc');
+        } else {
+            $query->latest();
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
         $categories = \App\Models\Category::all();
         $products = \App\Models\Product::all();
         $combos = \App\Models\Combo::all();
+        
+        $overduePendingCount = Order::where('status', 'pending')
+            ->where('created_at', '<', now()->subDays(2))
+            ->count();
         
         return Inertia::render('Admin/Order/Index', [
             'orders' => $orders,
             'categories' => $categories,
             'products' => $products,
             'combos' => $combos,
-            'currentStatus' => $status ?? 'all',
+            'currentStatus' => $status,
             'currentCategoryId' => $categoryId ?? 'all',
             'currentProductId' => $productId ?? 'all',
-            'currentComboId' => $comboId ?? 'all'
+            'currentComboId' => $comboId ?? 'all',
+            'overduePendingCount' => $overduePendingCount,
         ]);
     }
 
@@ -69,7 +84,9 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         return Inertia::render('Admin/Order/Show', [
-            'order' => $order->load(['items.product', 'items.combo.products'])
+            'order' => $order->load(['items.product', 'items.combo.products', 'messages' => function($q) {
+                $q->with(['user', 'admin'])->oldest();
+            }])
         ]);
     }
 

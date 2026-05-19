@@ -109,11 +109,21 @@
                                         </div>
                                         <div class="relative">
                                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Area / Thana / Upazila</label>
-                                            <select v-model="form.upazila" :disabled="!form.district || loadingUpazilas" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all appearance-none pr-10 disabled:opacity-50">
-                                                <option value="" disabled>{{ loadingUpazilas ? 'Loading...' : 'Select Area' }}</option>
-                                                <option v-for="u in upazilas" :key="u" :value="u">{{ u }}</option>
-                                            </select>
-                                            <ChevronDown class="absolute right-4 bottom-4 w-4 h-4 text-slate-400 pointer-events-none" />
+                                            <div v-if="upazilas.length > 0" class="relative">
+                                                <select v-model="form.upazila" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all appearance-none pr-10">
+                                                    <option value="" disabled>Select Area</option>
+                                                    <option v-for="u in upazilas" :key="u" :value="u">{{ u }}</option>
+                                                </select>
+                                                <ChevronDown class="absolute right-4 bottom-4 w-4 h-4 text-slate-400 pointer-events-none" />
+                                            </div>
+                                            <input 
+                                                v-else 
+                                                v-model="form.upazila" 
+                                                type="text" 
+                                                required 
+                                                :placeholder="loadingUpazilas ? 'Loading areas...' : 'Enter Thana / Upazila'"
+                                                class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300"
+                                            />
                                         </div>
                                     </div>
                                     <div>
@@ -314,7 +324,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
 import { useCart } from '@/Composables/useCart';
 import { Lock, Package, ArrowRight, Banknote, Truck, X, ShoppingCart, MapPin, Phone, ShoppingBag, ChevronDown } from 'lucide-vue-next';
@@ -378,7 +388,31 @@ const total = computed(() => {
     return subtotal.value + currentDeliveryCharge.value;
 });
 
-const districts = ref([]);
+const staticDistricts = [
+    { district: "Bagerhat" }, { district: "Bandarban" }, { district: "Barguna" }, 
+    { district: "Barishal" }, { district: "Bhola" }, { district: "Bogra" }, 
+    { district: "Brahmanbaria" }, { district: "Chandpur" }, { district: "Chattogram" }, 
+    { district: "Chuadanga" }, { district: "Comilla" }, { district: "Cox's Bazar" }, 
+    { district: "Dhaka" }, { district: "Dinajpur" }, { district: "Faridpur" }, 
+    { district: "Feni" }, { district: "Gaibandha" }, { district: "Gazipur" }, 
+    { district: "Gopalganj" }, { district: "Habiganj" }, { district: "Jamalpur" }, 
+    { district: "Jashore" }, { district: "Jhalokati" }, { district: "Jhenaidah" }, 
+    { district: "Joypurhat" }, { district: "Khagrachhari" }, { district: "Khulna" }, 
+    { district: "Kishoreganj" }, { district: "Kurigram" }, { district: "Kushtia" }, 
+    { district: "Lakshmipur" }, { district: "Lalmonirhat" }, { district: "Madaripur" }, 
+    { district: "Magura" }, { district: "Manikganj" }, { district: "Meherpur" }, 
+    { district: "Moulvibazar" }, { district: "Munshiganj" }, { district: "Mymensingh" }, 
+    { district: "Naogaon" }, { district: "Narail" }, { district: "Narayanganj" }, 
+    { district: "Narsingdi" }, { district: "Natore" }, { district: "Netrokona" }, 
+    { district: "Nilphamari" }, { district: "Noakhali" }, { district: "Pabna" }, 
+    { district: "Panchagarh" }, { district: "Patuakhali" }, { district: "Pirojpur" }, 
+    { district: "Rajbari" }, { district: "Rajshahi" }, { district: "Rangamati" }, 
+    { district: "Rangpur" }, { district: "Satkhira" }, { district: "Shariatpur" }, 
+    { district: "Sherpur" }, { district: "Sirajganj" }, { district: "Sunamganj" }, 
+    { district: "Sylhet" }, { district: "Tangail" }, { district: "Thakurgaon" }
+];
+
+const districts = ref(staticDistricts);
 const upazilas = ref([]);
 const loadingUpazilas = ref(false);
 
@@ -406,7 +440,9 @@ const fetchDistricts = async () => {
     try {
         const response = await fetch('https://bdapis.com/api/v1.2/districts');
         const result = await response.json();
-        districts.value = result.data.sort((a, b) => a.district.localeCompare(b.district));
+        if (result && result.data) {
+            districts.value = result.data.sort((a, b) => a.district.localeCompare(b.district));
+        }
     } catch (error) {
         console.error('Error fetching districts:', error);
     }
@@ -453,6 +489,11 @@ const handleDistrictChange = async () => {
 
 onMounted(() => {
     fetchDistricts();
+    const page = usePage();
+    if (page.props.auth?.user) {
+        form.customer_name = page.props.auth.user.name || '';
+        form.customer_email = page.props.auth.user.email || '';
+    }
 });
 
 const confirmAndSubmit = () => {

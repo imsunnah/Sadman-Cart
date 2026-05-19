@@ -25,6 +25,7 @@
                             <Link v-if="!$page.props.auth.user" href="/login" class="hover:text-[#FF6600] transition-colors">Login</Link>
                             <div v-else class="flex items-center gap-4">
                                 <span class="text-slate-400 hidden sm:inline">{{ $page.props.auth.user.name }}</span>
+                                <Link href="/customer/orders" class="hover:text-[#FF6600] transition-colors">My Orders</Link>
                                 <Link href="/logout" method="post" as="button" class="hover:text-[#FF6600] transition-colors">Logout</Link>
                                 <Link v-if="$page.props.auth.user?.role === 'admin'" href="/admin/dashboard" class="text-[#FF6600] font-black italic">Admin</Link>
                             </div>

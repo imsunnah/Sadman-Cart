@@ -12,7 +12,7 @@ class PageController extends Controller
 {
     public function index()
     {
-        $pages = Page::latest()->paginate(15);
+        $pages = Page::latest()->paginate(10);
         return Inertia::render('Admin/Page/Index', [
             'pages' => $pages
         ]);

@@ -17,6 +17,20 @@
             </div>
         </div>
 
+        <!-- Overdue Pending Orders Alert -->
+        <div v-if="overduePendingCount > 0" class="mb-8 bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl flex items-center justify-between shadow-sm animate-pulse">
+            <div class="flex items-center space-x-3">
+                <AlertTriangle class="w-5 h-5 text-red-600 shrink-0" />
+                <div>
+                    <h4 class="text-xs font-black uppercase tracking-wider text-red-900">Urgent Pending Action Required</h4>
+                    <p class="text-[10px] font-bold text-red-600 uppercase tracking-widest mt-0.5">{{ overduePendingCount }} items is pending more than 2 days</p>
+                </div>
+            </div>
+            <Link :href="route('admin.orders.index', { status: 'pending' })" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">
+                Review Pending
+            </Link>
+        </div>
+
         <!-- Notification -->
         <div v-if="$page.props.flash?.success" class="mb-8 bg-green-50 border border-green-200 text-green-700 p-4 rounded-xl flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -103,26 +117,51 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        <tr v-for="order in orders.data" :key="order.id" class="hover:bg-slate-50 transition-colors">
-                            <td class="py-5 px-6">
-                                <div class="text-sm font-black text-[#003366]">#{{ String(order.id).padStart(5, '0') }}</div>
-                                <div class="text-[10px] font-bold text-slate-400 mt-1">
-                                    {{ new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }}
-                                </div>
-                                <div class="mt-2">
-                                    <button @click="toggleActive(order.id)" :class="order.is_active ? 'bg-green-50 text-green-600 border-green-100' : 'bg-slate-50 text-slate-400 border-slate-100'" class="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border">
-                                        {{ order.is_active ? 'Active' : 'Archived' }}
-                                    </button>
+                        <tr v-for="order in orders.data" :key="order.id" 
+                            class="transition-colors"
+                            :class="[
+                                isOrderOverdue(order) 
+                                ? 'bg-red-50/30 hover:bg-red-50/60' 
+                                : 'hover:bg-slate-50'
+                            ]"
+                        >
+                            <td class="py-5 px-6 relative">
+                                <!-- Dynamic Status Accent Bar -->
+                                <div 
+                                    class="absolute left-0 top-0 bottom-0 w-1.5"
+                                    :class="{
+                                        'bg-red-600 animate-pulse': isOrderOverdue(order),
+                                        'bg-[#FF6600]': order.status === 'pending' && !isOrderOverdue(order),
+                                        'bg-blue-500': order.status === 'processing',
+                                        'bg-green-500': order.status === 'completed',
+                                        'bg-red-500': order.status === 'cancelled'
+                                    }"
+                                ></div>
+                                <div class="pl-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm font-black text-[#003366] tracking-tight">#{{ String(order.id).padStart(5, '0') }}</span>
+                                        <span v-if="isOrderOverdue(order)" class="inline-flex items-center gap-0.5 text-[8px] font-black uppercase bg-red-600 text-white px-1.5 py-0.5 rounded tracking-widest animate-pulse">
+                                            <AlertTriangle class="w-2.5 h-2.5" /> Overdue
+                                        </span>
+                                    </div>
+                                    <div class="text-[10px] font-bold text-slate-400 mt-1">
+                                        {{ new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }}
+                                    </div>
+                                    <div class="mt-2">
+                                        <button @click="toggleActive(order.id)" :class="order.is_active ? 'bg-green-50 text-green-600 border-green-100' : 'bg-slate-50 text-slate-400 border-slate-100'" class="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border">
+                                            {{ order.is_active ? 'Active' : 'Archived' }}
+                                        </button>
+                                    </div>
                                 </div>
                             </td>
                             <td class="py-5 px-6">
                                 <div class="text-sm font-bold text-slate-900">{{ order.customer_name }}</div>
-                                <div class="text-xs text-slate-500 mt-1 flex items-center">
-                                    <Phone class="w-3 h-3 mr-1 text-slate-400" /> {{ order.customer_phone }}
+                                <div class="text-xs text-slate-500 mt-1 flex items-center font-semibold">
+                                    <Phone class="w-3.5 h-3.5 mr-1 text-[#FF6600]" /> {{ order.customer_phone }}
                                 </div>
-                                <div class="text-[10px] text-slate-400 mt-1 space-y-0.5">
+                                <div class="text-[10px] text-slate-400 mt-1.5 space-y-0.5">
                                     <div class="flex items-start">
-                                        <MapPin class="w-3 h-3 mr-1 mt-0.5 flex-shrink-0" />
+                                        <MapPin class="w-3.5 h-3.5 mr-1 mt-0.5 flex-shrink-0 text-slate-400" />
                                         <span class="line-clamp-2">{{ order.shipping_address }}</span>
                                     </div>
                                     <div class="pl-4 text-[#003366] font-bold">
@@ -133,7 +172,7 @@
                             <td class="py-5 px-6">
                                 <div class="space-y-2">
                                     <div class="flex items-center space-x-2">
-                                        <Truck class="w-4 h-4 text-slate-400" />
+                                        <Truck class="w-4 h-4 text-[#003366]" />
                                         <select 
                                             @change="initiateLocationUpdate(order, $event.target.value, $event)" 
                                             :value="order.delivery_location" 
@@ -144,22 +183,37 @@
                                             <option value="Outside Dhaka">Outside Dhaka</option>
                                         </select>
                                     </div>
-                                    <ul class="space-y-1 mt-3">
-                                        <li v-for="item in order.items" :key="item.id" class="text-[10px] flex items-center gap-2 border-b border-slate-50 pb-1 last:border-0">
-                                            <div class="w-1.5 h-1.5 rounded-full shrink-0" :class="item.combo_id ? 'bg-[#003366]' : 'bg-slate-300'"></div>
-                                            <span class="font-bold text-slate-700 truncate italic" :title="item.product_name">{{ item.product_name }}</span>
-                                            <span class="font-black text-[#FF6600] ml-auto whitespace-nowrap">x{{ item.quantity }}</span>
+                                    <ul class="space-y-2 mt-3">
+                                        <li v-for="item in order.items" :key="item.id" class="flex items-center gap-2 border-b border-slate-50 pb-2 last:border-0">
+                                            <div class="w-8 h-8 rounded bg-white flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-100 p-0.5">
+                                                <img 
+                                                    v-if="item.product && item.product.image" 
+                                                    :src="item.product.image.startsWith('http') ? item.product.image : `/storage/${item.product.image}`" 
+                                                    class="w-full h-full object-contain" 
+                                                />
+                                                <img 
+                                                    v-else-if="item.combo && item.combo.image" 
+                                                    :src="item.combo.image.startsWith('http') ? item.combo.image : `/storage/${item.combo.image}`" 
+                                                    class="w-full h-full object-contain" 
+                                                />
+                                                <Package v-else class="w-4 h-4 text-slate-300" />
+                                            </div>
+                                            <div class="flex-grow min-w-0">
+                                                <p class="text-[10px] font-black text-slate-700 truncate italic" :title="item.product_name">{{ item.product_name }}</p>
+                                                <p class="text-[9px] font-bold text-slate-400">৳{{ parseFloat(item.price).toLocaleString() }}</p>
+                                            </div>
+                                            <span class="text-[10px] font-black text-[#FF6600] shrink-0 bg-orange-50 px-1.5 py-0.5 rounded">x{{ item.quantity }}</span>
                                         </li>
                                     </ul>
                                 </div>
                             </td>
                             <td class="py-5 px-6">
-                                <div class="space-y-1">
-                                    <div class="flex items-center justify-between text-xs font-bold text-slate-500">
-                                        <span>Items:</span>
+                                <div class="space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-100 max-w-[180px]">
+                                    <div class="flex items-center justify-between text-[10px] font-bold text-slate-500">
+                                        <span>Items Sub:</span>
                                         <span>৳{{ (order.total_amount - order.delivery_charge).toLocaleString() }}</span>
                                     </div>
-                                    <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+                                    <div class="flex items-center justify-between text-[10px] font-bold text-slate-500">
                                         <span>Delivery:</span>
                                         <div class="flex items-center">
                                             <span class="mr-1">৳</span>
@@ -168,33 +222,38 @@
                                                 :value="order.delivery_charge" 
                                                 :disabled="order.status === 'completed' || order.status === 'cancelled'"
                                                 @blur="updateDeliveryCharge(order, $event.target.value)"
-                                                class="w-16 bg-slate-50 border border-slate-200 rounded px-1 py-0.5 text-right focus:ring-1 focus:ring-[#003366] outline-none transition-all disabled:opacity-50"
+                                                class="w-12 bg-white border border-slate-200 rounded px-1 py-0.5 text-right font-black text-slate-700 text-[10px] focus:ring-1 focus:ring-[#003366] outline-none transition-all disabled:opacity-50"
                                             >
                                         </div>
                                     </div>
-                                    <div class="pt-1 border-t border-slate-100 flex items-center justify-between">
-                                        <span class="text-sm font-black text-slate-900">Total:</span>
-                                        <span class="text-sm font-black text-[#003366]">৳{{ parseFloat(order.total_amount).toLocaleString() }}</span>
+                                    <div class="pt-1.5 border-t border-slate-200 flex items-center justify-between">
+                                        <span class="text-xs font-black text-slate-900">Payable:</span>
+                                        <span class="text-xs font-black text-[#003366]">৳{{ parseFloat(order.total_amount).toLocaleString() }}</span>
                                     </div>
-                                    <div class="text-[10px] font-bold text-slate-400 uppercase text-right">{{ order.payment_method }}</div>
+                                    <div class="text-[8px] font-black text-white bg-[#003366] rounded px-1.5 py-0.5 inline-block uppercase text-center w-full tracking-widest mt-1">
+                                        {{ order.payment_method }}
+                                    </div>
                                 </div>
                             </td>
                             <td class="py-5 px-6 text-center">
-                                <select 
-                                    @change="initiateStatusUpdate(order, $event.target.value, $event)" 
-                                    :value="order.status" 
-                                    :disabled="order.status === 'completed' || order.status === 'cancelled'"
-                                    class="text-xs font-bold uppercase px-3 py-2 rounded-lg border outline-none cursor-pointer w-full text-center transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed" 
-                                    :class="getStatusClass(order.status)"
-                                >
-                                    <option value="pending">Pending</option>
-                                    <option value="processing">Processing</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
+                                <div class="relative inline-block w-full">
+                                    <select 
+                                        @change="initiateStatusUpdate(order, $event.target.value, $event)" 
+                                        :value="order.status" 
+                                        :disabled="order.status === 'completed' || order.status === 'cancelled'"
+                                        class="text-xs font-black uppercase pl-3 pr-8 py-2.5 rounded-xl border outline-none cursor-pointer w-full text-center transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed" 
+                                        :class="getStatusClass(order.status)"
+                                    >
+                                        <option value="pending">Pending</option>
+                                        <option value="processing">Processing</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </select>
+                                    <ChevronDown class="absolute right-2.5 top-3.5 w-3.5 h-3.5 pointer-events-none opacity-60" />
+                                </div>
                             </td>
                             <td class="py-5 px-6 text-right">
-                                <Link :href="`/admin/orders/${order.id}`" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-[#003366] text-slate-600 hover:text-white rounded-lg text-xs font-bold transition-colors">
+                                <Link :href="`/admin/orders/${order.id}`" class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-[#003366] text-slate-600 hover:text-white rounded-xl text-xs font-black uppercase tracking-wider transition-colors border border-slate-200 hover:border-[#003366]">
                                     <Eye class="w-4 h-4" /> View Details
                                 </Link>
                             </td>
@@ -269,7 +328,7 @@
 import { ref, reactive } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Eye, CheckCircle, XCircle, ShoppingBag, Phone, MapPin, Truck, AlertTriangle, Package, Plus } from 'lucide-vue-next';
+import { Eye, CheckCircle, XCircle, ShoppingBag, Phone, MapPin, Truck, AlertTriangle, Package, Plus, ChevronDown } from 'lucide-vue-next';
 
 const props = defineProps({
     orders: Object,
@@ -279,8 +338,17 @@ const props = defineProps({
     currentStatus: String,
     currentCategoryId: [String, Number],
     currentProductId: [String, Number],
-    currentComboId: [String, Number]
+    currentComboId: [String, Number],
+    overduePendingCount: Number
 });
+
+const isOrderOverdue = (order) => {
+    if (order.status !== 'pending') return false;
+    const createdAt = new Date(order.created_at);
+    const diffTime = Math.abs(new Date() - createdAt);
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    return diffDays > 2;
+};
 
 const filterForm = reactive({
     category_id: props.currentCategoryId || 'all',
