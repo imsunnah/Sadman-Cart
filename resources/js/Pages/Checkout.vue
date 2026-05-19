@@ -164,23 +164,7 @@
                                 </div>
 
                                 <!-- Section 4: Payment -->
-                                <div class="mb-12">
-                                    <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
-                                        <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">4</span>
-                                        Payment Method
-                                    </h2>
-                                    <div class="bg-slate-50 border-2 border-[#003366] rounded-2xl p-6 flex items-center justify-between">
-                                        <div class="flex items-center">
-                                            <div class="w-5 h-5 rounded-full border-4 border-[#003366] mr-4 flex-shrink-0"></div>
-                                            <div>
-                                                <p class="text-sm font-black text-slate-900 uppercase">Cash on Delivery</p>
-                                                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pay when you receive your order</p>
-                                            </div>
-                                        </div>
-                                        <Banknote class="w-8 h-8 text-[#003366]/20" />
-                                    </div>
-                                </div>
-
+                         
                                 <!-- Section 5: Customer Remarks -->
                                 <div class="mb-12">
                                     <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
@@ -257,7 +241,24 @@
                                     <p class="text-[11px] font-black uppercase tracking-widest">Steadfast Delivery</p>
                                     <p class="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-0.5">Estimated 2-3 business days</p>
                                 </div>
-                            </div>
+                            </div>       
+                            <div class="mb-12">
+                                    <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
+                                        <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">4</span>
+                                        Payment Method
+                                    </h2>
+                                    <div class="bg-slate-50 border-2 border-[#003366] rounded-2xl p-6 flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div class="w-5 h-5 rounded-full border-4 border-[#003366] mr-4 flex-shrink-0"></div>
+                                            <div>
+                                                <p class="text-sm font-black text-slate-900 uppercase">Cash on Delivery</p>
+                                                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pay when you receive your order</p>
+                                            </div>
+                                        </div>
+                                        <Banknote class="w-8 h-8 text-[#003366]/20" />
+                                    </div>
+                                </div>
+
                         </div>
                     </div>
                 </div>
