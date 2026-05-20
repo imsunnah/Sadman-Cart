@@ -11,8 +11,8 @@
                             <Lock class="w-8 h-8 text-[#003366]" />
                         </div>
                     </div>
-                    <h2 class="text-2xl font-black uppercase tracking-tight mb-2">Processing Order</h2>
-                    <p class="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">Please wait while we secure your purchase</p>
+                    <h2 class="text-2xl font-black uppercase tracking-tight mb-2">{{ $t('Processing Order') }}</h2>
+                    <p class="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">{{ $t('Please wait while we secure your purchase') }}</p>
                 </div>
             </Transition>
 
@@ -26,10 +26,10 @@
                                 <ShoppingCart class="w-6 h-6 sm:w-8 sm:h-8 text-[#003366]" />
                             </div>
                             
-                            <h2 class="text-2xl font-black text-slate-900 tracking-tight uppercase mb-3">Place Your Order?</h2>
+                            <h2 class="text-2xl font-black text-slate-900 tracking-tight uppercase mb-3">{{ $t('Place Your Order?') }}</h2>
                             <p class="text-slate-500 font-medium leading-relaxed mb-8">
-                                You are placing an order for <span class="text-[#003366] font-bold">৳{{ subtotal.toLocaleString() }}</span>. 
-                                By clicking confirm, your order will be sent for processing.
+                                {{ $t('You are placing an order for') }} <span class="text-[#003366] font-bold">৳{{ subtotal.toLocaleString() }}</span>. 
+                                {{ $t('By clicking confirm, your order will be sent for processing.') }}
                             </p>
 
                             <div class="bg-slate-50 rounded-2xl p-5 mb-8 space-y-3 border border-slate-100">
@@ -45,10 +45,10 @@
 
                             <div class="flex flex-col sm:flex-row gap-3">
                                 <button @click="showConfirmModal = false" class="flex-1 py-3 sm:py-4 rounded-xl text-[11px] font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all border border-slate-200">
-                                    Cancel
+                                    {{ $t('Cancel') }}
                                 </button>
                                 <button @click="confirmAndSubmit" class="flex-[2] py-3 sm:py-4 bg-[#003366] rounded-xl text-[11px] font-black text-white uppercase tracking-[0.2em] shadow-lg shadow-[#003366]/20 hover:bg-slate-800 transition-all transform active:scale-95 flex items-center justify-center">
-                                    Confirm Order <ArrowRight class="w-4 h-4 ml-2" />
+                                    {{ $t('Confirm Order') }} <ArrowRight class="w-4 h-4 ml-2" />
                                 </button>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                 <div class="mb-6 sm:mb-10">
                     <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center uppercase">
                         <ShoppingBag class="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-[#003366]" />
-                        Checkout
+                        {{ $t('Checkout') }}
                     </h1>
                     <div class="h-1 w-20 bg-[#003366] mt-4 rounded-full"></div>
                 </div>
@@ -74,20 +74,20 @@
                                 <div class="mb-12">
                                     <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
                                         <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">1</span>
-                                        Contact Information
+                                        {{ $t('Contact Information') }}
                                     </h2>
                                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                         <div class="sm:col-span-2">
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Full Name</label>
-                                            <input v-model="form.customer_name" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="e.g. John Doe">
+                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Full Name') }}</label>
+                                            <input v-model="form.customer_name" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" :placeholder="$t('e.g. John Doe')">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Phone Number</label>
-                                            <input v-model="form.customer_phone" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="01XXXXXXXXX">
+                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Phone Number') }}</label>
+                                            <input v-model="form.customer_phone" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" :placeholder="$t('01XXXXXXXXX')">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Email (Optional)</label>
-                                            <input v-model="form.customer_email" type="email" class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="john@example.com">
+                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Email (Optional)') }}</label>
+                                            <input v-model="form.customer_email" type="email" class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" :placeholder="$t('john@example.com')">
                                         </div>
                                     </div>
                                 </div>
@@ -96,22 +96,22 @@
                                 <div class="mb-12">
                                     <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
                                         <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">2</span>
-                                        Shipping Address
+                                        {{ $t('Shipping Address') }}
                                     </h2>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                         <div class="relative">
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">District</label>
+                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('District') }}</label>
                                             <select v-model="form.district" @change="handleDistrictChange" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all appearance-none pr-10">
-                                                <option value="" disabled>Select District</option>
+                                                <option value="" disabled>{{ $t('Select District') }}</option>
                                                 <option v-for="d in districts" :key="d.district" :value="d.district">{{ d.district }}</option>
                                             </select>
                                             <ChevronDown class="absolute right-4 bottom-4 w-4 h-4 text-slate-400 pointer-events-none" />
                                         </div>
                                         <div class="relative">
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Area / Thana / Upazila</label>
+                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Area / Thana / Upazila') }}</label>
                                             <div v-if="upazilas.length > 0" class="relative">
                                                 <select v-model="form.upazila" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all appearance-none pr-10">
-                                                    <option value="" disabled>Select Area</option>
+                                                    <option value="" disabled>{{ $t('Select Area') }}</option>
                                                     <option v-for="u in upazilas" :key="u" :value="u">{{ u }}</option>
                                                 </select>
                                                 <ChevronDown class="absolute right-4 bottom-4 w-4 h-4 text-slate-400 pointer-events-none" />
@@ -121,14 +121,14 @@
                                                 v-model="form.upazila" 
                                                 type="text" 
                                                 required 
-                                                :placeholder="loadingUpazilas ? 'Loading areas...' : 'Enter Thana / Upazila'"
+                                                :placeholder="loadingUpazilas ? $t('Loading areas...') : $t('Enter Thana / Upazila')"
                                                 class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300"
                                             />
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Village / Area / House</label>
-                                        <input v-model="form.village" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="Detailed address details">
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Village / Area / House') }}</label>
+                                        <input v-model="form.village" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" :placeholder="$t('Detailed address details')">
                                     </div>
                                 </div>
 
@@ -136,7 +136,7 @@
                                 <div class="mb-12">
                                     <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
                                         <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">3</span>
-                                        Delivery Location
+                                        {{ $t('Delivery Location') }}
                                     </h2>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <label 
@@ -149,8 +149,8 @@
                                                     <div v-if="form.delivery_location === 'Inside Dhaka'" class="w-2.5 h-2.5 rounded-full bg-[#003366]"></div>
                                                 </div>
                                                 <div>
-                                                    <p class="text-sm font-black text-slate-900 uppercase">Inside Dhaka</p>
-                                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">৳{{ delivery_charges.inside_dhaka }} Delivery Charge</p>
+                                                    <p class="text-sm font-black text-slate-900 uppercase">{{ $t('Inside Dhaka') }}</p>
+                                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">৳{{ delivery_charges.inside_dhaka }} {{ $t('Delivery Charge') }}</p>
                                                 </div>
                                             </div>
                                         </label>
@@ -165,8 +165,8 @@
                                                     <div v-if="form.delivery_location === 'Outside Dhaka'" class="w-2.5 h-2.5 rounded-full bg-[#003366]"></div>
                                                 </div>
                                                 <div>
-                                                    <p class="text-sm font-black text-slate-900 uppercase">Outside Dhaka</p>
-                                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">৳{{ delivery_charges.outside_dhaka }} Delivery Charge</p>
+                                                    <p class="text-sm font-black text-slate-900 uppercase">{{ $t('Outside Dhaka') }}</p>
+                                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">৳{{ delivery_charges.outside_dhaka }} {{ $t('Delivery Charge') }}</p>
                                                 </div>
                                             </div>
                                         </label>
@@ -179,16 +179,16 @@
                                 <div class="mb-12">
                                     <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
                                         <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">5</span>
-                                        Special Instructions / Remarks
+                                        {{ $t('Special Instructions / Remarks') }}
                                     </h2>
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Order Note / Customer Remarks</label>
-                                        <textarea v-model="form.customer_remarks" rows="3" class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="e.g. Any special instructions regarding delivery, product requests, packaging, etc."></textarea>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Order Note / Customer Remarks') }}</label>
+                                        <textarea v-model="form.customer_remarks" rows="3" class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" :placeholder="$t('e.g. Any special instructions regarding delivery, product requests, packaging, etc.')"></textarea>
                                     </div>
                                 </div>
 
                                 <button type="submit" :disabled="form.processing" class="w-full bg-[#003366] py-5 rounded-2xl text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-[#003366]/20 hover:bg-slate-800 transition-all transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center">
-                                    Continue to Confirmation <ArrowRight class="w-5 h-5 ml-3" />
+                                    {{ $t('Continue to Confirmation') }} <ArrowRight class="w-5 h-5 ml-3" />
                                 </button>
                             </form>
                         </div>
@@ -199,8 +199,8 @@
                         <div class="lg:sticky lg:top-24 space-y-6">
                             <div class="bg-white shadow-xl shadow-slate-200/50 rounded-3xl border border-slate-100 overflow-hidden">
                                 <div class="p-6 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                                    <h2 class="text-[11px] font-black text-[#003366] uppercase tracking-[0.2em]">Order Summary</h2>
-                                    <span class="px-3 py-1 bg-white rounded-full text-[10px] font-black text-slate-500 border border-slate-100">{{ cart.items.length }} Items</span>
+                                    <h2 class="text-[11px] font-black text-[#003366] uppercase tracking-[0.2em]">{{ $t('Order Summary') }}</h2>
+                                    <span class="px-3 py-1 bg-white rounded-full text-[10px] font-black text-slate-500 border border-slate-100">{{ cart.items.length }} {{ $t('Items') }}</span>
                                 </div>
                                 <div class="p-6">
                                     <ul role="list" class="divide-y divide-slate-100 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
@@ -210,7 +210,7 @@
                                             </div>
                                             <div class="ml-4 flex-1">
                                                 <div class="flex items-center gap-2 mb-1" v-if="item.combo_id">
-                                                    <span class="text-[7px] font-black bg-[#003366] text-white px-1.5 py-0.5 rounded-full uppercase tracking-widest">Combo</span>
+                                                    <span class="text-[7px] font-black bg-[#003366] text-white px-1.5 py-0.5 rounded-full uppercase tracking-widest">{{ $t('Combo') }}</span>
                                                 </div>
                                                 <h3 class="text-[11px] font-black text-slate-900 uppercase tracking-tight line-clamp-1 italic">{{ item.product?.name || item.combo?.name }}</h3>
                                                 <div v-if="item.combo_id && item.combo?.products" class="mt-1 flex flex-wrap gap-x-2 gap-y-1">
@@ -219,7 +219,7 @@
                                                     </span>
                                                 </div>
                                                 <div class="flex justify-between items-center mt-2">
-                                                    <p class="text-[10px] font-bold text-slate-400">Qty {{ item.quantity }}</p>
+                                                    <p class="text-[10px] font-bold text-slate-400">{{ $t('Qty') }} {{ item.quantity }}</p>
                                                     <p class="text-xs font-black text-slate-900">৳{{ (getItemPrice(item) * item.quantity).toLocaleString() }}</p>
                                                 </div>
                                             </div>
@@ -228,15 +228,15 @@
 
                                     <div class="border-t border-slate-100 pt-6 mt-4 space-y-3">
                                         <div class="flex justify-between text-[11px] font-bold text-slate-500">
-                                            <p>Subtotal</p>
+                                            <p>{{ $t('Subtotal') }}</p>
                                             <p>৳{{ subtotal.toLocaleString() }}</p>
                                         </div>
                                         <div class="flex justify-between text-[11px] font-bold text-slate-500">
-                                            <p>Shipping ({{ form.delivery_location }})</p>
+                                            <p>{{ $t('Shipping') }} ({{ $t(form.delivery_location) }})</p>
                                             <p>৳{{ currentDeliveryCharge.toLocaleString() }}</p>
                                         </div>
                                         <div class="flex justify-between border-t border-slate-100 pt-5 mt-3">
-                                            <p class="text-sm font-black text-slate-900 uppercase italic">Total to pay</p>
+                                            <p class="text-sm font-black text-slate-900 uppercase italic">{{ $t('Total to pay') }}</p>
                                             <p class="text-2xl font-black text-[#003366]">৳{{ total.toLocaleString() }}</p>
                                         </div>
                                     </div>
@@ -248,8 +248,8 @@
                                     <Truck class="w-5 h-5 text-white" />
                                 </div>
                                 <div class="flex-1">
-                                    <p class="text-[11px] font-black uppercase tracking-widest">Steadfast Delivery</p>
-                                    <p class="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-0.5">Estimated 2-3 business days</p>
+                                    <p class="text-[11px] font-black uppercase tracking-widest">{{ $t('Steadfast Delivery') }}</p>
+                                    <p class="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-0.5">{{ $t('Estimated 2-3 business days') }}</p>
                                 </div>
                             </div>       
                             <div class="mb-12">
@@ -258,8 +258,8 @@
                                         <div class="flex items-center">
                                             <div class="w-5 h-5 rounded-full border-4 border-[#003366] mr-4 flex-shrink-0"></div>
                                             <div>
-                                                <p class="text-sm font-black text-slate-900 uppercase">Cash on Delivery</p>
-                                                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pay when you receive your order</p>
+                                                <p class="text-sm font-black text-slate-900 uppercase">{{ $t('Cash on Delivery') }}</p>
+                                                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ $t('Pay when you receive your order') }}</p>
                                             </div>
                                         </div>
                                         <Banknote class="w-8 h-8 text-[#003366]/20" />
@@ -286,32 +286,32 @@
                                 <Package class="w-10 h-10 text-white -rotate-12" />
                             </div>
 
-                            <h3 class="text-2xl font-black text-slate-900 text-center mb-4 uppercase tracking-tight italic">Confirm Your Order</h3>
+                            <h3 class="text-2xl font-black text-slate-900 text-center mb-4 uppercase tracking-tight italic">{{ $t('Confirm Your Order') }}</h3>
                             <p class="text-sm font-bold text-slate-500 text-center mb-8 uppercase tracking-widest leading-relaxed">
-                                Are you sure? <span class="text-[#003366]">৳{{ currentDeliveryCharge }}</span> delivery charge will be added for <span class="text-[#003366]">{{ form.delivery_location }}</span> delivery.
+                                {{ $t('Are you sure?') }} <span class="text-[#003366]">৳{{ currentDeliveryCharge }}</span> {{ $t('delivery charge will be added for') }} <span class="text-[#003366]">{{ $t(form.delivery_location) }}</span> {{ $t('delivery.') }}
                             </p>
 
                             <div class="bg-slate-50 rounded-2xl p-6 mb-8 border border-slate-100">
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Subtotal</span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $t('Subtotal') }}</span>
                                     <span class="text-sm font-bold text-slate-900">৳{{ subtotal.toLocaleString() }}</span>
                                 </div>
                                 <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-200">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Shipping</span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $t('Shipping') }}</span>
                                     <span class="text-sm font-bold text-[#003366]">৳{{ currentDeliveryCharge.toLocaleString() }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-xs font-black text-slate-900 uppercase tracking-widest italic">Total to pay</span>
+                                    <span class="text-xs font-black text-slate-900 uppercase tracking-widest italic">{{ $t('Total to pay') }}</span>
                                     <span class="text-2xl font-black text-[#003366]">৳{{ total.toLocaleString() }}</span>
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <button @click="showConfirmModal = false" class="px-6 py-4 rounded-xl border-2 border-slate-100 text-slate-500 font-black uppercase tracking-widest text-[10px] hover:bg-slate-50 transition-all">
-                                    Go Back
+                                    {{ $t('Go Back') }}
                                 </button>
                                 <button @click="confirmAndSubmit" class="px-6 py-4 rounded-xl bg-[#003366] text-white font-black uppercase tracking-widest text-[10px] hover:bg-slate-800 transition-all shadow-lg shadow-[#003366]/20">
-                                    Confirm Order
+                                    {{ $t('Confirm Order') }}
                                 </button>
                             </div>
                         </div>

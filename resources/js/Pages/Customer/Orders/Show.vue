@@ -9,10 +9,10 @@
                         href="/customer/orders" 
                         class="inline-flex items-center text-[10px] font-black text-[#003366] hover:text-[#FF6600] uppercase tracking-widest transition-colors"
                     >
-                        <ArrowLeft class="w-4 h-4 mr-2" /> Back to History
+                        <ArrowLeft class="w-4 h-4 mr-2" /> {{ $t('Back to History') }}
                     </Link>
                     <div class="flex items-center gap-3">
-                        <span class="text-xs font-bold text-slate-400 uppercase">Order ID:</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase">{{ $t('Order ID:') }}</span>
                         <span class="text-lg font-black text-[#003366] italic bg-white border border-slate-100 px-4 py-1.5 rounded-xl shadow-sm">
                             #{{ String(order.id).padStart(6, '0') }}
                         </span>
@@ -27,7 +27,7 @@
                         <!-- Order Tracing Timeline -->
                         <div class="bg-white rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] border border-slate-100 p-6 sm:p-8">
                             <h3 class="font-black text-xs text-[#003366] uppercase tracking-widest mb-8 flex items-center italic">
-                                <Activity class="w-4 h-4 mr-2 text-[#FF6600]" /> Live Order Tracing
+                                <Activity class="w-4 h-4 mr-2 text-[#FF6600]" /> {{ $t('Live Order Tracing') }}
                             </h3>
 
                             <!-- Visual Status Progression Steps -->
@@ -56,7 +56,7 @@
                                         class="text-[9px] font-black uppercase tracking-wider mt-3 block"
                                         :class="isStepActive(step.status) ? 'text-[#003366]' : 'text-slate-400'"
                                     >
-                                        {{ step.label }}
+                                        {{ $t(step.label) }}
                                     </span>
                                 </div>
                             </div>
@@ -74,7 +74,7 @@
                                     <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 transition-colors hover:border-[#003366]/10">
                                         <div class="flex items-center justify-between mb-1.5">
                                             <span class="text-[10px] font-black uppercase tracking-wider text-[#003366]">
-                                                {{ log.status }}
+                                                {{ $t(log.status) }}
                                             </span>
                                             <span class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">
                                                 {{ new Date(log.created_at).toLocaleString() }}
@@ -82,7 +82,7 @@
                                         </div>
                                         <p class="text-xs font-bold text-slate-600 leading-relaxed">{{ log.note }}</p>
                                         <p v-if="log.changer" class="text-[8px] font-bold text-[#FF6600] uppercase tracking-widest mt-2">
-                                            Logged by: {{ log.changer.name }}
+                                            {{ $t('Logged by:') }} {{ log.changer.name }}
                                         </p>
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@
                         <div class="bg-white rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
                             <div class="p-6 border-b border-slate-50 bg-slate-50/50">
                                 <h3 class="font-black text-xs text-[#003366] uppercase tracking-widest flex items-center italic">
-                                    <ShoppingBag class="w-4 h-4 mr-2 text-slate-400" /> Dispatch Details
+                                    <ShoppingBag class="w-4 h-4 mr-2 text-slate-400" /> {{ $t('Dispatch Details') }}
                                 </h3>
                             </div>
                             <div class="p-6">
@@ -125,15 +125,15 @@
 
                                 <div class="mt-6 pt-6 border-t border-slate-100 space-y-3">
                                     <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                        <p>Subtotal</p>
+                                        <p>{{ $t('Subtotal') }}</p>
                                         <p class="text-slate-900">৳ {{ (order.total_amount - order.delivery_charge).toLocaleString() }}</p>
                                     </div>
                                     <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                        <p>Delivery Charge</p>
+                                        <p>{{ $t('Delivery Charge') }}</p>
                                         <p class="text-[#FF6600]">৳ {{ parseFloat(order.delivery_charge).toLocaleString() }}</p>
                                     </div>
                                     <div class="flex justify-between border-t border-dashed border-slate-200 pt-6 mt-4">
-                                        <p class="text-xs font-black text-slate-900 italic uppercase tracking-tighter">Total Payable</p>
+                                        <p class="text-xs font-black text-slate-900 italic uppercase tracking-tighter">{{ $t('Total Payable') }}</p>
                                         <p class="text-xl font-black text-[#003366]">৳ {{ parseFloat(order.total_amount).toLocaleString() }}</p>
                                     </div>
                                 </div>
@@ -143,30 +143,30 @@
                         <!-- Shipping Logistics Profile -->
                         <div class="bg-white rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] border border-slate-100 p-6 sm:p-8">
                             <h3 class="font-black text-xs text-[#003366] uppercase tracking-widest mb-6 flex items-center italic">
-                                <Truck class="w-4 h-4 mr-2 text-[#FF6600]" /> Logistics Destination
+                                <Truck class="w-4 h-4 mr-2 text-[#FF6600]" /> {{ $t('Logistics Destination') }}
                             </h3>
                             <div class="space-y-4 text-xs font-bold text-slate-600">
                                 <div class="border-b border-slate-50 pb-3">
-                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Customer Name</p>
+                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ $t('Customer Name') }}</p>
                                     <p class="text-slate-900 uppercase font-black tracking-tight">{{ order.customer_name }}</p>
                                 </div>
                                 <div class="border-b border-slate-50 pb-3">
-                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Phone Number</p>
+                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ $t('Phone Number') }}</p>
                                     <p class="text-[#003366]">{{ order.customer_phone }}</p>
                                 </div>
                                 <div v-if="order.customer_email" class="border-b border-slate-50 pb-3">
-                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Email Protocol</p>
+                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ $t('Email Protocol') }}</p>
                                     <p>{{ order.customer_email }}</p>
                                 </div>
                                 <div class="border-b border-slate-50 pb-3">
-                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Shipping Destination</p>
+                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ $t('Shipping Destination') }}</p>
                                     <p class="text-slate-900 leading-relaxed uppercase tracking-tight italic">
                                         {{ order.village }}, {{ order.upazila }}, {{ order.district }}
                                     </p>
                                     <p class="text-[10px] text-slate-500 mt-1 leading-relaxed">{{ order.shipping_address }}</p>
                                 </div>
                                 <div v-if="order.customer_remarks" class="pb-2">
-                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Remarks</p>
+                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ $t('Remarks') }}</p>
                                     <p class="text-slate-500 font-medium italic">"{{ order.customer_remarks }}"</p>
                                 </div>
                             </div>

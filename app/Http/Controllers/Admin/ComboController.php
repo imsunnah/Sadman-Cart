@@ -27,8 +27,10 @@ class ComboController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'name_en' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
+            'description_en' => 'nullable|string',
+            'description_bn' => 'nullable|string',
             'price' => 'required|numeric',
             'original_price' => 'nullable|numeric',
             'image' => 'nullable',
@@ -38,7 +40,7 @@ class ComboController extends Controller
         ]);
 
         $data = $request->except('product_ids', 'image');
-        $data['slug'] = Str::slug($request->name) . '-' . time();
+        $data['slug'] = Str::slug($request->name_en) . '-' . time();
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/gallery', 'public');
@@ -66,8 +68,10 @@ class ComboController extends Controller
     public function update(Request $request, Combo $combo)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'name_en' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
+            'description_en' => 'nullable|string',
+            'description_bn' => 'nullable|string',
             'price' => 'required|numeric',
             'original_price' => 'nullable|numeric',
             'image' => 'nullable',

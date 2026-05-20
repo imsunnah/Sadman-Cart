@@ -5,10 +5,10 @@
                 <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
                         <h1 class="text-4xl font-black text-slate-900 tracking-tight italic uppercase">
-                            Shopping <span class="text-[#003366]">Cart</span>
+                            {{ $t('Shopping') }} <span class="text-[#003366]">{{ $t('Cart') }}</span>
                         </h1>
                         <p class="text-slate-500 font-bold mt-2 uppercase tracking-widest text-[10px]">
-                            Review your selection before checkout
+                            {{ $t('Review your selection before checkout') }}
                         </p>
                     </div>
                     
@@ -20,7 +20,7 @@
                                 <Check v-if="isAllSelected" class="w-3 h-3 text-white" />
                             </div>
                         </label>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Select All Items</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">{{ $t('Select All Items') }}</span>
                     </div>
                 </div>
 
@@ -54,7 +54,7 @@
                                     <div class="ml-4 sm:ml-8 flex-1 flex flex-col">
                                         <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-0">
                                             <div>
-                                                <span v-if="item.combo_id" class="inline-block text-[8px] font-black bg-[#003366] text-white px-2 py-0.5 rounded-full uppercase tracking-widest mb-1">Combo Bundle</span>
+                                                <span v-if="item.combo_id" class="inline-block text-[8px] font-black bg-[#003366] text-white px-2 py-0.5 rounded-full uppercase tracking-widest mb-1">{{ $t('Combo Bundle') }}</span>
                                                 <h3 class="text-xl font-black text-slate-900 italic uppercase tracking-tight">
                                                     <Link :href="item.product_id ? `/products/${item.product?.slug}` : `/combos/${item.combo?.slug}`" class="hover:text-[#003366] transition-colors">
                                                         {{ item.product?.name || item.combo?.name }}
@@ -79,7 +79,7 @@
                                                 </button>
                                             </div>
                                             <button type="button" @click="removeFromCart(item.id)" class="text-[10px] font-black text-red-400 hover:text-red-600 flex items-center uppercase tracking-widest transition-colors">
-                                                <Trash2 class="w-4 h-4 mr-2" /> Remove Item
+                                                <Trash2 class="w-4 h-4 mr-2" /> {{ $t('Remove Item') }}
                                             </button>
                                         </div>
                                     </div>
@@ -90,10 +90,10 @@
                             <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                                 <ShoppingCart class="w-12 h-12 text-slate-200" />
                             </div>
-                            <h2 class="text-2xl font-black text-slate-800 italic uppercase">Your cart is empty</h2>
-                            <p class="mt-2 text-slate-400 font-bold uppercase tracking-widest text-[10px]">Explore our catalog to add items</p>
+                            <h2 class="text-2xl font-black text-slate-800 italic uppercase">{{ $t('Your cart is empty') }}</h2>
+                            <p class="mt-2 text-slate-400 font-bold uppercase tracking-widest text-[10px]">{{ $t('Explore our catalog to add items') }}</p>
                             <Link href="/shop" class="mt-10 inline-flex items-center px-10 py-4 bg-[#003366] text-white font-black rounded-full hover:bg-slate-800 transition-all shadow-xl shadow-[#003366]/20 text-[10px] uppercase tracking-widest">
-                                Continue Shopping
+                                {{ $t('Continue Shopping') }}
                             </Link>
                         </div>
                     </div>
@@ -101,22 +101,22 @@
                     <div class="lg:col-span-4" v-if="cart.length > 0">
                         <div class="bg-[#003366] text-white rounded-3xl p-6 sm:p-10 sticky top-24 shadow-2xl shadow-[#003366]/30 overflow-hidden relative">
                             <div class="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
-                            <h2 class="text-xs font-black mb-10 border-b border-white/10 pb-6 uppercase tracking-[0.3em]">Order Architecture</h2>
+                            <h2 class="text-xs font-black mb-10 border-b border-white/10 pb-6 uppercase tracking-[0.3em]">{{ $t('Order Architecture') }}</h2>
 
                             <dl class="space-y-6">
                                 <div class="flex items-center justify-between">
-                                    <dt class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Selected Subtotal</dt>
+                                    <dt class="text-[10px] font-black text-slate-300 uppercase tracking-widest">{{ $t('Selected Subtotal') }}</dt>
                                     <dd class="text-lg font-black">৳{{ selectedTotal.toLocaleString() }}</dd>
                                 </div>
                                 <div class="flex items-center justify-between border-t border-white/10 pt-6">
                                     <dt class="flex flex-col">
-                                        <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Items Count</span>
-                                        <span class="text-[8px] font-black text-[#FF6600] mt-1 italic uppercase tracking-widest">{{ selectedItems.length }} items selected</span>
+                                        <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">{{ $t('Items Count') }}</span>
+                                        <span class="text-[8px] font-black text-[#FF6600] mt-1 italic uppercase tracking-widest">{{ selectedItems.length }} {{ $t('items selected') }}</span>
                                     </dt>
-                                    <dd class="text-[10px] font-black uppercase tracking-widest italic">{{ selectedItems.length }} of {{ cart.length }}</dd>
+                                    <dd class="text-[10px] font-black uppercase tracking-widest italic">{{ selectedItems.length }} {{ $t('of') }} {{ cart.length }}</dd>
                                 </div>
                                 <div class="flex items-center justify-between border-t border-white/20 pt-8 mt-4">
-                                    <dt class="text-lg font-black italic uppercase tracking-tighter">Total Payable</dt>
+                                    <dt class="text-lg font-black italic uppercase tracking-tighter">{{ $t('Total Payable') }}</dt>
                                     <dd class="text-3xl font-black text-[#FF6600]">৳{{ selectedTotal.toLocaleString() }}</dd>
                                 </div>
                             </dl>
@@ -127,9 +127,9 @@
                                     :disabled="selectedItems.length === 0"
                                     class="w-full flex items-center justify-center rounded-2xl bg-white px-8 py-5 text-[10px] font-black text-[#003366] shadow-xl hover:bg-[#FF6600] hover:text-white transition-all uppercase tracking-[0.3em] disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    Proceed To Checkout
+                                    {{ $t('Proceed To Checkout') }}
                                 </button>
-                                <p v-if="selectedItems.length === 0" class="text-center text-[8px] font-black text-white/50 uppercase mt-4 tracking-widest">Select items to continue</p>
+                                <p v-if="selectedItems.length === 0" class="text-center text-[8px] font-black text-white/50 uppercase mt-4 tracking-widest">{{ $t('Select items to continue') }}</p>
                             </div>
                         </div>
                     </div>

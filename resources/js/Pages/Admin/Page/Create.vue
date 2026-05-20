@@ -16,11 +16,19 @@
                 <!-- Title & Group -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Page Title</label>
-                        <input v-model="form.title" type="text" placeholder="e.g. Return Policy" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
-                        <p v-if="form.errors.title" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.title }}</p>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Page Title (English)</label>
+                        <input v-model="form.title_en" type="text" placeholder="e.g. Return Policy" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
+                        <p v-if="form.errors.title_en" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.title_en }}</p>
                     </div>
 
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Page Title (Bangla)</label>
+                        <input v-model="form.title_bn" type="text" placeholder="e.g. রিটার্ন পলিসি" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
+                        <p v-if="form.errors.title_bn" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.title_bn }}</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Page Group / Section</label>
                         <select v-model="form.group" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
@@ -30,33 +38,46 @@
                         </select>
                         <p v-if="form.errors.group" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.group }}</p>
                     </div>
-                </div>
-
-                <!-- Page Banner Image -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Page Header/Banner Image</label>
-                    <div class="mt-2 flex items-center space-x-6">
-                        <div class="shrink-0 w-32 h-20 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden border border-slate-200">
-                            <img v-if="previewUrl" :src="previewUrl" class="w-full h-full object-cover" />
-                            <ImageIcon v-else class="w-8 h-8 text-slate-300" />
+                    
+                    <!-- Page Banner Image -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Page Header/Banner Image</label>
+                        <div class="mt-2 flex items-center space-x-6">
+                            <div class="shrink-0 w-32 h-20 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden border border-slate-200">
+                                <img v-if="previewUrl" :src="previewUrl" class="w-full h-full object-cover" />
+                                <ImageIcon v-else class="w-8 h-8 text-slate-300" />
+                            </div>
+                            <input type="file" @input="handleFileUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white hover:file:bg-slate-800" />
                         </div>
-                        <input type="file" @input="handleFileUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white hover:file:bg-slate-800" />
+                        <p v-if="form.errors.image" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.image }}</p>
                     </div>
-                    <p v-if="form.errors.image" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.image }}</p>
                 </div>
 
                 <!-- Short Summary / Meta Description -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Short Description / Summary (Shown in Header & SEO)</label>
-                    <textarea v-model="form.description" rows="3" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium placeholder:text-slate-400" placeholder="Brief 1-2 sentence description summarizing this policy or custom page..."></textarea>
-                    <p v-if="form.errors.description" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Short Description / Summary (English)</label>
+                        <textarea v-model="form.description_en" rows="3" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium placeholder:text-slate-400" placeholder="Brief description..."></textarea>
+                        <p v-if="form.errors.description_en" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description_en }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Short Description / Summary (Bangla)</label>
+                        <textarea v-model="form.description_bn" rows="3" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium placeholder:text-slate-400" placeholder="সংক্ষিপ্ত বিবরণ..."></textarea>
+                        <p v-if="form.errors.description_bn" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description_bn }}</p>
+                    </div>
                 </div>
 
                 <!-- Main Content Area -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Page Content (HTML Format Allowed)</label>
-                    <textarea v-model="form.content" rows="12" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium font-mono text-sm" placeholder="<h1>Page Heading</h1><p>Write your HTML or plain text content here...</p>"></textarea>
-                    <p v-if="form.errors.content" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.content }}</p>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Page Content (English - HTML Format Allowed)</label>
+                    <textarea v-model="form.content_en" rows="8" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium font-mono text-sm" placeholder="<h1>Page Heading</h1><p>Write your HTML or plain text content here...</p>"></textarea>
+                    <p v-if="form.errors.content_en" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.content_en }}</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Page Content (Bangla - HTML Format Allowed)</label>
+                    <textarea v-model="form.content_bn" rows="8" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium font-mono text-sm" placeholder="<h1>শিরোনাম</h1><p>এখানে আপনার বিষয়বস্তু লিখুন...</p>"></textarea>
+                    <p v-if="form.errors.content_bn" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.content_bn }}</p>
                 </div>
 
                 <div>
@@ -85,11 +106,14 @@ import { ArrowLeft, Image as ImageIcon } from 'lucide-vue-next';
 const previewUrl = ref(null);
 
 const form = useForm({
-    title: '',
+    title_en: '',
+    title_bn: '',
     group: 'about_us',
-    description: '',
+    description_en: '',
+    description_bn: '',
     image: null,
-    content: '',
+    content_en: '',
+    content_bn: '',
     is_active: true,
 });
 

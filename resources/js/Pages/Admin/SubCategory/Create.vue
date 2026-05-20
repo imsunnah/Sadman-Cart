@@ -16,15 +16,22 @@
                     <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Parent Category</label>
                     <select v-model="form.category_id" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold appearance-none">
                         <option value="" disabled>Choose a main category</option>
-                        <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+                        <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name_en }} / {{ cat.name_bn }}</option>
                     </select>
                     <p v-if="form.errors.category_id" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.category_id }}</p>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Subcategory Name</label>
-                    <input v-model="form.name" type="text" placeholder="e.g. Smart Watches" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold">
-                    <p v-if="form.errors.name" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.name }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Subcategory Name (English)</label>
+                        <input v-model="form.name_en" type="text" placeholder="e.g. Smart Watches" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold">
+                        <p v-if="form.errors.name_en" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.name_en }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Subcategory Name (Bangla)</label>
+                        <input v-model="form.name_bn" type="text" placeholder="e.g. স্মার্ট ওয়াচ" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-bold">
+                        <p v-if="form.errors.name_bn" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.name_bn }}</p>
+                    </div>
                 </div>
 
                 <div>
@@ -39,10 +46,17 @@
                     <p v-if="form.errors.image" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.image }}</p>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description</label>
-                    <textarea v-model="form.description" rows="4" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-medium" placeholder="Optional description..."></textarea>
-                    <p v-if="form.errors.description" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description (English)</label>
+                        <textarea v-model="form.description_en" rows="4" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-medium" placeholder="Optional description..."></textarea>
+                        <p v-if="form.errors.description_en" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description_en }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description (Bangla)</label>
+                        <textarea v-model="form.description_bn" rows="4" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#FF6600]/10 outline-none transition-all font-medium" placeholder="ঐচ্ছিক বিবরণ..."></textarea>
+                        <p v-if="form.errors.description_bn" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description_bn }}</p>
+                    </div>
                 </div>
 
                 <div>
@@ -76,8 +90,10 @@ const previewUrl = ref(null);
 
 const form = useForm({
     category_id: '',
-    name: '',
-    description: '',
+    name_en: '',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
     is_active: true,
     image: null,
 });

@@ -52,7 +52,7 @@
             <div class="max-w-[1550px] mx-auto px-4">
                 <div class="flex flex-col items-center gap-2 mb-10 text-center">
                     <div class="w-12 h-1.5 bg-[#FF6600] rounded-full mb-2"></div>
-                    <h2 class="text-3xl font-black text-[#003366] uppercase tracking-tighter italic">Categories</h2>
+                    <h2 class="text-3xl font-black text-[#003366] uppercase tracking-tighter italic">{{ $t('Categories') }}</h2>
                 </div>
                 <div class="flex flex-wrap justify-center gap-6 md:gap-12">
                     <Link v-for="cat in featuredCategories" :key="cat.id" :href="`/shop?category=${cat.slug}`" class="group flex flex-col items-center gap-2 min-w-[80px] cursor-pointer">
@@ -69,7 +69,7 @@
         <!-- ─── COMBO BUNDLES ─────────────────────────────────── -->
         <section v-if="combos.length" class="py-14 bg-white border-b border-slate-100">
             <div class="max-w-[1550px] mx-auto px-4">
-                <SectionTitle title="Combo Bundles & Offers" subtitle="Exclusive bundle deals" centered />
+                <SectionTitle :title="$t('Combo Bundles & Offers')" :subtitle="$t('Exclusive bundle deals')" centered />
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8 justify-center">
                     <ComboCard v-for="combo in combos" :key="combo.id" :combo="combo" />
                 </div>
@@ -79,7 +79,7 @@
         <!-- ─── HOT DEALS ─────────────────────────────────────── -->
         <section v-if="discountedProducts.length" class="py-14 bg-slate-50 border-b border-slate-100">
             <div class="max-w-[1550px] mx-auto px-4">
-                <SectionTitle title="Hot Flash Deals" subtitle="Limited time discounts" centered />
+                <SectionTitle :title="$t('Hot Flash Deals')" :subtitle="$t('Limited time discounts')" centered />
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8 justify-center">
                     <ProductCard v-for="p in discountedProducts" :key="p.id" :product="p" />
                 </div>
@@ -89,7 +89,7 @@
         <!-- ─── LATEST ARRIVALS ───────────────────────────────── -->
         <section class="py-14 bg-white border-b border-slate-100">
             <div class="max-w-[1550px] mx-auto px-4">
-                <SectionTitle title="Newly Arrived" subtitle="Fresh in from the farms" centered />
+                <SectionTitle :title="$t('Newly Arrived')" :subtitle="$t('Fresh in from the farms')" centered />
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8 justify-center">
                     <ProductCard v-for="p in latestProducts" :key="p.id" :product="p" />
                 </div>
@@ -105,8 +105,8 @@
                             <component :is="b.icon" class="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <h3 class="text-[10px] font-black text-white uppercase tracking-widest italic">{{ b.title }}</h3>
-                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ b.desc }}</p>
+                            <h3 class="text-[10px] font-black text-white uppercase tracking-widest italic">{{ $t(b.title) }}</h3>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ $t(b.desc) }}</p>
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
                         <div class="w-12 h-1.5 bg-[#FF6600] rounded-full mb-2"></div>
                         <h2 class="text-2xl font-black text-[#003366] uppercase tracking-tighter italic leading-none">{{ section.name }}</h2>
                         <Link :href="`/shop?category=${section.slug}`" class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.3em] flex items-center gap-1 hover:underline transition-all mt-2">
-                            View All Collection <ArrowRight class="w-3 h-3" />
+                            {{ $t('View All Collection') }} <ArrowRight class="w-3 h-3" />
                         </Link>
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8 justify-center">
@@ -136,8 +136,8 @@
             <div class="max-w-[1550px] mx-auto px-4">
                 <!-- Header -->
                 <div class="text-center mb-14">
-                    <p class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.4em] mb-2">Real Experiences</p>
-                    <h2 class="text-3xl font-black text-[#003366] uppercase tracking-tighter italic">Customer Reviews</h2>
+                    <p class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.4em] mb-2">{{ $t('Real Experiences') }}</p>
+                    <h2 class="text-3xl font-black text-[#003366] uppercase tracking-tighter italic">{{ $t('Customer Reviews') }}</h2>
                     <div class="w-12 h-1 bg-[#FF6600] mx-auto mt-4 rounded-full"></div>
                 </div>
 
@@ -177,8 +177,8 @@
                                             {{ review.customer_name ? review.customer_name.charAt(0).toUpperCase() : 'A' }}
                                         </div>
                                         <div>
-                                            <p class="text-[11px] font-black text-[#003366] uppercase tracking-widest">{{ review.customer_name || 'Anonymous' }}</p>
-                                            <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">Verified Purchase</p>
+                                            <p class="text-[11px] font-black text-[#003366] uppercase tracking-widest">{{ review.customer_name || $t('Anonymous') }}</p>
+                                            <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{{ $t('Verified Purchase') }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -202,14 +202,14 @@
                     <!-- See All link -->
                     <div class="mt-10 text-center">
                         <Link href="/reviews" class="inline-flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] hover:text-[#FF6600] transition-colors">
-                            See All Reviews <ArrowRight class="w-3.5 h-3.5" />
+                            {{ $t('See All Reviews') }} <ArrowRight class="w-3.5 h-3.5" />
                         </Link>
                     </div>
                 </div>
 
                 <!-- Empty state -->
                 <div v-else class="text-center py-12 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">No customer reviews yet. Be the first to leave one!</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ $t('No customer reviews yet. Be the first to leave one!') }}</p>
                 </div>
             </div>
         </section>

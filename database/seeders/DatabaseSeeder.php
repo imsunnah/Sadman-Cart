@@ -49,24 +49,34 @@ class DatabaseSeeder extends Seeder
 
         // 3. Setup Default Settings (10 total keys)
         $settings = [
-            'site_name' => 'Sadman Cart',
-            'contact_email' => 'contact@sadmancart.com',
-            'contact_phone' => '+880123456789',
-            'currency' => '৳',
-            'address' => 'Dhaka, Bangladesh',
-            'site_facebook_url' => 'https://facebook.com/sadmancart',
-            'site_instagram_url' => 'https://instagram.com/sadmancart',
-            'shipping_policy_summary' => 'Express delivery within 2-3 business days inside Dhaka, 3-5 days outside Dhaka.',
-            'return_policy_summary' => 'Easy return protocol within 7 days of package confirmation.',
-            'slider_images' => json_encode([
+            'site_name' => ['en' => 'Sadman Cart', 'bn' => 'সাদমান কার্ট'],
+            'contact_email' => ['en' => 'contact@sadmancart.com', 'bn' => 'contact@sadmancart.com'],
+            'contact_phone' => ['en' => '+880123456789', 'bn' => '+880123456789'],
+            'currency' => ['en' => '৳', 'bn' => '৳'],
+            'address' => ['en' => 'Dhaka, Bangladesh', 'bn' => 'ঢাকা, বাংলাদেশ'],
+            'site_facebook_url' => ['en' => 'https://facebook.com/sadmancart', 'bn' => 'https://facebook.com/sadmancart'],
+            'site_instagram_url' => ['en' => 'https://instagram.com/sadmancart', 'bn' => 'https://instagram.com/sadmancart'],
+            'shipping_policy_summary' => ['en' => 'Express delivery within 2-3 business days inside Dhaka, 3-5 days outside Dhaka.', 'bn' => 'ঢাকায় ২-৩ দিন এবং ঢাকার বাইরে ৩-৫ দিনে এক্সপ্রেস ডেলিভারি।'],
+            'return_policy_summary' => ['en' => 'Easy return protocol within 7 days of package confirmation.', 'bn' => '৭ দিনের মধ্যে সহজ রিটার্ন সুবিধা।'],
+            'slider_images' => ['en' => json_encode([
                 'https://placehold.co/1920x600/003366/ffffff?text=Premium+Surgical+Equipments',
                 'https://placehold.co/1920x600/ff6600/ffffff?text=Latest+Tech+Gadgets',
                 'https://placehold.co/1920x600/003366/ffffff?text=Daily+Home+Accessories'
-            ])
+            ]), 'bn' => json_encode([
+                'https://placehold.co/1920x600/003366/ffffff?text=Premium+Surgical+Equipments',
+                'https://placehold.co/1920x600/ff6600/ffffff?text=Latest+Tech+Gadgets',
+                'https://placehold.co/1920x600/003366/ffffff?text=Daily+Home+Accessories'
+            ])]
         ];
 
-        foreach ($settings as $key => $value) {
-            Setting::updateOrCreate(['key' => $key], ['value' => $value]);
+        foreach ($settings as $key => $values) {
+            Setting::updateOrCreate(
+                ['key' => $key], 
+                [
+                    'value_en' => $values['en'],
+                    'value_bn' => $values['bn']
+                ]
+            );
         }
 
         // 4. Run Store Seeder and Page Seeder

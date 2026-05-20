@@ -59,13 +59,13 @@
                             <!-- Brand / Category info -->
                             <div class="flex flex-wrap gap-4 py-4 border-y border-slate-50">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Brand:</span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $t('Brand:') }}</span>
                                     <span class="text-[10px] font-black text-[#003366] uppercase tracking-widest bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
                                         {{ product.brand || 'Premium' }}
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Category:</span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $t('Category:') }}</span>
                                     <span class="text-[10px] font-black text-[#FF6600] uppercase tracking-widest bg-orange-50 px-2.5 py-1 rounded-lg border border-orange-100">
                                         {{ product.category?.name || 'Organic' }}
                                     </span>
@@ -74,7 +74,7 @@
 
                             <!-- Quantity -->
                             <div class="flex items-center gap-6">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Quantity:</span>
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $t('Quantity:') }}</span>
                                 <div class="flex items-center bg-slate-50 border border-slate-100 rounded-xl overflow-hidden h-10">
                                     <button @click="quantity > 1 && quantity--" class="px-4 h-full text-[#003366] hover:bg-slate-100 transition-colors"><Minus class="w-3 h-3" /></button>
                                     <input type="number" v-model="quantity" class="w-10 h-full text-center font-black text-xs border-none bg-transparent focus:ring-0 text-[#003366]" />
@@ -92,14 +92,14 @@
                                     :disabled="product.stock <= 0"
                                     class="h-14 bg-[#003366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0f172a] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-900/10 font-sans cursor-pointer"
                                 >
-                                    <ShoppingCart class="w-4 h-4" /> Add To Cart
+                                    <ShoppingCart class="w-4 h-4" /> {{ $t('Add To Cart') }}
                                 </button>
                                 <button 
                                     @click="handleBuyNow"
                                     :disabled="product.stock <= 0"
                                     class="h-14 bg-[#FF6600] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-orange-950/15 font-sans cursor-pointer"
                                 >
-                                    <Zap class="w-4 h-4" /> Buy Now
+                                    <Zap class="w-4 h-4" /> {{ $t('Buy Now') }}
                                 </button>
                             </div>
 
@@ -110,14 +110,14 @@
                                     target="_blank"
                                     class="h-12 bg-[#25D366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#128C7E] transition-all active:scale-95 flex items-center justify-center gap-3 w-full"
                                 >
-                                    <MessageSquare class="w-4 h-4" /> Order On WhatsApp
+                                    <MessageSquare class="w-4 h-4" /> {{ $t('Order On WhatsApp') }}
                                 </a>
                             </div>
 
                             <!-- Admin Remarks / Note -->
                             <div v-if="product.remarks" class="p-4 bg-blue-50 border border-blue-100 rounded-2xl">
                                 <p class="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] mb-1 flex items-center gap-2">
-                                    <Info class="w-3 h-3" /> Important Note
+                                    <Info class="w-3 h-3" /> {{ $t('Important Note') }}
                                 </p>
                                 <p class="text-xs font-bold text-blue-800 italic leading-relaxed">{{ product.remarks }}</p>
                             </div>
@@ -133,20 +133,20 @@
                             :class="[activeTab === 'description' ? 'text-[#FF6600] border-b-2 border-[#FF6600]' : 'text-slate-400 hover:text-slate-600']"
                             class="px-8 py-6 font-black text-[10px] uppercase tracking-widest transition-all"
                         >
-                            Description
+                            {{ $t('Description') }}
                         </button>
                         <button 
                             @click="activeTab = 'reviews'" 
                             :class="[activeTab === 'reviews' ? 'text-[#FF6600] border-b-2 border-[#FF6600]' : 'text-slate-400 hover:text-slate-600']"
                             class="px-8 py-6 font-black text-[10px] uppercase tracking-widest transition-all"
                         >
-                            Customer Reviews ({{ product.reviews ? product.reviews.length : 0 }})
+                            {{ $t('Customer Reviews') }} ({{ product.reviews ? product.reviews.length : 0 }})
                         </button>
                     </div>
 
                     <div class="p-8 md:p-12">
                         <div v-if="activeTab === 'description'">
-                            <h3 class="text-xs font-black text-[#003366] mb-6 uppercase tracking-widest">Product Details</h3>
+                            <h3 class="text-xs font-black text-[#003366] mb-6 uppercase tracking-widest">{{ $t('Product Details') }}</h3>
                             <div class="prose prose-slate prose-sm max-w-none text-slate-600 font-medium leading-relaxed whitespace-pre-line">
                                 {{ product.description }}
                             </div>
@@ -156,7 +156,7 @@
                             <div class="flex items-center gap-8 mb-10 pb-10 border-b border-slate-50">
                                 <div class="text-center">
                                     <p class="text-5xl font-black text-slate-900">{{ averageRating }}</p>
-                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Overall Rating</p>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{{ $t('Overall Rating') }}</p>
                                 </div>
                                 <div class="flex-grow space-y-2">
                                     <div v-for="star in 5" :key="star" class="flex items-center gap-3">
@@ -186,12 +186,12 @@
                                 </div>
                             </div>
                             <div v-else class="text-center py-10 mb-10 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">No customer remarks/reviews yet. Be the first to leave a note!</p>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ $t('No customer remarks/reviews yet. Be the first to leave a note!') }}</p>
                             </div>
 
                             <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100">
-                                <h3 class="text-[10px] font-black text-[#003366] mb-2 uppercase tracking-widest">Submit Your Remark / Review</h3>
-                                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-6">No login required — open to all customers</p>
+                                <h3 class="text-[10px] font-black text-[#003366] mb-2 uppercase tracking-widest">{{ $t('Submit Your Remark / Review') }}</h3>
+                                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-6">{{ $t('No login required — open to all customers') }}</p>
                                 
                                 <div v-if="reviewSuccessMessage" class="p-4 mb-6 bg-green-50 border border-green-200 text-green-700 text-xs font-black rounded-xl uppercase tracking-wider">
                                     {{ reviewSuccessMessage }}
@@ -199,11 +199,11 @@
 
                                 <form @submit.prevent="submitReview" class="space-y-4">
                                     <div>
-                                        <label class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">Your Name</label>
+                                        <label class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ $t('Your Name') }}</label>
                                         <input type="text" v-model="reviewForm.customer_name" placeholder="e.g. Anonymous Guest" class="w-full rounded-2xl border-none bg-white px-5 py-4 text-xs font-medium focus:ring-1 focus:ring-[#FF6600]/20 transition-all" />
                                     </div>
                                     <div>
-                                        <label class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">Rating</label>
+                                        <label class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ $t('Rating') }}</label>
                                         <div class="flex gap-2">
                                             <Star 
                                                 v-for="star in 5" 
@@ -215,7 +215,7 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">Remarks / Opinion</label>
+                                        <label class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ $t('Remarks / Opinion') }}</label>
                                         <textarea rows="4" v-model="reviewForm.comment" required placeholder="Write your remark or opinion here..." class="w-full rounded-2xl border-none bg-white p-4 text-xs font-medium focus:ring-1 focus:ring-[#FF6600]/20 transition-all"></textarea>
                                     </div>
                                     <button 
@@ -223,7 +223,7 @@
                                         :disabled="isSubmittingReview"
                                         class="px-8 py-4 bg-[#003366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all disabled:opacity-50"
                                     >
-                                        {{ isSubmittingReview ? 'Submitting...' : 'Submit Remark' }}
+                                        {{ isSubmittingReview ? $t('Submitting...') : $t('Submit Remark') }}
                                     </button>
                                 </form>
                             </div>
@@ -235,8 +235,8 @@
                 <div class="bg-white rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] border border-slate-100 p-8 md:p-12 mb-12">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-50">
                         <div>
-                            <span class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.3em] block mb-1">Customer Testimonials</span>
-                            <h3 class="text-xl font-black text-[#003366] uppercase tracking-tighter italic">Latest Reviews for this Product</h3>
+                            <span class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.3em] block mb-1">{{ $t('Customer Testimonials') }}</span>
+                            <h3 class="text-xl font-black text-[#003366] uppercase tracking-tighter italic">{{ $t('Latest Reviews for this Product') }}</h3>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-sm font-black text-slate-800 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-100 flex items-center gap-1.5">
@@ -244,7 +244,7 @@
                                 {{ averageRating }} / 5
                             </span>
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                ({{ product.reviews ? product.reviews.length : 0 }} Verified Reviews)
+                                ({{ product.reviews ? product.reviews.length : 0 }} {{ $t('Verified Reviews') }})
                             </span>
                         </div>
                     </div>
@@ -268,15 +268,15 @@
                     </div>
                     <div v-else class="text-center py-12 bg-slate-50 rounded-[2rem] border border-dashed border-slate-200">
                         <MessageSquare class="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest">No customer reviews yet. Be the first to share your opinion under the Reviews tab above!</p>
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest">{{ $t('No customer remarks/reviews yet. Be the first to leave a note!') }}</p>
                     </div>
                 </div>
 
                 <!-- Related Products -->
                 <div>
                     <div class="flex justify-between items-center mb-8 px-2">
-                        <h2 class="text-lg font-black text-[#003366] uppercase tracking-tighter italic">Related Products</h2>
-                        <Link href="/shop" class="text-[9px] font-black text-[#FF6600] uppercase tracking-widest hover:underline">View More Products →</Link>
+                        <h2 class="text-lg font-black text-[#003366] uppercase tracking-tighter italic">{{ $t('Related Products') }}</h2>
+                        <Link href="/shop" class="text-[9px] font-black text-[#FF6600] uppercase tracking-widest hover:underline">{{ $t('View More Products →') }}</Link>
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                         <ProductCard v-for="p in relatedProducts" :key="p.id" :product="p" />
@@ -291,7 +291,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
 import ProductCard from '@/Components/ProductCard.vue';
 import ImageLightbox from '@/Components/ImageLightbox.vue';
@@ -345,7 +345,7 @@ const submitReview = async () => {
                 reviewForm.value.customer_name = '';
                 reviewForm.value.comment = '';
                 reviewForm.value.rating = 5;
-                reviewSuccessMessage.value = 'Thank you! Your remark/review has been posted successfully.';
+                reviewSuccessMessage.value = usePage().props.translations?.['Thank you! Your remark/review has been posted successfully.'] || 'Thank you! Your remark/review has been posted successfully.';
             }
         });
     } catch (e) {

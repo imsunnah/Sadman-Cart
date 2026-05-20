@@ -9,10 +9,12 @@ class Product extends Model
     protected $fillable = [
         'category_id',
         'sub_category_id',
-        'name',
+        'name_en',
+        'name_bn',
         'slug',
         'sku',
-        'description',
+        'description_en',
+        'description_bn',
         'price',
         'buying_price',
         'package_cost',
@@ -31,7 +33,21 @@ class Product extends Model
 
     protected $appends = [
         'discounted_price',
+        'name',
+        'description',
     ];
+
+    public function getNameAttribute()
+    {
+        $locale = app()->getLocale();
+        return $locale === 'bn' ? ($this->name_bn ?: $this->name_en) : $this->name_en;
+    }
+
+    public function getDescriptionAttribute()
+    {
+        $locale = app()->getLocale();
+        return $locale === 'bn' ? ($this->description_bn ?: $this->description_en) : $this->description_en;
+    }
 
     public function category()
     {

@@ -3,7 +3,7 @@
         <div class="mb-10 flex items-center justify-between bg-white p-8 rounded-xl shadow-sm border border-slate-100">
             <div>
                 <h1 class="text-2xl font-bold text-[#003366]">Edit Category</h1>
-                <p class="text-xs text-slate-500 mt-1">Updating details for <span class="text-[#003366] font-bold">{{ category.name }}</span></p>
+                <p class="text-xs text-slate-500 mt-1">Updating details for <span class="text-[#003366] font-bold">{{ category.name_en }}</span></p>
             </div>
             <Link href="/admin/categories" class="text-xs font-bold text-slate-500 hover:text-[#003366] flex items-center transition-all">
                 <ArrowLeft class="w-4 h-4 mr-2" />
@@ -13,10 +13,17 @@
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden max-w-2xl">
             <form @submit.prevent="submit" class="p-8 space-y-8">
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category Name</label>
-                    <input v-model="form.name" type="text" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
-                    <p v-if="form.errors.name" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.name }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category Name (English)</label>
+                        <input v-model="form.name_en" type="text" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
+                        <p v-if="form.errors.name_en" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.name_en }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category Name (Bangla)</label>
+                        <input v-model="form.name_bn" type="text" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
+                        <p v-if="form.errors.name_bn" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.name_bn }}</p>
+                    </div>
                 </div>
 
                 <div>
@@ -31,10 +38,17 @@
                     <p v-if="form.errors.image" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.image }}</p>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description</label>
-                    <textarea v-model="form.description" rows="4" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium"></textarea>
-                    <p v-if="form.errors.description" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description (English)</label>
+                        <textarea v-model="form.description_en" rows="4" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium"></textarea>
+                        <p v-if="form.errors.description_en" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description_en }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description (Bangla)</label>
+                        <textarea v-model="form.description_bn" rows="4" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium"></textarea>
+                        <p v-if="form.errors.description_bn" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description_bn }}</p>
+                    </div>
                 </div>
 
                 <div>
@@ -68,8 +82,10 @@ const previewUrl = ref(null);
 
 const form = useForm({
     _method: 'PUT',
-    name: props.category.name,
-    description: props.category.description,
+    name_en: props.category.name_en || '',
+    name_bn: props.category.name_bn || '',
+    description_en: props.category.description_en || '',
+    description_bn: props.category.description_bn || '',
     is_active: props.category.is_active ? true : false,
     image: null,
 });

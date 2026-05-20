@@ -15,16 +15,27 @@
                 <div class="bg-white rounded-[2.5rem] p-8 sm:p-12 shadow-sm border border-slate-100">
                     <h3 class="text-sm font-black text-[#003366] mb-8 uppercase tracking-[0.2em] italic border-b border-slate-50 pb-4">Basic Information</h3>
                     
-                    <div class="grid grid-cols-1 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Combo Name</label>
-                            <input v-model="form.name" type="text" required placeholder="e.g. Organic Breakfast Bundle" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 focus:bg-white focus:border-[#003366]/10 focus:ring-0 outline-none transition-all font-bold text-sm">
-                            <div v-if="form.errors.name" class="text-red-500 text-[10px] mt-2 ml-2 font-bold">{{ form.errors.name }}</div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Combo Name (English)</label>
+                            <input v-model="form.name_en" type="text" required placeholder="e.g. Organic Breakfast Bundle" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 focus:bg-white focus:border-[#003366]/10 focus:ring-0 outline-none transition-all font-bold text-sm">
+                            <div v-if="form.errors.name_en" class="text-red-500 text-[10px] mt-2 ml-2 font-bold">{{ form.errors.name_en }}</div>
                         </div>
-
                         <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Bundle Description</label>
-                            <textarea v-model="form.description" rows="4" placeholder="Explain what's included in this premium offer..." class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 focus:bg-white focus:border-[#003366]/10 focus:ring-0 outline-none transition-all font-bold text-sm italic"></textarea>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Combo Name (Bangla)</label>
+                            <input v-model="form.name_bn" type="text" required placeholder="e.g. অর্গানিক ব্রেকফাস্ট বান্ডেল" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 focus:bg-white focus:border-[#003366]/10 focus:ring-0 outline-none transition-all font-bold text-sm">
+                            <div v-if="form.errors.name_bn" class="text-red-500 text-[10px] mt-2 ml-2 font-bold">{{ form.errors.name_bn }}</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Bundle Description (English)</label>
+                            <textarea v-model="form.description_en" rows="4" placeholder="Explain what's included in this premium offer..." class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 focus:bg-white focus:border-[#003366]/10 focus:ring-0 outline-none transition-all font-bold text-sm italic"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Bundle Description (Bangla)</label>
+                            <textarea v-model="form.description_bn" rows="4" placeholder="বান্ডেলের বিবরণ লিখুন..." class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 focus:bg-white focus:border-[#003366]/10 focus:ring-0 outline-none transition-all font-bold text-sm italic"></textarea>
                         </div>
                     </div>
                 </div>
@@ -92,7 +103,7 @@
                                     <img v-if="product.image" :src="product.image" class="w-full h-full object-cover rounded-lg" />
                                     <Package v-else class="w-6 h-6" />
                                 </div>
-                                <span class="text-[10px] font-black uppercase tracking-widest leading-tight">{{ product.name }}</span>
+                                <span class="text-[10px] font-black uppercase tracking-widest leading-tight">{{ product.name_en }}</span>
                                 <span class="text-[9px] font-bold opacity-60">৳{{ parseFloat(product.price).toLocaleString() }}</span>
                             </div>
                         </div>
@@ -125,8 +136,10 @@ const props = defineProps({
 
 const form = useForm({
     _method: 'PUT',
-    name: props.combo.name,
-    description: props.combo.description,
+    name_en: props.combo.name_en || '',
+    name_bn: props.combo.name_bn || '',
+    description_en: props.combo.description_en || '',
+    description_bn: props.combo.description_bn || '',
     price: props.combo.price,
     original_price: props.combo.original_price,
     image: null,

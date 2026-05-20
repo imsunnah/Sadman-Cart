@@ -27,13 +27,15 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'name_en' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
+            'description_en' => 'nullable|string',
+            'description_bn' => 'nullable|string',
             'is_active' => 'boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = Str::slug($validated['name_en']);
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/gallery', 'public');
@@ -55,13 +57,15 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'name_en' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
+            'description_en' => 'nullable|string',
+            'description_bn' => 'nullable|string',
             'is_active' => 'boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = Str::slug($validated['name_en']);
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/gallery', 'public');

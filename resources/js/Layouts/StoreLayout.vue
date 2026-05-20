@@ -23,15 +23,15 @@
                         </div>
                         <div class="flex items-center gap-4 border-l border-slate-700 pl-4 md:pl-8">
                             <div v-if="!$page.props.auth.user" class="flex items-center gap-2">
-                                <Link href="/login" class="hover:text-[#FF6600] transition-colors">Login</Link>
+                                <Link href="/login" class="hover:text-[#FF6600] transition-colors">{{ $t('Login') }}</Link>
                                 <span class="text-slate-500">/</span>
-                                <Link href="/register" class="hover:text-[#FF6600] transition-colors">Register</Link>
+                                <Link href="/register" class="hover:text-[#FF6600] transition-colors">{{ $t('Register') }}</Link>
                             </div>
                             <div v-else class="flex items-center gap-4">
                                 <span class="text-slate-400 hidden sm:inline">{{ $page.props.auth.user.name }}</span>
-                                <Link href="/customer/orders" class="hover:text-[#FF6600] transition-colors">My Orders</Link>
-                                <Link href="/logout" method="post" as="button" class="hover:text-[#FF6600] transition-colors">Logout</Link>
-                                <Link v-if="$page.props.auth.user?.role === 'admin'" href="/admin/dashboard" class="text-[#FF6600] font-black italic">Admin</Link>
+                                <Link href="/customer/orders" class="hover:text-[#FF6600] transition-colors">{{ $t('My Orders') }}</Link>
+                                <Link href="/logout" method="post" as="button" class="hover:text-[#FF6600] transition-colors">{{ $t('Logout') }}</Link>
+                                <Link v-if="$page.props.auth.user?.role === 'admin'" href="/admin/dashboard" class="text-[#FF6600] font-black italic">{{ $t('Admin') }}</Link>
                             </div>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                         <input
                             v-model="searchQuery"
                             type="text"
-                            placeholder="Find your selection..."
+                            :placeholder="$t('Find your selection...')"
                             class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:bg-white focus:border-[#003366]/20 focus:ring-0 outline-none transition-all shadow-sm"
                         />
                         <Search class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#003366] transition-colors" />
@@ -85,7 +85,7 @@
                     <input
                         v-model="searchQuery"
                         type="text"
-                        placeholder="Search..."
+                        :placeholder="$t('Search...')"
                         class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none"
                     />
                     <Search class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -125,7 +125,7 @@
                             <button 
                                 class="text-[11px] font-black uppercase tracking-[0.3em] text-white hover:text-[#FF6600] transition-all drop-shadow-sm flex items-center gap-1 cursor-pointer"
                             >
-                                More →
+                                {{ $t('More') }} →
                             </button>
                             <div class="absolute left-1/2 -translate-x-1/2 top-full pt-4 opacity-0 invisible group-hover/more:opacity-100 group-hover/more:visible transition-all duration-300 z-50">
                                 <div class="bg-[#002244] border border-white/10 rounded-2xl shadow-2xl py-3 w-64 flex flex-col overflow-hidden">
@@ -154,7 +154,7 @@
             <!-- Top Section (Orange) -->
             <div class="w-full bg-[#FF6600] pt-4 pb-3 flex flex-col items-center justify-center">
                 <ShoppingBag class="w-6 h-6 text-white mb-1" />
-                <span class="text-[9px] font-black text-white uppercase tracking-tight leading-none">{{ cartCount }} Items</span>
+                <span class="text-[9px] font-black text-white uppercase tracking-tight leading-none">{{ cartCount }} {{ $t('Items') }}</span>
             </div>
             
             <!-- Bottom Section (White) -->
@@ -174,8 +174,8 @@
             class="fixed bottom-8 right-8 z-[90] flex items-center gap-3 bg-white pl-5 pr-2 py-2 rounded-full shadow-[0_15px_40px_-10px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all group border border-slate-100"
         >
             <div class="flex flex-col items-end">
-                <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Online Support</span>
-                <span class="text-[10px] font-black text-[#003366] uppercase tracking-wider leading-none group-hover:text-[#FF6600] transition-colors">Chat with us</span>
+                <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{{ $t('Online Support') }}</span>
+                <span class="text-[10px] font-black text-[#003366] uppercase tracking-wider leading-none group-hover:text-[#FF6600] transition-colors">{{ $t('Chat with us') }}</span>
             </div>
             <div class="w-12 h-12 bg-[#0084FF] text-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-105 transition-all">
                 <MessageCircle class="w-6 h-6 fill-current" />
@@ -201,7 +201,7 @@
                     <div class="flex justify-between items-center mb-12">
                         <div class="flex items-center">
                             <ShoppingBag class="w-8 h-8 text-[#003366] mr-2" />
-                            <span class="text-xl font-black text-[#003366] uppercase italic">Menu</span>
+                            <span class="text-xl font-black text-[#003366] uppercase italic">{{ $t('Menu') }}</span>
                         </div>
                         <button @click="isMobileMenuOpen = false" class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 hover:text-[#FF6600] transition-colors">
                             <X class="w-6 h-6" />
@@ -209,11 +209,11 @@
                     </div>
 
                     <div class="flex-grow space-y-2 overflow-y-auto">
-                        <Link href="/" @click="isMobileMenuOpen = false" class="block py-4 text-2xl font-black italic uppercase tracking-tighter text-[#003366] border-b border-slate-50">Home</Link>
-                        <Link href="/shop" @click="isMobileMenuOpen = false" class="block py-4 text-2xl font-black italic uppercase tracking-tighter text-[#003366] border-b border-slate-50">Shop Catalog</Link>
+                        <Link href="/" @click="isMobileMenuOpen = false" class="block py-4 text-2xl font-black italic uppercase tracking-tighter text-[#003366] border-b border-slate-50">{{ $t('Home') }}</Link>
+                        <Link href="/shop" @click="isMobileMenuOpen = false" class="block py-4 text-2xl font-black italic uppercase tracking-tighter text-[#003366] border-b border-slate-50">{{ $t('Shop Catalog') }}</Link>
                         
                         <div class="py-6">
-                            <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-6">Collections</p>
+                            <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-6">{{ $t('Collections') }}</p>
                             <div class="grid grid-cols-1 gap-4">
                                 <Link 
                                     v-for="category in $page.props.categories" 
@@ -231,14 +231,14 @@
                     <div class="mt-auto pt-8 border-t border-slate-100 space-y-6">
                         <div class="flex flex-col gap-3">
                             <div v-if="!$page.props.auth.user" class="grid grid-cols-2 gap-3">
-                                <Link href="/login" @click="isMobileMenuOpen = false" class="w-full py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs uppercase tracking-widest text-center block">Login</Link>
-                                <Link href="/register" @click="isMobileMenuOpen = false" class="w-full py-3.5 bg-[#003366] text-white hover:bg-slate-800 rounded-xl font-bold text-xs uppercase tracking-widest text-center block">Register</Link>
+                                <Link href="/login" @click="isMobileMenuOpen = false" class="w-full py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs uppercase tracking-widest text-center block">{{ $t('Login') }}</Link>
+                                <Link href="/register" @click="isMobileMenuOpen = false" class="w-full py-3.5 bg-[#003366] text-white hover:bg-slate-800 rounded-xl font-bold text-xs uppercase tracking-widest text-center block">{{ $t('Register') }}</Link>
                             </div>
                             <div v-else class="flex flex-col gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                <span class="text-xs font-black text-[#003366] uppercase tracking-wider block mb-1">Hello, {{ $page.props.auth.user.name }}</span>
+                                <span class="text-xs font-black text-[#003366] uppercase tracking-wider block mb-1">{{ $t('Hello') }}, {{ $page.props.auth.user.name }}</span>
                                 <div class="flex gap-2">
-                                    <Link href="/customer/orders" @click="isMobileMenuOpen = false" class="flex-grow py-2.5 bg-[#003366] text-white rounded-lg text-[10px] font-black uppercase tracking-wider text-center">My Orders</Link>
-                                    <Link href="/logout" method="post" as="button" @click="isMobileMenuOpen = false" class="flex-grow py-2.5 bg-slate-200 text-slate-700 rounded-lg text-[10px] font-black uppercase tracking-wider text-center">Logout</Link>
+                                    <Link href="/customer/orders" @click="isMobileMenuOpen = false" class="flex-grow py-2.5 bg-[#003366] text-white rounded-lg text-[10px] font-black uppercase tracking-wider text-center">{{ $t('My Orders') }}</Link>
+                                    <Link href="/logout" method="post" as="button" @click="isMobileMenuOpen = false" class="flex-grow py-2.5 bg-slate-200 text-slate-700 rounded-lg text-[10px] font-black uppercase tracking-wider text-center">{{ $t('Logout') }}</Link>
                                 </div>
                             </div>
                         </div>
@@ -253,7 +253,7 @@
                                 {{ $page.props.settings.footer_email }}
                             </a>
                         </div>
-                        <Link href="/cart" @click="isMobileMenuOpen = false" class="w-full py-5 bg-[#FF6600] text-white rounded-2xl font-black text-xs uppercase tracking-widest text-center block shadow-xl shadow-orange-500/20">View My Cart</Link>
+                        <Link href="/cart" @click="isMobileMenuOpen = false" class="w-full py-5 bg-[#FF6600] text-white rounded-2xl font-black text-xs uppercase tracking-widest text-center block shadow-xl shadow-orange-500/20">{{ $t('View My Cart') }}</Link>
                     </div>
                 </div>
             </div>
@@ -271,7 +271,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-[11px] font-black uppercase tracking-widest mb-0.5" :class="toast.type === 'success' ? 'text-green-700' : (toast.type === 'error' ? 'text-red-700' : 'text-blue-700')">
-                                {{ toast.type === "success" ? "Added to Cart" : (toast.type === "error" ? "Error" : "Notice") }}
+                            {{ toast.type === "success" ? $t("Added to Cart") : (toast.type === "error" ? $t("Error") : $t("Notice")) }}
                             </p>
                             <p class="text-xs font-bold text-slate-600 leading-snug">{{ toast.message }}</p>
                         </div>
@@ -342,7 +342,7 @@
 
                 <!-- Information -->
                 <div>
-                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Information</h3>
+                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">{{ $t('Information') }}</h3>
                     <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
                         <li v-for="page in ($page.props.activePages || []).filter(p => p.group === 'about_us')" :key="page.id">
                             <Link :href="`/pages/${page.slug}`" class="hover:text-[#FF6600] transition-colors">{{ page.title }}</Link>
@@ -352,31 +352,31 @@
 
                 <!-- Shop By -->
                 <div>
-                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Shop By</h3>
+                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">{{ $t('Shop By') }}</h3>
                     <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
                         <li v-for="cat in $page.props.categories.slice(0, 5)" :key="cat.id">
                             <Link :href="`/shop?category=${cat.slug}`" class="hover:text-[#FF6600] transition-colors">{{ cat.name }}</Link>
                         </li>
-                        <li><Link href="/shop" class="hover:text-[#FF6600] transition-colors font-black text-[#FF6600]">View All Shop</Link></li>
+                        <li><Link href="/shop" class="hover:text-[#FF6600] transition-colors font-black text-[#FF6600]">{{ $t('View All Shop') }}</Link></li>
                     </ul>
                 </div>
 
                 <!-- Support -->
                 <div>
-                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Support</h3>
+                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">{{ $t('Support') }}</h3>
                     <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
                         <li v-for="page in ($page.props.activePages || []).filter(p => p.group === 'support')" :key="page.id">
                             <Link :href="`/pages/${page.slug}`" class="hover:text-[#FF6600] transition-colors">{{ page.title }}</Link>
                         </li>
                         <li>
-                            <Link href="/reviews" class="hover:text-[#FF6600] transition-colors">Customer Reviews</Link>
+                            <Link href="/reviews" class="hover:text-[#FF6600] transition-colors">{{ $t('Customer Reviews') }}</Link>
                         </li>
                     </ul>
                 </div>
 
                 <!-- Consumer Policy -->
                 <div>
-                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">Consumer Policy</h3>
+                    <h3 class="font-black text-white mb-8 uppercase text-[10px] tracking-[0.2em] italic border-b border-white/10 pb-2">{{ $t('Consumer Policy') }}</h3>
                     <ul class="space-y-4 text-[10px] text-slate-300 font-bold uppercase tracking-widest">
                         <li v-for="page in ($page.props.activePages || []).filter(p => p.group === 'consumer_policy')" :key="page.id">
                             <Link :href="`/pages/${page.slug}`" class="hover:text-[#FF6600] transition-colors">{{ page.title }}</Link>
@@ -387,11 +387,11 @@
 
             <div class="max-w-[1550px] mx-auto px-4 mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                 <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.3em]">
-                    &copy; 2026 {{ $page.props.settings.site_name }}. All Rights Reserved.
+                    &copy; 2026 {{ $page.props.settings.site_name }}. {{ $t('All Rights Reserved.') }}
                 </p>
                 <div class="flex items-center gap-2">
                     <ShieldCheck class="w-4 h-4 text-[#FF6600]" />
-                    <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest italic">Premium Verified Platform</span>
+                    <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest italic">{{ $t('Premium Verified Platform') }}</span>
                 </div>
             </div>
         </footer>

@@ -73,7 +73,10 @@ class StoreController extends Controller
         }
 
         if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where(function($q) use ($request) {
+                $q->where('name_en', 'like', '%' . $request->search . '%')
+                  ->orWhere('name_bn', 'like', '%' . $request->search . '%');
+            });
         }
 
         // Apply Sorting
@@ -91,7 +94,7 @@ class StoreController extends Controller
 
         $products = $query->paginate(12)->withQueryString();
 
-        $brandsQuery = \App\Models\Brand::where('is_active', true)->orderBy('name', 'asc');
+        $brandsQuery = \App\Models\Brand::where('is_active', true)->orderBy(app()->getLocale() === 'bn' ? 'name_bn' : 'name_en', 'asc');
         if ($request->has('category') && $request->category) {
             $categoriesList = explode(',', $request->category);
             $brandsQuery->where(function($q) use ($categoriesList) {
@@ -111,7 +114,7 @@ class StoreController extends Controller
 
     public function categories()
     {
-        $categories = Category::withCount('products')->orderBy('name')->get();
+        $categories = Category::withCount('products')->orderBy(app()->getLocale() === 'bn' ? 'name_bn' : 'name_en')->get();
         return Inertia::render('Categories', [
             'categories' => $categories
         ]);

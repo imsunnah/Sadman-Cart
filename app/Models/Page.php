@@ -7,14 +7,41 @@ use Illuminate\Database\Eloquent\Model;
 class Page extends Model
 {
     protected $fillable = [
-        'title',
+        'title_en',
+        'title_bn',
         'slug',
-        'description',
+        'description_en',
+        'description_bn',
         'image',
-        'content',
+        'content_en',
+        'content_bn',
         'group',
         'is_active',
     ];
+
+    protected $appends = [
+        'title',
+        'description',
+        'content',
+    ];
+
+    public function getTitleAttribute()
+    {
+        $locale = app()->getLocale();
+        return $locale === 'bn' ? ($this->title_bn ?: $this->title_en) : $this->title_en;
+    }
+
+    public function getDescriptionAttribute()
+    {
+        $locale = app()->getLocale();
+        return $locale === 'bn' ? ($this->description_bn ?: $this->description_en) : $this->description_en;
+    }
+
+    public function getContentAttribute()
+    {
+        $locale = app()->getLocale();
+        return $locale === 'bn' ? ($this->content_bn ?: $this->content_en) : $this->content_en;
+    }
 
     protected $casts = [
         'is_active' => 'boolean',

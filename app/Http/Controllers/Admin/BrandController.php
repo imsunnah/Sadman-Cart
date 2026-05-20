@@ -17,7 +17,10 @@ class BrandController extends Controller
         $query = Brand::with('categories')->latest();
         
         if ($search) {
-            $query->where('name', 'like', '%' . $search . '%');
+            $query->where(function($q) use ($search) {
+                $q->where('name_en', 'like', '%' . $search . '%')
+                  ->orWhere('name_bn', 'like', '%' . $search . '%');
+            });
         }
 
         $brands = $query->paginate(10)->withQueryString();
@@ -30,7 +33,7 @@ class BrandController extends Controller
 
     public function create()
     {
-        $categories = Category::where('is_active', true)->orderBy('name', 'asc')->get();
+        $categories = Category::where('is_active', true)->orderBy('name_en', 'asc')->get();
         return Inertia::render('Admin/Brand/Create', [
             'categories' => $categories
         ]);
@@ -39,14 +42,15 @@ class BrandController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name_en' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
             'is_active' => 'boolean',
             'image' => 'nullable',
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'nullable|exists:categories,id'
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = Str::slug($validated['name_en']);
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/gallery', 'public');
@@ -66,7 +70,7 @@ class BrandController extends Controller
 
     public function edit(Brand $brand)
     {
-        $categories = Category::where('is_active', true)->orderBy('name', 'asc')->get();
+        $categories = Category::where('is_active', true)->orderBy('name_en', 'asc')->get();
         return Inertia::render('Admin/Brand/Edit', [
             'brand' => $brand->load('categories'),
             'categories' => $categories
@@ -76,14 +80,15 @@ class BrandController extends Controller
     public function update(Request $request, Brand $brand)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name_en' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
             'is_active' => 'boolean',
             'image' => 'nullable',
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'nullable|exists:categories,id'
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = Str::slug($validated['name_en']);
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/gallery', 'public');

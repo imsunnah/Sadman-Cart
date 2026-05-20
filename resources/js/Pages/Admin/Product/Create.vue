@@ -15,17 +15,24 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     <!-- Left Column -->
                     <div class="space-y-6">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Product Name</label>
-                            <input v-model="form.name" type="text" placeholder="e.g. Pure Organic Honey" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
-                            <p v-if="form.errors.name" class="mt-1 text-xs text-red-500">{{ form.errors.name }}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Product Name (English)</label>
+                                <input v-model="form.name_en" type="text" placeholder="e.g. Pure Organic Honey" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
+                                <p v-if="form.errors.name_en" class="mt-1 text-xs text-red-500">{{ form.errors.name_en }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Product Name (Bangla)</label>
+                                <input v-model="form.name_bn" type="text" placeholder="e.g. খাঁটি অর্গানিক মধু" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
+                                <p v-if="form.errors.name_bn" class="mt-1 text-xs text-red-500">{{ form.errors.name_bn }}</p>
+                            </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Brand (Optional)</label>
                             <select v-model="form.brand_id" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold font-sans">
                                 <option :value="null">No Brand</option>
-                                <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{ brand.name }}</option>
+                                <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{ brand.name_en }}</option>
                             </select>
                             <p v-if="form.errors.brand_id" class="mt-1 text-xs text-red-500">{{ form.errors.brand_id }}</p>
                         </div>
@@ -37,14 +44,14 @@
                                     <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 ml-1">Main Category</label>
                                     <select v-model="form.category_id" class="w-full px-4 py-3 rounded-xl bg-white border-none shadow-sm focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold appearance-none">
                                         <option value="" disabled>Select Category</option>
-                                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
+                                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name_en }}</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 ml-1">Subcategory (Optional)</label>
                                     <select v-model="form.sub_category_id" :disabled="!form.category_id" class="w-full px-4 py-3 rounded-xl bg-white border-none shadow-sm focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold appearance-none disabled:opacity-50">
                                         <option :value="null">No Subcategory</option>
-                                        <option v-for="sub in selectedCategorySubs" :key="sub.id" :value="sub.id">{{ sub.name }}</option>
+                                        <option v-for="sub in selectedCategorySubs" :key="sub.id" :value="sub.id">{{ sub.name_en }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -74,10 +81,17 @@
                             <p v-if="form.errors.stock" class="mt-1 text-xs text-red-500">{{ form.errors.stock }}</p>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description</label>
-                            <textarea v-model="form.description" rows="5" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium" placeholder="Describe your product..."></textarea>
-                            <p v-if="form.errors.description" class="mt-1 text-xs text-red-500">{{ form.errors.description }}</p>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description (English)</label>
+                                <textarea v-model="form.description_en" rows="5" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium" placeholder="Describe your product..."></textarea>
+                                <p v-if="form.errors.description_en" class="mt-1 text-xs text-red-500">{{ form.errors.description_en }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description (Bangla)</label>
+                                <textarea v-model="form.description_bn" rows="5" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium" placeholder="পণ্যের বিবরণ লিখুন..."></textarea>
+                                <p v-if="form.errors.description_bn" class="mt-1 text-xs text-red-500">{{ form.errors.description_bn }}</p>
+                            </div>
                         </div>
                     </div>
 
@@ -185,9 +199,11 @@ const props = defineProps({
 const form = useForm({
     category_id: '',
     sub_category_id: '',
-    name: '',
+    name_en: '',
+    name_bn: '',
     brand_id: null,
-    description: '',
+    description_en: '',
+    description_bn: '',
     price: '',
     buying_price: '',
     package_cost: '',

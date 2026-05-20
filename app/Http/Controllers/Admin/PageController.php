@@ -26,15 +26,18 @@ class PageController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'title_en' => 'required|string|max:255',
+            'title_bn' => 'nullable|string|max:255',
+            'description_en' => 'nullable|string',
+            'description_bn' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'content' => 'required|string',
+            'content_en' => 'required|string',
+            'content_bn' => 'nullable|string',
             'group' => 'required|string|in:about_us,consumer_policy,support',
             'is_active' => 'required|boolean',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
+        $validated['slug'] = Str::slug($validated['title_en']);
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/gallery', 'public');
@@ -56,15 +59,18 @@ class PageController extends Controller
     public function update(Request $request, Page $page)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'title_en' => 'required|string|max:255',
+            'title_bn' => 'nullable|string|max:255',
+            'description_en' => 'nullable|string',
+            'description_bn' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'content' => 'required|string',
+            'content_en' => 'required|string',
+            'content_bn' => 'nullable|string',
             'group' => 'required|string|in:about_us,consumer_policy,support',
             'is_active' => 'required|boolean',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
+        $validated['slug'] = Str::slug($validated['title_en']);
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/gallery', 'public');

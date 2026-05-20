@@ -7,14 +7,33 @@ use Illuminate\Database\Eloquent\Model;
 class Combo extends Model
 {
     protected $fillable = [
-        'name',
+        'name_en',
+        'name_bn',
         'slug',
-        'description',
+        'description_en',
+        'description_bn',
         'price',
         'original_price',
         'image',
         'is_active',
     ];
+
+    protected $appends = [
+        'name',
+        'description',
+    ];
+
+    public function getNameAttribute()
+    {
+        $locale = app()->getLocale();
+        return $locale === 'bn' ? ($this->name_bn ?: $this->name_en) : $this->name_en;
+    }
+
+    public function getDescriptionAttribute()
+    {
+        $locale = app()->getLocale();
+        return $locale === 'bn' ? ($this->description_bn ?: $this->description_en) : $this->description_en;
+    }
 
     public function getImageAttribute($value)
     {

@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
-    protected $fillable = ['key', 'value', 'group'];
+    protected $fillable = ['key', 'value_en', 'value_bn', 'group'];
+
+    protected $appends = ['value'];
 
     public static function get($key, $default = null)
     {
@@ -16,25 +18,29 @@ class Setting extends Model
 
     public static function set($key, $value, $group = 'general')
     {
+        // For backwards compatibility and setting defaults, set value_en
         return self::updateOrCreate(
             ['key' => $key],
-            ['value' => $value, 'group' => $group]
+            ['value_en' => $value, 'group' => $group]
         );
     }
 
-    public function getValueAttribute($value)
+    public function getValueAttribute()
     {
-        if (!$value) {
+        $locale = app()->getLocale();
+        $val = $locale === 'bn' ? ($this->value_bn ?: $this->value_en) : $this->value_en;
+        
+        if (!$val) {
             return null;
         }
 
         $key = $this->attributes['key'] ?? null;
         if (in_array($key, ['site_logo', 'hero_static_image', 'site_favicon'])) {
-            return $this->resolveImageUrl($value);
+            return $this->resolveImageUrl($val);
         }
 
         if ($key === 'slider_images') {
-            $images = json_decode($value, true);
+            $images = json_decode($val, true);
             if (is_array($images)) {
                 return json_encode(array_map(function($img) {
                     return $this->resolveImageUrl($img);
@@ -42,7 +48,7 @@ class Setting extends Model
             }
         }
 
-        return $value;
+        return $val;
     }
 
     private function resolveImageUrl($value)

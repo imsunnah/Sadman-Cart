@@ -10,11 +10,11 @@
                             {{ activeCategoryName }}
                         </h1>
                         <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">
-                            Browse through our premium selection
+                            {{ $t('Browse through our premium selection') }}
                         </p>
                     </div>
                     <div class="mt-4 md:mt-0 text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                        <Link href="/" class="hover:text-[#FF6600]">Home</Link>
+                        <Link href="/" class="hover:text-[#FF6600]">{{ $t('Home') }}</Link>
                         <span>&gt;</span>
                         <span class="text-slate-600">{{ activeCategoryName }}</span>
                     </div>
@@ -29,7 +29,7 @@
                             <!-- Filter By Category -->
                             <div>
                                 <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
-                                    Filter By Category
+                                    {{ $t('Filter By Category') }}
                                 </h3>
                                 <ul class="space-y-2">
                                     <li v-for="cat in $page.props.categories" :key="cat.id" class="flex items-center gap-2">
@@ -50,7 +50,7 @@
                             <!-- Price Range Slider -->
                             <div>
                                 <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
-                                    Price Range
+                                    {{ $t('Price Range') }}
                                 </h3>
                                 <div class="space-y-6">
                                     <!-- Double slider bar container -->
@@ -90,7 +90,7 @@
                                     <!-- Text inputs side-by-side -->
                                     <div class="flex items-center gap-2">
                                         <div class="flex-1">
-                                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Min Price</span>
+                                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">{{ $t('Min Price') }}</span>
                                             <div class="relative flex items-center">
                                                 <span class="absolute left-2 text-[9px] font-bold text-slate-400">Tk</span>
                                                 <input 
@@ -103,7 +103,7 @@
                                         </div>
                                         <span class="text-slate-350 font-bold self-end mb-1.5">-</span>
                                         <div class="flex-1">
-                                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Max Price</span>
+                                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">{{ $t('Max Price') }}</span>
                                             <div class="relative flex items-center">
                                                 <span class="absolute left-2 text-[9px] font-bold text-slate-400">Tk</span>
                                                 <input 
@@ -121,7 +121,7 @@
                             <!-- Brands Filter -->
                             <div v-if="brands && brands.length > 0">
                                 <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
-                                    Brands
+                                    {{ $t('Brands') }}
                                 </h3>
                                 <ul class="space-y-2">
                                     <li v-for="brand in brands" :key="brand.id" class="flex items-center gap-2">
@@ -142,7 +142,7 @@
                             <!-- Product Flags Filter -->
                             <div>
                                 <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
-                                    Product Flags
+                                    {{ $t('Product Flags') }}
                                 </h3>
                                 <ul class="space-y-2">
                                     <li class="flex items-center gap-2">
@@ -154,7 +154,7 @@
                                             class="rounded text-[#FF6600] focus:ring-[#FF6600]/20 border-slate-200 w-4 h-4 cursor-pointer"
                                         />
                                         <label for="flag-best" class="text-xs font-bold text-slate-650 cursor-pointer select-none hover:text-[#FF6600]">
-                                            Best Selling
+                                            {{ $t('Best Selling') }}
                                         </label>
                                     </li>
                                     <li class="flex items-center gap-2">
@@ -166,7 +166,7 @@
                                             class="rounded text-[#FF6600] focus:ring-[#FF6600]/20 border-slate-200 w-4 h-4 cursor-pointer"
                                         />
                                         <label for="flag-new" class="text-xs font-bold text-slate-650 cursor-pointer select-none hover:text-[#FF6600]">
-                                            New Arrival
+                                            {{ $t('New Arrival') }}
                                         </label>
                                     </li>
                                 </ul>
@@ -181,18 +181,18 @@
                         <!-- Top Sort Bar -->
                         <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm mb-6 flex justify-between items-center">
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sort By:</span>
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $t('Sort By:') }}</span>
                                 <select 
                                     v-model="sortBy"
                                     class="text-[10px] font-black text-[#003366] uppercase tracking-widest border border-slate-200 rounded-lg px-3 py-1.5 bg-slate-50 focus:ring-1 focus:ring-[#FF6600]/20 cursor-pointer outline-none"
                                 >
-                                    <option value="Latest Arrival">Latest Arrival</option>
-                                    <option value="Price: Low to High">Price: Low to High</option>
-                                    <option value="Price: High to Low">Price: High to Low</option>
+                                    <option value="Latest Arrival">{{ $t('Latest Arrival') }}</option>
+                                    <option value="Price: Low to High">{{ $t('Price: Low to High') }}</option>
+                                    <option value="Price: High to Low">{{ $t('Price: High to Low') }}</option>
                                 </select>
                             </div>
                             <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                Showing <span class="text-[#FF6600]">{{ filteredProducts.length }}</span> products
+                                {{ $t('Showing') }} <span class="text-[#FF6600]">{{ filteredProducts.length }}</span> {{ $t('products') }}
                             </div>
                         </div>
 
@@ -206,9 +206,9 @@
                             <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                                 <Package class="w-8 h-8 text-slate-300" />
                             </div>
-                            <h2 class="text-lg font-black text-slate-800 uppercase tracking-tight">No Products Match Filters</h2>
-                            <p class="mt-1 text-slate-400 font-bold uppercase tracking-[0.2em] text-[8px]">Try resetting your sidebar checkboxes or slide price limit higher</p>
-                            <button @click="resetFilters" class="mt-6 px-6 py-3 bg-[#003366] text-white rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-black transition-all">Reset Filters</button>
+                            <h2 class="text-lg font-black text-slate-800 uppercase tracking-tight">{{ $t('No Products Match Filters') }}</h2>
+                            <p class="mt-1 text-slate-400 font-bold uppercase tracking-[0.2em] text-[8px]">{{ $t('Try resetting your sidebar checkboxes or slide price limit higher') }}</p>
+                            <button @click="resetFilters" class="mt-6 px-6 py-3 bg-[#003366] text-white rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-black transition-all">{{ $t('Reset Filters') }}</button>
                         </div>
 
                         <!-- Pagination -->
@@ -280,7 +280,7 @@ const activeCategoryName = computed(() => {
             return found ? found.name : slug;
         }).join(', ');
     }
-    return 'All Products';
+    return $t('All Products');
 });
 
 const filteredProducts = computed(() => {

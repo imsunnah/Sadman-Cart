@@ -50,7 +50,7 @@ class HandleInertiaRequests extends Middleware
             'categories' => \App\Models\Category::with(['subCategories' => function($query) {
                 $query->where('is_active', true);
             }])->where('is_active', true)->get(),
-            'activePages' => \App\Models\Page::where('is_active', true)->select('id', 'title', 'slug', 'group')->get(),
+            'activePages' => \App\Models\Page::where('is_active', true)->select('id', 'title_en', 'title_bn', 'slug', 'group')->get(),
             'flash' => [
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),

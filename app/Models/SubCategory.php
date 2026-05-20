@@ -8,16 +8,35 @@ class SubCategory extends Model
 {
     protected $fillable = [
         'category_id',
-        'name',
+        'name_en',
+        'name_bn',
         'slug',
         'image',
-        'description',
+        'description_en',
+        'description_bn',
         'is_active',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    protected $appends = [
+        'name',
+        'description',
+    ];
+
+    public function getNameAttribute()
+    {
+        $locale = app()->getLocale();
+        return $locale === 'bn' ? ($this->name_bn ?: $this->name_en) : $this->name_en;
+    }
+
+    public function getDescriptionAttribute()
+    {
+        $locale = app()->getLocale();
+        return $locale === 'bn' ? ($this->description_bn ?: $this->description_en) : $this->description_en;
+    }
 
     public function getImageAttribute($value)
     {

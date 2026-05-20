@@ -13,10 +13,17 @@
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden max-w-2xl">
             <form @submit.prevent="submit" class="p-8 space-y-8">
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category Name</label>
-                    <input v-model="form.name" type="text" placeholder="e.g. Organic Honey" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
-                    <p v-if="form.errors.name" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.name }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category Name (English)</label>
+                        <input v-model="form.name_en" type="text" placeholder="e.g. Organic Honey" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
+                        <p v-if="form.errors.name_en" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.name_en }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category Name (Bangla)</label>
+                        <input v-model="form.name_bn" type="text" placeholder="e.g. অর্গানিক মধু" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold">
+                        <p v-if="form.errors.name_bn" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.name_bn }}</p>
+                    </div>
                 </div>
 
                 <div>
@@ -31,10 +38,17 @@
                     <p v-if="form.errors.image" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.image }}</p>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description</label>
-                    <textarea v-model="form.description" rows="4" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium" placeholder="What is this category about?"></textarea>
-                    <p v-if="form.errors.description" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description (English)</label>
+                        <textarea v-model="form.description_en" rows="4" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium" placeholder="What is this category about?"></textarea>
+                        <p v-if="form.errors.description_en" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description_en }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description (Bangla)</label>
+                        <textarea v-model="form.description_bn" rows="4" class="w-full px-4 py-3 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-medium" placeholder="এই ক্যাটাগরি সম্পর্কে কিছু লিখুন..."></textarea>
+                        <p v-if="form.errors.description_bn" class="mt-2 text-xs text-red-500 font-bold">{{ form.errors.description_bn }}</p>
+                    </div>
                 </div>
 
                 <div>
@@ -63,8 +77,10 @@ import { ArrowLeft, Image as ImageIcon } from 'lucide-vue-next';
 const previewUrl = ref(null);
 
 const form = useForm({
-    name: '',
-    description: '',
+    name_en: '',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
     is_active: true,
     image: null,
 });

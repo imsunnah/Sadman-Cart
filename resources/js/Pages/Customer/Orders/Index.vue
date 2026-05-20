@@ -8,18 +8,18 @@
                     <div class="absolute right-0 bottom-0 top-0 w-1/3 opacity-10 bg-[radial-gradient(circle_at_bottom_right,white,transparent)] pointer-events-none"></div>
                     <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div>
-                            <span class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.4em] mb-2 block">Customer Dashboard</span>
-                            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight italic">Welcome back, <span class="text-orange-400">{{ $page.props.auth.user.name }}</span></h1>
+                            <span class="text-[9px] font-black text-[#FF6600] uppercase tracking-[0.4em] mb-2 block">{{ $t('Customer Dashboard') }}</span>
+                            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight italic">{{ $t('Welcome back,') }} <span class="text-orange-400">{{ $page.props.auth.user.name }}</span></h1>
                             <p class="text-xs font-bold text-slate-300 mt-2 lowercase">{{ $page.props.auth.user.email }}</p>
                         </div>
                         <div class="flex items-center gap-6">
                             <div class="bg-white/5 backdrop-blur-md rounded-2xl px-5 py-4 border border-white/10 text-center min-w-[100px]">
                                 <span class="block text-2xl font-black text-[#FF6600]">{{ orders.data ? orders.total : 0 }}</span>
-                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider">Total Orders</span>
+                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider">{{ $t('Total Orders') }}</span>
                             </div>
                             <div class="bg-white/5 backdrop-blur-md rounded-2xl px-5 py-4 border border-white/10 text-center min-w-[100px]">
                                 <span class="block text-2xl font-black text-[#FF6600]">{{ reviews.length }}</span>
-                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider">Reviews Given</span>
+                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider">{{ $t('Reviews Given') }}</span>
                             </div>
                         </div>
                     </div>
@@ -38,14 +38,14 @@
                                 class="py-3 px-6 text-xs font-black uppercase tracking-wider border-b-2 outline-none transition-colors"
                                 :class="dashboardTab === 'activity' ? 'border-[#FF6600] text-[#003366]' : 'border-transparent text-slate-400 hover:text-slate-600'"
                             >
-                                Orders & Reviews
+                                {{ $t('Orders & Reviews') }}
                             </button>
                             <button 
                                 @click="dashboardTab = 'password'" 
                                 class="py-3 px-6 text-xs font-black uppercase tracking-wider border-b-2 outline-none transition-colors"
                                 :class="dashboardTab === 'password' ? 'border-[#FF6600] text-[#003366]' : 'border-transparent text-slate-400 hover:text-slate-600'"
                             >
-                                Change Password
+                                {{ $t('Change Password') }}
                             </button>
                         </div>
 
@@ -55,10 +55,10 @@
                                 <div class="flex justify-between items-center mb-6">
                                     <h2 class="text-lg font-black text-[#003366] uppercase tracking-wider flex items-center gap-2">
                                         <ShoppingBag class="w-5 h-5 text-[#FF6600]" />
-                                        Active Orders & History
+                                        {{ $t('Active Orders & History') }}
                                     </h2>
                                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                                        Latest items shown first
+                                        {{ $t('Latest items shown first') }}
                                     </span>
                                 </div>
 
@@ -67,11 +67,11 @@
                                         <table class="w-full text-left border-collapse">
                                             <thead>
                                                 <tr class="border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                                    <th class="py-3 px-4">Order ID</th>
-                                                    <th class="py-3 px-4">Date</th>
-                                                    <th class="py-3 px-4">Total Amount</th>
-                                                    <th class="py-3 px-4">Status</th>
-                                                    <th class="py-3 px-4 text-right">Actions</th>
+                                                    <th class="py-3 px-4">{{ $t('Order ID') }}</th>
+                                                    <th class="py-3 px-4">{{ $t('Date') }}</th>
+                                                    <th class="py-3 px-4">{{ $t('Total Amount') }}</th>
+                                                    <th class="py-3 px-4">{{ $t('Status') }}</th>
+                                                    <th class="py-3 px-4 text-right">{{ $t('Actions') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-slate-50">
@@ -104,7 +104,7 @@
                                                             class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#003366] text-white rounded-lg font-black uppercase tracking-widest text-[8px] hover:bg-[#FF6600] transition-all"
                                                         >
                                                             <Eye class="w-3 h-3" />
-                                                            Trace Status
+                                                            {{ $t('Trace Status') }}
                                                         </Link>
                                                     </td>
                                                 </tr>
@@ -138,13 +138,13 @@
                                 <!-- Empty State -->
                                 <div v-else class="text-center py-10 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 p-8">
                                     <ShoppingBag class="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                                    <h3 class="text-sm font-black text-[#003366] uppercase tracking-tight">No Orders Yet</h3>
+                                    <h3 class="text-sm font-black text-[#003366] uppercase tracking-tight">{{ $t('No Orders Yet') }}</h3>
                                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider max-w-xs mx-auto mt-1">
-                                        You have not placed any orders yet. Visit our shop to get started!
+                                        {{ $t('You have not placed any orders yet. Visit our shop to get started!') }}
                                     </p>
                                     <div class="mt-4">
                                         <Link href="/shop" class="inline-flex items-center bg-[#FF6600] text-white px-5 py-2 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-[#e55c00] transition-all">
-                                            Go Shopping
+                                            {{ $t('Go Shopping') }}
                                         </Link>
                                     </div>
                                 </div>
@@ -154,7 +154,7 @@
                             <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-6 sm:p-8">
                                 <h2 class="text-lg font-black text-[#003366] uppercase tracking-wider flex items-center gap-2 mb-6">
                                     <Star class="w-5 h-5 text-[#FF6600]" />
-                                    Reviews & Remarks Provided
+                                    {{ $t('Reviews & Remarks Provided') }}
                                 </h2>
 
                                 <div v-if="reviews && reviews.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -183,7 +183,7 @@
                                             </p>
                                         </div>
                                         <div class="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-slate-400 border-t border-slate-100/80 pt-3">
-                                            <span>Submitted as: {{ review.customer_name }}</span>
+                                            <span>{{ $t('Submitted as:') }} {{ review.customer_name }}</span>
                                             <span>{{ new Date(review.created_at).toLocaleDateString() }}</span>
                                         </div>
                                     </div>
@@ -192,9 +192,9 @@
                                 <!-- Empty State for Reviews -->
                                 <div v-else class="text-center py-10 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 p-8">
                                     <Star class="w-10 h-10 text-slate-200 mx-auto mb-3" />
-                                    <h3 class="text-sm font-black text-[#003366] uppercase tracking-tight">No Reviews Provided</h3>
+                                    <h3 class="text-sm font-black text-[#003366] uppercase tracking-tight">{{ $t('No Reviews Provided') }}</h3>
                                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider max-w-xs mx-auto mt-1">
-                                        You have not submitted reviews for any products yet.
+                                        {{ $t('You have not submitted reviews for any products yet.') }}
                                     </p>
                                 </div>
                             </div>
@@ -205,10 +205,10 @@
                             <div>
                                 <h2 class="text-lg font-black text-[#003366] uppercase tracking-wider flex items-center gap-2">
                                     <Lock class="w-5 h-5 text-[#FF6600]" />
-                                    Change Account Password
+                                    {{ $t('Change Account Password') }}
                                 </h2>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">
-                                    Ensure your account remains secure by updating your access key.
+                                    {{ $t('Ensure your account remains secure by updating your access key.') }}
                                 </p>
                             </div>
 
@@ -227,7 +227,7 @@
                             <form @submit.prevent="submitPasswordChange" class="space-y-5">
                                 <div class="space-y-4">
                                     <div>
-                                        <label for="current_password" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Current Password</label>
+                                        <label for="current_password" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ $t('Current Password') }}</label>
                                         <input 
                                             id="current_password" 
                                             v-model="passwordForm.current_password" 
@@ -239,7 +239,7 @@
                                     </div>
 
                                     <div>
-                                        <label for="new_password" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">New Password</label>
+                                        <label for="new_password" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ $t('New Password') }}</label>
                                         <input 
                                             id="new_password" 
                                             v-model="passwordForm.password" 
@@ -251,7 +251,7 @@
                                     </div>
 
                                     <div>
-                                        <label for="new_password_confirmation" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Confirm New Password</label>
+                                        <label for="new_password_confirmation" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ $t('Confirm New Password') }}</label>
                                         <input 
                                             id="new_password_confirmation" 
                                             v-model="passwordForm.password_confirmation" 
@@ -268,7 +268,7 @@
                                     :disabled="passwordForm.processing"
                                     class="bg-[#003366] text-white hover:bg-[#FF6600] text-[10px] font-black uppercase tracking-widest px-6 py-3 rounded-xl transition-all disabled:opacity-50 active:scale-95 shadow-md shadow-[#003366]/10"
                                 >
-                                    Update Password
+                                    {{ $t('Update Password') }}
                                 </button>
                             </form>
                         </div>
@@ -281,8 +281,8 @@
                             <div class="flex items-center gap-2.5">
                                 <MessageSquare class="w-4.5 h-4.5 text-[#FF6600]" />
                                 <div>
-                                    <span class="text-xs font-black uppercase tracking-wider block">Live Support Portal</span>
-                                    <span class="text-[8px] font-bold text-slate-300 block mt-0.5">Average reply time: &lt; 5 mins</span>
+                                    <span class="text-xs font-black uppercase tracking-wider block">{{ $t('Live Support Portal') }}</span>
+                                    <span class="text-[8px] font-bold text-slate-300 block mt-0.5">{{ $t('Average reply time: < 5 mins') }}</span>
                                 </div>
                             </div>
                             <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -295,7 +295,7 @@
                         >
                             <div v-if="messagesList.length === 0" class="text-center py-20 text-slate-400 font-bold text-[10px] uppercase tracking-widest px-4">
                                 <MessageSquare class="w-10 h-10 text-slate-200 mx-auto mb-3" />
-                                Send a message below to start your support transmission.
+                                {{ $t('Send a message below to start your support transmission.') }}
                             </div>
                             <div 
                                 v-else 
@@ -312,7 +312,7 @@
                                 >
                                     <div class="flex items-center justify-between gap-4 mb-0.5">
                                         <span class="text-[7px] font-black uppercase tracking-widest" :class="msg.is_from_admin ? 'text-[#FF6600]' : 'text-orange-200'">
-                                            {{ msg.is_from_admin ? 'Agent' : 'You' }}
+                                            {{ msg.is_from_admin ? $t('Agent') : $t('You') }}
                                         </span>
                                         <span class="text-[6px] font-bold opacity-60">
                                             {{ formatTime(msg.created_at) }}
@@ -328,7 +328,7 @@
                             <form @submit.prevent="sendMessage" class="flex gap-2 items-end">
                                 <textarea 
                                     v-model="newMessage"
-                                    placeholder="Type your support request..."
+                                    :placeholder="$t('Type your support request...')"
                                     rows="2"
                                     class="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs font-bold outline-none focus:bg-white focus:border-[#003366]/20 transition-all resize-none shadow-inner"
                                     @keydown.enter.prevent="sendMessage"

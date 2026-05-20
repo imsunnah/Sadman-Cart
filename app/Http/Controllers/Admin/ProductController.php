@@ -37,7 +37,8 @@ class ProductController extends Controller
         // Search Filtering
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
+                $q->where('name_en', 'like', '%' . $search . '%')
+                  ->orWhere('name_bn', 'like', '%' . $search . '%')
                   ->orWhere('sku', 'like', '%' . $search . '%');
             });
         }
@@ -68,7 +69,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::with('subCategories')->get();
-        $brands = \App\Models\Brand::where('is_active', true)->orderBy('name', 'asc')->get();
+        $brands = \App\Models\Brand::where('is_active', true)->orderBy('name_en', 'asc')->get();
         return Inertia::render('Admin/Product/Create', [
             'categories' => $categories,
             'brands' => $brands
@@ -80,8 +81,10 @@ class ProductController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'nullable|exists:sub_categories,id',
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
+            'name_en' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
+            'description_en' => 'required|string',
+            'description_bn' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'buying_price' => 'required|numeric|min:0',
             'package_cost' => 'required|numeric|min:0',
@@ -96,7 +99,7 @@ class ProductController extends Controller
             'brand_id' => 'nullable|exists:brands,id',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = Str::slug($validated['name_en']);
         $validated['sku'] = 'PRD-' . strtoupper(substr(uniqid(), -5));
         
         if ($request->hasFile('image')) {
@@ -130,7 +133,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::with('subCategories')->get();
-        $brands = \App\Models\Brand::where('is_active', true)->orderBy('name', 'asc')->get();
+        $brands = \App\Models\Brand::where('is_active', true)->orderBy('name_en', 'asc')->get();
         return Inertia::render('Admin/Product/Edit', [
             'product' => $product->load('gallery'),
             'categories' => $categories,
@@ -143,8 +146,10 @@ class ProductController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'nullable|exists:sub_categories,id',
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
+            'name_en' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
+            'description_en' => 'required|string',
+            'description_bn' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'buying_price' => 'required|numeric|min:0',
             'package_cost' => 'required|numeric|min:0',
@@ -159,7 +164,7 @@ class ProductController extends Controller
             'brand_id' => 'nullable|exists:brands,id',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = Str::slug($validated['name_en']);
 
         // Handle Featured Image update safely
         if ($request->hasFile('image')) {

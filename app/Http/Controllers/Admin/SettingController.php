@@ -23,9 +23,9 @@ class SettingController extends Controller
         // Handle Site Logo
         if ($request->hasFile('site_logo')) {
             $path = $request->file('site_logo')->store('uploads/gallery', 'public');
-            Setting::where('key', 'site_logo')->update(['value' => '/storage/' . $path]);
+            Setting::where('key', 'site_logo')->update(['value_en' => '/storage/' . $path]);
         } elseif ($request->filled('site_logo') && is_string($request->site_logo)) {
-            Setting::where('key', 'site_logo')->update(['value' => $request->site_logo]);
+            Setting::where('key', 'site_logo')->update(['value_en' => $request->site_logo]);
         }
 
         // Handle Site Favicon
@@ -33,23 +33,23 @@ class SettingController extends Controller
             $path = $request->file('site_favicon')->store('uploads/gallery', 'public');
             Setting::updateOrCreate(
                 ['key' => 'site_favicon'],
-                ['value' => '/storage/' . $path, 'group' => 'general']
+                ['value_en' => '/storage/' . $path, 'group' => 'general']
             );
         } elseif ($request->filled('site_favicon') && is_string($request->site_favicon)) {
             Setting::updateOrCreate(
                 ['key' => 'site_favicon'],
-                ['value' => $request->site_favicon, 'group' => 'general']
+                ['value_en' => $request->site_favicon, 'group' => 'general']
             );
         }
 
         // Handle Slider Images (Appending new ones)
         if ($request->hasFile('slider_upload')) {
-            $currentSliders = json_decode(Setting::where('key', 'slider_images')->first()->value ?? '[]', true);
+            $currentSliders = json_decode(Setting::where('key', 'slider_images')->first()->value_en ?? '[]', true);
             foreach ($request->file('slider_upload') as $file) {
                 $path = $file->store('uploads/gallery', 'public');
                 $currentSliders[] = '/storage/' . $path;
             }
-            Setting::where('key', 'slider_images')->update(['value' => json_encode($currentSliders)]);
+            Setting::where('key', 'slider_images')->update(['value_en' => json_encode($currentSliders)]);
         }
 
         // Handle Hero Static Image
@@ -57,12 +57,12 @@ class SettingController extends Controller
             $path = $request->file('hero_static_image')->store('uploads/gallery', 'public');
             Setting::updateOrCreate(
                 ['key' => 'hero_static_image'],
-                ['value' => '/storage/' . $path, 'group' => 'general']
+                ['value_en' => '/storage/' . $path, 'group' => 'general']
             );
         } elseif ($request->filled('hero_static_image') && is_string($request->hero_static_image)) {
             Setting::updateOrCreate(
                 ['key' => 'hero_static_image'],
-                ['value' => $request->hero_static_image, 'group' => 'general']
+                ['value_en' => $request->hero_static_image, 'group' => 'general']
             );
         }
 
@@ -79,17 +79,32 @@ class SettingController extends Controller
             'hero_slider_text'
         ];
         foreach ($settings as $key) {
-            if ($request->has($key)) {
+            $data = [];
+            if ($request->has($key . '_en')) {
+                $data['value_en'] = $request->get($key . '_en');
+                $data['group'] = 'general';
+            }
+            if ($request->has($key . '_bn')) {
+                $data['value_bn'] = $request->get($key . '_bn');
+                $data['group'] = 'general';
+            }
+            // Fallback for non-bilingual fields or older form submissions
+            if ($request->has($key) && !isset($data['value_en'])) {
+                $data['value_en'] = $request->get($key);
+                $data['group'] = 'general';
+            }
+            
+            if (!empty($data)) {
                 Setting::updateOrCreate(
                     ['key' => $key],
-                    ['value' => $request->get($key), 'group' => 'general']
+                    $data
                 );
             }
         }
 
         // Handle Slider Deletion (if requested)
         if ($request->has('slider_images')) {
-            Setting::where('key', 'slider_images')->update(['value' => json_encode($request->get('slider_images'))]);
+            Setting::where('key', 'slider_images')->update(['value_en' => json_encode($request->get('slider_images'))]);
         }
 
         return redirect()->back()->with('success', 'Settings updated successfully.');

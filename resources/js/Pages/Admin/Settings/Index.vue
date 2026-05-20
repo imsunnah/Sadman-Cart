@@ -27,8 +27,12 @@
                 </div>
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Name</label>
-                        <input v-model="form.site_name" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Name (English)</label>
+                        <input v-model="form.site_name_en" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Name (Bangla)</label>
+                        <input v-model="form.site_name_bn" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Logo</label>
@@ -102,13 +106,23 @@
                     <h2 class="text-lg font-bold text-slate-900">Footer & Contact Details</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">About Description</label>
-                        <textarea v-model="form.footer_about" rows="3" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none"></textarea>
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">About Description (English)</label>
+                            <textarea v-model="form.footer_about_en" rows="3" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">About Description (Bangla)</label>
+                            <textarea v-model="form.footer_about_bn" rows="3" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none"></textarea>
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Office Address</label>
-                        <input v-model="form.footer_address" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Office Address (English)</label>
+                        <input v-model="form.footer_address_en" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Office Address (Bangla)</label>
+                        <input v-model="form.footer_address_bn" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Phone Number</label>
@@ -141,9 +155,15 @@
                             </label>
                         </div>
                         
-                        <div v-if="form.hero_slider_text_show">
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Slider Overlay Text (HTML allowed)</label>
-                            <textarea v-model="form.hero_slider_text" rows="4" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none font-medium" placeholder="e.g. <h1>Fresh Organic</h1><p>Direct from farms</p>"></textarea>
+                        <div v-if="form.hero_slider_text_show" class="grid grid-cols-1 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Slider Overlay Text (English - HTML allowed)</label>
+                                <textarea v-model="form.hero_slider_text_en" rows="4" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none font-medium" placeholder="e.g. <h1>Fresh Organic</h1><p>Direct from farms</p>"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Slider Overlay Text (Bangla - HTML allowed)</label>
+                                <textarea v-model="form.hero_slider_text_bn" rows="4" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none font-medium" placeholder="e.g. <h1>সতেজ অর্গানিক</h1><p>সরাসরি খামার থেকে</p>"></textarea>
+                            </div>
                         </div>
                     </div>
 
@@ -208,10 +228,13 @@ const props = defineProps({
     settings: Object
 });
 
-const getVal = (key) => {
+const getVal = (key, locale = 'en') => {
     for (const group in props.settings) {
         const found = props.settings[group].find(s => s.key === key);
-        if (found) return found.value;
+        if (found) {
+            if (locale === 'bn') return found.value_bn || '';
+            return found.value_en || found.value || '';
+        }
     }
     return '';
 };
@@ -225,13 +248,16 @@ const showGallery = ref(false);
 const galleryTarget = ref(''); // 'logo', 'favicon', 'slider', 'hero'
 
 const form = useForm({
-    site_name: getVal('site_name'),
+    site_name_en: getVal('site_name', 'en'),
+    site_name_bn: getVal('site_name', 'bn'),
     site_logo: null,
     existing_site_logo: getVal('site_logo'),
     site_favicon: null,
     existing_site_favicon: getVal('site_favicon'),
-    footer_about: getVal('footer_about'),
-    footer_address: getVal('footer_address'),
+    footer_about_en: getVal('footer_about', 'en'),
+    footer_about_bn: getVal('footer_about', 'bn'),
+    footer_address_en: getVal('footer_address', 'en'),
+    footer_address_bn: getVal('footer_address', 'bn'),
     footer_phone: getVal('footer_phone'),
     footer_email: getVal('footer_email'),
     delivery_charge_inside_dhaka: getVal('delivery_charge_inside_dhaka'),
@@ -241,7 +267,8 @@ const form = useForm({
     hero_static_image: null,
     existing_hero_static_image: getVal('hero_static_image'),
     hero_slider_text_show: getVal('hero_slider_text_show') == '1',
-    hero_slider_text: getVal('hero_slider_text'),
+    hero_slider_text_en: getVal('hero_slider_text', 'en'),
+    hero_slider_text_bn: getVal('hero_slider_text', 'bn'),
 });
 
 const handleLogoUpload = (e) => {

@@ -6,8 +6,9 @@
     <title inertia>Sadman Cart</title>
     
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bangla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Favicon Configuration (Logo in Tab of PC) -->
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
