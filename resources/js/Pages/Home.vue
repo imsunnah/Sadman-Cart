@@ -52,8 +52,7 @@
             <div class="max-w-[1550px] mx-auto px-4">
                 <div class="flex flex-col items-center gap-2 mb-10 text-center">
                     <div class="w-12 h-1.5 bg-[#FF6600] rounded-full mb-2"></div>
-                    <h2 class="text-3xl font-black text-[#003366] uppercase tracking-tighter italic">Elite Selections</h2>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Premium Organic Categories</p>
+                    <h2 class="text-3xl font-black text-[#003366] uppercase tracking-tighter italic">Categories</h2>
                 </div>
                 <div class="flex flex-wrap justify-center gap-6 md:gap-12">
                     <Link v-for="cat in featuredCategories" :key="cat.id" :href="`/shop?category=${cat.slug}`" class="group flex flex-col items-center gap-2 min-w-[80px] cursor-pointer">

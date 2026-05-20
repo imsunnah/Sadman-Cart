@@ -23,7 +23,7 @@ return new class extends Migration
         \DB::table('settings')->insert([
             ['key' => 'site_logo', 'value' => '/images/logo.png', 'group' => 'general'],
             ['key' => 'site_name', 'value' => 'Sadman Cart', 'group' => 'general'],
-            ['key' => 'footer_about', 'value' => 'Bangladesh\'s leading destination for pure, natural, and premium organic products.', 'group' => 'footer'],
+            ['key' => 'footer_about', 'value' => 'Bangladesh\'s leading destination for pure'],
             ['key' => 'footer_address', 'value' => 'Rampura, Dhaka, Bangladesh', 'group' => 'footer'],
             ['key' => 'footer_phone', 'value' => '0123456789', 'group' => 'footer'],
             ['key' => 'footer_email', 'value' => 'admin@sadmancart.com', 'group' => 'footer'],
