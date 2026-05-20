@@ -13,7 +13,7 @@
     <!-- Favicon Configuration (Logo in Tab of PC) -->
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     @php
-        $siteFavicon = \App\Models\Setting::where('key', 'site_favicon')->value('value') ?? \App\Models\Setting::where('key', 'site_logo')->value('value') ?? '/favicon.ico';
+        $siteFavicon = \App\Models\Setting::get('site_favicon') ?? \App\Models\Setting::get('site_logo') ?? '/favicon.ico';
     @endphp
     <link rel="icon" type="image/png" href="{{ asset($siteFavicon) }}">
 
