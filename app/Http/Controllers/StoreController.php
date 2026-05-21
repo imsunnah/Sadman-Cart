@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
+use App\Mail\OrderCreated;
+use Illuminate\Support\Facades\Mail;
 
 class StoreController extends Controller
 {
