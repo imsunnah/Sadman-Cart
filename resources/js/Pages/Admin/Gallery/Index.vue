@@ -2,12 +2,12 @@
     <AdminLayout>
         <div class="mb-10 flex justify-between items-center bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
             <div>
-                <h1 class="text-3xl font-bold text-[#003366] tracking-tight">Media Gallery</h1>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Manage all your system assets in one place</p>
+                <h1 class="text-3xl font-bold text-[#003366] tracking-tight">{{ $t('Media Gallery') }}</h1>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">{{ $t('Manage all your system assets in one place') }}</p>
             </div>
             <div class="flex items-center gap-4">
                 <label class="cursor-pointer bg-[#003366] text-white px-8 py-4 rounded-xl hover:bg-slate-800 transition-all font-bold text-xs uppercase tracking-widest flex items-center shadow-lg active:scale-95">
-                    <Plus class="w-4 h-4 mr-3" /> Upload Assets
+                    <Plus class="w-4 h-4 mr-3" /> {{ $t('Upload Assets') }}
                     <input type="file" multiple class="hidden" @change="handleUpload" accept="image/*" />
                 </label>
             </div>
@@ -27,7 +27,7 @@
                 <input v-model="searchQuery" type="text" placeholder="Search by filename..." class="w-full pl-12 pr-6 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-[#003366]/10 outline-none transition-all font-bold text-sm">
             </div>
             <div class="flex items-center gap-3">
-                <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Total Assets: {{ filteredMedia.length }}</span>
+                <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">{{ $t('Total Assets') }}: {{ filteredMedia.length }}</span>
             </div>
         </div>
 
@@ -56,7 +56,7 @@
 
         <div v-if="filteredMedia.length === 0" class="py-32 flex flex-col items-center opacity-30">
             <ImageIcon class="w-20 h-20 mb-6 text-slate-300" />
-            <p class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">No media assets found</p>
+            <p class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">{{ $t('No media assets found') }}</p>
         </div>
 
         <!-- Delete Confirmation Modal -->
@@ -69,10 +69,10 @@
                 <p class="text-xs text-slate-500 text-center mb-8 font-medium leading-relaxed">Are you sure you want to permanently delete this media asset? This might break existing product displays.</p>
                 <div class="flex gap-4">
                     <button @click="showDeleteConfirm = false" class="flex-1 py-3 px-4 bg-slate-50 hover:bg-slate-100 text-[#003366] font-bold text-xs uppercase tracking-widest rounded-xl transition-all border border-slate-200">
-                        Cancel
+                        {{ $t('Cancel') }}
                     </button>
                     <button @click="confirmDelete" class="flex-1 py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-red-500/20 transition-all">
-                        Delete
+                        {{ $t('Delete') }}
                     </button>
                 </div>
             </div>

@@ -12,12 +12,12 @@
             />
             <div v-else class="flex flex-col items-center gap-2 text-slate-200">
                 <Layers class="w-16 h-16" />
-                <span class="text-[9px] font-black uppercase tracking-widest">No Image</span>
+                <span class="text-[9px] font-black uppercase tracking-widest text-[#FF6600]">{{ $t('No Image') }}</span>
             </div>
             <!-- Hover overlay -->
             <div class="absolute inset-0 bg-gradient-to-t from-orange-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 flex items-center justify-center">
                 <div class="bg-white/90 backdrop-blur-md text-[#FF6600] text-[10px] font-black px-6 py-3 rounded-2xl uppercase tracking-[0.2em] shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-2 border border-white">
-                    <Eye class="w-4 h-4" /> View Combo
+                    <Eye class="w-4 h-4" /> {{ $t('View Combo') }}
                 </div>
             </div>
         </Link>
@@ -25,9 +25,9 @@
         <!-- Info -->
         <div class="flex flex-col flex-1 p-6">
             <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="text-[9px] font-black text-white bg-[#003366] px-2 py-0.5 rounded-md uppercase tracking-[0.15em]">Bundle</span>
+                <span class="text-[9px] font-black text-white bg-[#003366] px-2 py-0.5 rounded-md uppercase tracking-[0.15em]">{{ $t('Bundle') }}</span>
                 <span v-if="combo.original_price" class="text-[9px] font-black text-[#FF6600] bg-orange-50 border border-orange-100 px-2 py-0.5 rounded-md uppercase tracking-[0.15em]">
-                    Save ৳{{ (parseFloat(combo.original_price) - parseFloat(combo.price)).toFixed(0) }}
+                    {{ $t('Save') }} ৳{{ (parseFloat(combo.original_price) - parseFloat(combo.price)).toFixed(0) }}
                 </span>
             </div>
             <Link :href="`/combos/${combo.slug}`" class="flex-grow mb-4">
@@ -50,7 +50,7 @@
                 :href="`/combos/${combo.slug}`"
                 class="h-12 rounded-2xl bg-[#FF6600] text-white text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#003366] transition-all duration-300 shadow-lg shadow-orange-900/10 active:scale-95"
             >
-                View Details
+                {{ $t('View Details') }}
             </Link>
         </div>
     </div>

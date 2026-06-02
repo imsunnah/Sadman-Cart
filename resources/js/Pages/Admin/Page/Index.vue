@@ -2,11 +2,11 @@
     <AdminLayout>
         <div class="mb-10 flex justify-between items-center bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
             <div>
-                <h1 class="text-4xl font-black text-primary-900 tracking-tighter uppercase italic">Dynamic <span class="text-slate-400">Pages</span></h1>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-1">Manage storefront pages, terms, and footer links</p>
+                <h1 class="text-4xl font-black text-primary-900 tracking-tighter uppercase italic">{{ $t('Dynamic') }} <span class="text-slate-400">{{ $t('Pages') }}</span></h1>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-1">{{ $t('Manage storefront pages, terms, and footer links') }}</p>
             </div>
             <Link href="/admin/pages/create" class="bg-primary-900 text-white px-8 py-4 rounded-2xl hover:bg-slate-800 transition-all font-black text-xs uppercase tracking-[0.2em] flex items-center shadow-2xl shadow-primary-900/30 active:scale-95">
-                <Plus class="w-4 h-4 mr-3" /> Create Custom Page
+                <Plus class="w-4 h-4 mr-3" /> {{ $t('Create Custom Page') }}
             </Link>
         </div>
 
@@ -23,12 +23,12 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-                            <th class="py-6 px-8 text-center w-24">ID</th>
-                            <th class="py-6 px-8">Title</th>
-                            <th class="py-6 px-8">Group / Category</th>
-                            <th class="py-6 px-8">Slug URL</th>
-                            <th class="py-6 px-8 text-center">Status</th>
-                            <th class="py-6 px-8 text-right">Operations</th>
+                            <th class="py-6 px-8 text-center w-24">{{ $t('ID') }}</th>
+                            <th class="py-6 px-8">{{ $t('Title') }}</th>
+                            <th class="py-6 px-8">{{ $t('Group / Category') }}</th>
+                            <th class="py-6 px-8">{{ $t('Slug URL') }}</th>
+                            <th class="py-6 px-8 text-center">{{ $t('Status') }}</th>
+                            <th class="py-6 px-8 text-right">{{ $t('Operations') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50">
@@ -49,7 +49,7 @@
                             </td>
                             <td class="py-6 px-8 text-center">
                                 <button @click="toggleActive(page)" :class="page.is_active ? 'text-green-500 bg-green-50 hover:bg-green-100' : 'text-slate-300 bg-slate-50 hover:bg-slate-100'" class="inline-flex items-center px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-current opacity-80 transition-all active:scale-95">
-                                    {{ page.is_active ? 'Active' : 'Disabled' }}
+                                    {{ page.is_active ? $t('Active') : $t('Disabled') }}
                                 </button>
                             </td>
                             <td class="py-6 px-8 text-right">
@@ -71,8 +71,8 @@
                                 <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
                                     <FileText class="w-10 h-10 text-slate-200" />
                                 </div>
-                                <h3 class="text-xl font-black text-slate-900 uppercase tracking-tight">No Dynamic Pages</h3>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-2">Create custom content pages to populate your footer links.</p>
+                                <h3 class="text-xl font-black text-slate-900 uppercase tracking-tight">{{ $t('No Dynamic Pages') }}</h3>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-2">{{ $t('Create custom content pages to populate your footer links.') }}</p>
                             </td>
                         </tr>
                     </tbody>
@@ -99,14 +99,14 @@
                     <div class="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner">
                         <AlertTriangle class="w-10 h-10" />
                     </div>
-                    <h3 class="text-2xl font-black text-slate-900 text-center mb-4 uppercase tracking-tighter italic">Erase Custom Page?</h3>
-                    <p class="text-xs font-medium text-slate-400 text-center mb-10 leading-relaxed px-4">This action will permanently delete this page. Any footer links referencing this slug will disappear.</p>
+                    <h3 class="text-2xl font-black text-slate-900 text-center mb-4 uppercase tracking-tighter italic">{{ $t('Erase Custom Page?') }}</h3>
+                    <p class="text-xs font-medium text-slate-400 text-center mb-10 leading-relaxed px-4">{{ $t('This action will permanently delete this page. Any footer links referencing this slug will disappear.') }}</p>
                     <div class="grid grid-cols-1 gap-3">
                         <button @click="deletePage" class="px-8 py-5 rounded-2xl bg-red-600 text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-700 transition-all shadow-xl shadow-red-600/20 active:scale-95">
-                            Confirm Deletion
+                            {{ $t('Confirm Deletion') }}
                         </button>
                         <button @click="showDeleteModal = false" class="px-8 py-5 rounded-2xl bg-slate-50 text-slate-400 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-slate-100 transition-all active:scale-95">
-                            Abort Operation
+                            {{ $t('Abort Operation') }}
                         </button>
                     </div>
                 </div>

@@ -24,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
 
         if (app()->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
+        } else {
+            // Fix for local development SSL verification issues
+            \Illuminate\Support\Facades\Http::globalOptions(['verify' => false]);
         }
     }
 }

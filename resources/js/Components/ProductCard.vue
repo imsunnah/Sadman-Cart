@@ -5,15 +5,15 @@
         <div class="absolute top-3 inset-x-3 z-10 flex justify-between items-start pointer-events-none">
             <!-- Left Badge -->
             <span v-if="product.stock > 0" class="bg-[#FF6600] text-white text-[8px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm">
-                {{ product.discount_type ? 'Sale' : 'New' }}
+                {{ product.discount_type ? $t('Sale') : $t('New') }}
             </span>
             <span v-else class="bg-red-500 text-white text-[8px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm">
-                Sold Out
+                {{ $t('Sold Out') }}
             </span>
             
             <!-- Right Badge -->
             <span v-if="product.discount_type" class="bg-green-600 text-white text-[8px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm">
-                {{ product.discount_type === 'percentage' ? product.discount_value + '% OFF' : '৳' + product.discount_value + ' OFF' }}
+                {{ product.discount_type === 'percentage' ? product.discount_value + '% ' + $t('OFF') : '৳' + product.discount_value + ' ' + $t('OFF') }}
             </span>
         </div>
 
@@ -28,7 +28,7 @@
             />
             <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-200">
                 <Package class="w-12 h-12" />
-                <span class="text-[8px] font-black uppercase tracking-widest mt-2">No Image</span>
+                <span class="text-[8px] font-black uppercase tracking-widest mt-2">{{ $t('No Image') }}</span>
             </div>
         </Link>
 
@@ -68,14 +68,14 @@
                     @click.prevent="handleAddToCart"
                     class="py-2.5 px-1 bg-[#003366] text-white hover:bg-[#FF6600] transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed font-sans cursor-pointer active:scale-95 shadow-sm"
                 >
-                    <ShoppingCart class="w-3 h-3" /> Add to Cart
+                    <ShoppingCart class="w-3 h-3" /> {{ $t('Add To Cart') }}
                 </button>
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleBuyNow"
                     class="py-2.5 px-1 bg-[#FF6600] text-white hover:bg-[#003366] transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm font-sans cursor-pointer active:scale-95"
                 >
-                    <Zap class="w-3 h-3" /> Buy Now
+                    <Zap class="w-3 h-3" /> {{ $t('Buy Now') }}
                 </button>
             </div>
         </div>

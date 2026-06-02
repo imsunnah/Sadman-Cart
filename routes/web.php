@@ -250,7 +250,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::put('/combos/{combo}/toggle-active', [\App\Http\Controllers\Admin\ComboController::class, 'toggleActive'])->name('combos.toggle-active');
     
     Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class);
+    Route::get('/orders/courier/status', [\App\Http\Controllers\Admin\OrderController::class, 'courierOrders'])->name('orders.courier');
     Route::put('/orders/{order}/toggle-active', [\App\Http\Controllers\Admin\OrderController::class, 'toggleActive'])->name('orders.toggle-active');
+    Route::post('/orders/{order}/send-to-courier', [\App\Http\Controllers\Admin\OrderController::class, 'sendToCourier'])->name('orders.send-to-courier');
+    Route::post('/orders/bulk-send-to-courier', [\App\Http\Controllers\Admin\OrderController::class, 'bulkSendToCourier'])->name('orders.bulk-send-to-courier');
 
     Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class)->except(['show', 'edit', 'create']);
     Route::put('/reviews/{review}/toggle-active', [\App\Http\Controllers\Admin\ReviewController::class, 'toggleActive'])->name('reviews.toggle-active');
@@ -276,4 +279,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/api/chat/threads', [\App\Http\Controllers\Admin\AdminChatController::class, 'getThreads'])->name('chat.threads');
     Route::get('/api/chat/threads/{user}/messages', [\App\Http\Controllers\Admin\AdminChatController::class, 'getMessages'])->name('chat.messages');
     Route::post('/api/chat/threads/{user}/messages', [\App\Http\Controllers\Admin\AdminChatController::class, 'sendMessage'])->name('chat.send');
+    Route::post('/steadfast-webhook', [\App\Http\Controllers\Admin\SteadFastWebhookController::class, 'handleSteadFastWebhook'])->name('courier.webhook');
 });

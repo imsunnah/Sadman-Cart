@@ -5,9 +5,9 @@
                 
                 <!-- Breadcrumbs -->
                 <nav class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-8 ml-2">
-                    <Link href="/" class="hover:text-[#FF6600]">Home</Link>
+                    <Link href="/" class="hover:text-[#FF6600]">{{ $t('Home') }}</Link>
                     <ChevronRight class="w-3 h-3" />
-                    <Link href="/shop" class="hover:text-[#FF6600]">Products</Link>
+                    <Link href="/shop" class="hover:text-[#FF6600]">{{ $t('Products') }}</Link>
                     <ChevronRight class="w-3 h-3" />
                     <span class="text-slate-600 truncate max-w-[200px]">{{ product.name }}</span>
                 </nav>
@@ -81,7 +81,7 @@
                                     <button @click="quantity < (product.stock || 99) && quantity++" class="px-4 h-full text-[#003366] hover:bg-slate-100 transition-colors"><Plus class="w-3 h-3" /></button>
                                 </div>
                                 <span v-if="product.stock <= 5 && product.stock > 0" class="text-[10px] font-black text-red-500 uppercase tracking-widest">
-                                    Only {{ product.stock }} left!
+                                    {{ $t('Only') }} {{ product.stock }} {{ $t('left!') }}
                                 </span>
                             </div>
 

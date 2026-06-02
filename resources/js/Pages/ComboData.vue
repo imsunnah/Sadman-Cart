@@ -5,7 +5,7 @@
                 
                 <!-- Breadcrumbs -->
                 <nav class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-8 ml-2">
-                    <Link href="/" class="hover:text-[#FF6600]">Home</Link>
+                    <Link href="/" class="hover:text-[#FF6600]">{{ $t('Home') }}</Link>
                     <ChevronRight class="w-3 h-3" />
                     <span class="text-slate-600 truncate max-w-[200px]">{{ combo.name }}</span>
                 </nav>
@@ -23,7 +23,7 @@
                             <!-- Included Products -->
                             <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100">
                                 <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <Package class="w-3 h-3" /> Included in this Bundle
+                                    <Package class="w-3 h-3" /> {{ $t('Included in this Bundle') }}
                                 </h3>
                                 <div class="space-y-3">
                                     <div v-for="p in combo.products" :key="p.id" class="flex items-center gap-3 p-2 bg-white rounded-xl border border-slate-100 group hover:border-[#FF6600]/20 transition-all">
@@ -44,7 +44,7 @@
                         <!-- Right: Info -->
                         <div class="mt-8 lg:mt-0 space-y-6">
                             <div>
-                                <span class="inline-block text-[9px] font-black text-white bg-[#003366] px-2 py-1 rounded-md uppercase tracking-[0.2em] mb-4">Combo Bundle</span>
+                                <span class="inline-block text-[9px] font-black text-white bg-[#003366] px-2 py-1 rounded-md uppercase tracking-[0.2em] mb-4">{{ $t('Combo Bundle') }}</span>
                                 <h1 class="text-2xl md:text-3xl font-black text-slate-900 mb-2 uppercase tracking-tight">{{ combo.name }}</h1>
                                 <div class="flex items-center gap-4">
                                     <div class="flex items-center gap-1.5">
@@ -52,7 +52,7 @@
                                         <span v-if="combo.original_price" class="text-sm text-slate-300 line-through font-bold">৳{{ parseFloat(combo.original_price).toLocaleString() }}</span>
                                     </div>
                                     <span v-if="combo.original_price" class="text-[9px] font-black text-white bg-green-500 px-2 py-1 rounded-md uppercase tracking-widest">
-                                        Save ৳{{ (parseFloat(combo.original_price) - parseFloat(combo.price)).toFixed(0) }}
+                                        {{ $t('Save') }} ৳{{ (parseFloat(combo.original_price) - parseFloat(combo.price)).toFixed(0) }}
                                     </span>
                                 </div>
                             </div>
@@ -63,7 +63,7 @@
 
                             <!-- Quantity -->
                             <div class="flex items-center gap-6 pt-4 border-t border-slate-50">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Quantity:</span>
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $t('Quantity:') }}</span>
                                 <div class="flex items-center bg-slate-50 border border-slate-100 rounded-xl overflow-hidden h-10">
                                     <button @click="quantity > 1 && quantity--" class="px-4 h-full text-[#003366] hover:bg-slate-100 transition-colors"><Minus class="w-3 h-3" /></button>
                                     <input type="number" v-model="quantity" class="w-10 h-full text-center font-black text-xs border-none bg-transparent focus:ring-0 text-[#003366]" />
@@ -77,7 +77,7 @@
                                     @click="handleAddToCart"
                                     class="h-14 bg-[#003366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0f172a] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-900/10 font-sans cursor-pointer"
                                 >
-                                    <ShoppingCart class="w-4 h-4" /> Add Bundle
+                                    <ShoppingCart class="w-4 h-4" /> {{ $t('Add Bundle') }}
                                 </button>
                                 <button 
                                     @click="handleBuyNow"
@@ -104,8 +104,8 @@
                 <!-- Related -->
                 <div>
                     <div class="flex justify-between items-center mb-8 px-2">
-                        <h2 class="text-lg font-black text-[#003366] uppercase tracking-tighter italic">Related Products</h2>
-                        <Link href="/shop" class="text-[9px] font-black text-[#FF6600] uppercase tracking-widest hover:underline">View More Products →</Link>
+                        <h2 class="text-lg font-black text-[#003366] uppercase tracking-tighter italic">{{ $t('Related Products') }}</h2>
+                        <Link href="/shop" class="text-[9px] font-black text-[#FF6600] uppercase tracking-widest hover:underline">{{ $t('View More Products') }} →</Link>
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                         <ProductCard v-for="p in relatedProducts" :key="p.id" :product="p" />

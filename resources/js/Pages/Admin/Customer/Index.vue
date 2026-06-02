@@ -5,9 +5,9 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 class="text-3xl font-black text-slate-900 tracking-tight uppercase italic flex items-center">
-                        <Users class="w-8 h-8 mr-3 text-indigo-900" /> Customer <span class="text-indigo-900 ml-2">Base</span>
+                        <Users class="w-8 h-8 mr-3 text-indigo-900" /> {{ $t('Customer') }} <span class="text-indigo-900 ml-2">{{ $t('Base') }}</span>
                     </h1>
-                    <p class="text-slate-400 font-bold mt-1 uppercase tracking-wider text-[9px]">Registered user entities & customer purchase frequency</p>
+                    <p class="text-slate-400 font-bold mt-1 uppercase tracking-wider text-[9px]">{{ $t('Registered user entities & customer purchase frequency') }}</p>
                 </div>
             </div>
 
@@ -18,32 +18,32 @@
                     class="py-3 px-6 text-xs font-black uppercase tracking-wider border-b-2 outline-none transition-colors"
                     :class="activeTab === 'all' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'"
                 >
-                    All Customers ({{ customers.total }})
+                    {{ $t('All Customers') }} ({{ customers.total }})
                 </button>
                 <button 
                     @click="activeTab = 'repeated'" 
                     class="py-3 px-6 text-xs font-black uppercase tracking-wider border-b-2 outline-none transition-colors"
                     :class="activeTab === 'repeated' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'"
                 >
-                    Repeated Customers ({{ repeatedCustomers.length }})
+                    {{ $t('Repeated Customers') }} ({{ repeatedCustomers.length }})
                 </button>
             </div>
 
             <!-- Tab 1: All Customers Table -->
             <div v-if="activeTab === 'all'" class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                    <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Authenticated User Registry</span>
+                    <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">{{ $t('Authenticated User Registry') }}</span>
                 </div>
                 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50/50 text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                <th class="py-4 px-6">User Identity</th>
-                                <th class="py-4 px-6">Email Protocol</th>
-                                <th class="py-4 px-6">Join Date</th>
-                                <th class="py-4 px-6 text-center">Orders Count</th>
-                                <th class="py-4 px-6 text-right">Status</th>
+                                <th class="py-4 px-6">{{ $t('User Identity') }}</th>
+                                <th class="py-4 px-6">{{ $t('Email Protocol') }}</th>
+                                <th class="py-4 px-6">{{ $t('Join Date') }}</th>
+                                <th class="py-4 px-6 text-center">{{ $t('Orders Count') }}</th>
+                                <th class="py-4 px-6 text-right">{{ $t('Status') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -70,18 +70,18 @@
                                         class="inline-block px-2.5 py-1 text-[9px] font-black rounded-full"
                                         :class="customer.orders_count > 0 ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-400'"
                                     >
-                                        {{ customer.orders_count }} orders
+                                        {{ customer.orders_count }} {{ $t('orders') }}
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-right">
                                     <span class="bg-green-50 text-green-600 text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-full border border-green-100">
-                                        Active
+                                        {{ $t('Active') }}
                                     </span>
                                 </td>
                             </tr>
                             <tr v-if="customers.data.length === 0">
                                 <td colspan="5" class="py-12 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">
-                                    No registered customers found.
+                                    {{ $t('No registered customers found.') }}
                                 </td>
                             </tr>
                         </tbody>
@@ -114,18 +114,18 @@
             <!-- Tab 2: Repeated Customers Table -->
             <div v-if="activeTab === 'repeated'" class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                    <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">High Loyalty Customer List (>= 2 purchases)</span>
+                    <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">{{ $t('High Loyalty Customer List (>= 2 purchases)') }}</span>
                 </div>
                 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50/50 text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                <th class="py-4 px-6">User Identity</th>
-                                <th class="py-4 px-6">Email Protocol</th>
-                                <th class="py-4 px-6">Join Date</th>
-                                <th class="py-4 px-6 text-center">Orders Count</th>
-                                <th class="py-4 px-6 text-right">Loyalty Class</th>
+                                <th class="py-4 px-6">{{ $t('User Identity') }}</th>
+                                <th class="py-4 px-6">{{ $t('Email Protocol') }}</th>
+                                <th class="py-4 px-6">{{ $t('Join Date') }}</th>
+                                <th class="py-4 px-6 text-center">{{ $t('Orders Count') }}</th>
+                                <th class="py-4 px-6 text-right">{{ $t('Loyalty Class') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -160,7 +160,7 @@
                             </tr>
                             <tr v-if="repeatedCustomers.length === 0">
                                 <td colspan="5" class="py-12 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">
-                                    No repeated customers yet.
+                                    {{ $t('No repeated customers yet.') }}
                                 </td>
                             </tr>
                         </tbody>

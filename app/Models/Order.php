@@ -27,6 +27,11 @@ class Order extends Model
         'status',
         'is_active',
         'customer_remarks',
+        'courier_name',
+        'courier_tracking_code',
+        'courier_consignment_id',
+        'courier_status',
+        'courier_response',
     ];
 
     protected $casts = [

@@ -9,6 +9,7 @@ use App\Models\Combo;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Mail;
+use SteadFast\SteadFastCourierLaravelPackage\Facades\SteadfastCourier;
 
 class OrderController extends Controller
 {
@@ -251,5 +252,133 @@ class OrderController extends Controller
         $order->update(['total_amount' => $totalAmount]);
 
         return redirect()->route('admin.orders.index')->with('success', 'Order created manually.');
+    }
+
+    public function sendToCourier(Order $order)
+    {
+        // 1. Basic Validation
+        if (empty($order->customer_phone) || empty($order->shipping_address) || empty($order->customer_name)) {
+            return redirect()->back()->with('error', 'Order must have a customer name, phone, and shipping address.');
+        }
+
+        // 2. Sanitize phone number: remove any non-digit characters
+        $phone = preg_replace('/[^0-9]/', '', $order->customer_phone);
+        
+        // If it starts with 880, remove the 88 (Steadfast prefers 01...)
+        if (str_starts_with($phone, '880')) {
+            $phone = substr($phone, 2);
+        }
+
+        // Final check: if phone is still empty or too short, error out
+        if (strlen($phone) < 6) {
+            return redirect()->back()->with('error', 'Steadfast requires a valid phone number. Your current phone number ("' . $order->customer_phone . '") is invalid or empty.');
+        }
+
+        $data = [
+            'invoice' => (string) $order->id,
+            'recipient_name' => $order->customer_name,
+            'recipient_phone' => $phone,
+            'recipient_address' => $order->shipping_address,
+            'cod_amount' => (int) $order->total_amount,
+            'note' => $order->customer_remarks,
+        ];
+        \Illuminate\Support\Facades\Log::info('Steadfast API Single Input:', $data);
+        try {
+            $response = SteadfastCourier::placeOrder($data);
+            \Illuminate\Support\Facades\Log::info('Steadfast API Single Response:', (array) $response);
+            $result = json_decode(json_encode($response)); // Ensure object access
+
+            // Always save the latest response for debugging
+            $order->update([
+                'courier_response' => json_encode($response),
+            ]);
+
+            if (isset($result->status) && $result->status == 200) {
+                $order->update([
+                    'courier_name' => 'Steadfast',
+                    'courier_tracking_code' => $result->consignment->tracking_code,
+                    'courier_consignment_id' => $result->consignment->consignment_id,
+                    'courier_status' => $result->consignment->status,
+                ]);
+
+                return redirect()->back()->with('success', 'Order sent to Steadfast successfully. Tracking: ' . $result->consignment->tracking_code);
+            }
+
+            // Handle validation errors or other failures
+            $errorMsg = $result->message ?? 'Failed to send order to Steadfast.';
+            if (isset($result->errors)) {
+                $errorMsg .= ' ' . collect($result->errors)->flatten()->implode(' ');
+            }
+
+            return redirect()->back()->with('error', $errorMsg);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Steadfast API Exception: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Connection Error: Could not reach Steadfast. ' . $e->getMessage());
+        }
+    }
+
+    public function bulkSendToCourier(Request $request)
+    {
+        $request->validate([
+            'order_ids' => 'required|array',
+            'order_ids.*' => 'exists:orders,id'
+        ]);
+
+        $orders = Order::whereIn('id', $request->order_ids)->get();
+        $data = [];
+
+        foreach ($orders as $order) {
+            // Sanitize phone number: remove any non-digit characters
+            $phone = preg_replace('/[^0-9]/', '', $order->customer_phone);
+            
+            // If it starts with 880, remove the 88 (Steadfast prefers 01...)
+            if (str_starts_with($phone, '880')) {
+                $phone = substr($phone, 2);
+            }
+
+            $data[] = [
+                'invoice' => (string) $order->id,
+                'recipient_name' => $order->customer_name,
+                'recipient_phone' => $phone,
+                'recipient_address' => $order->shipping_address,
+                'cod_amount' => (int) $order->total_amount,
+                'note' => $order->customer_remarks,
+            ];
+        }
+
+        $results = SteadfastCourier::bulkCreateOrders($data);
+
+        if ($results && is_array($results)) {
+            $successCount = 0;
+            foreach ($results as $res) {
+                if ($res['status'] === 'success') {
+                    $order = Order::find($res['invoice']);
+                    if ($order) {
+                        $order->update([
+                            'courier_name' => 'Steadfast',
+                            'courier_tracking_code' => $res['tracking_code'],
+                            'courier_consignment_id' => $res['consignment_id'],
+                            'courier_status' => 'success',
+                            'courier_response' => json_encode($res),
+                        ]);
+                        $successCount++;
+                    }
+                }
+            }
+            return redirect()->back()->with('success', "$successCount orders sent to Steadfast successfully.");
+        }
+
+        return redirect()->back()->with('error', 'Failed to send bulk orders to Steadfast.');
+    }
+
+    public function courierOrders()
+    {
+        $orders = Order::whereNotNull('courier_tracking_code')
+            ->latest()
+            ->paginate(15);
+
+        return Inertia::render('Admin/Order/CourierIndex', [
+            'orders' => $orders
+        ]);
     }
 }

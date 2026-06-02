@@ -14,101 +14,129 @@
                 </Link>
             </div>
             
-            <nav class="flex-1 overflow-y-auto py-6 px-3 custom-scrollbar">
-                <div class="mb-3 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ $t('Main Menu') }}</div>
-                <ul class="space-y-1">
-                    <li>
-                        <Link href="/admin/dashboard" :class="[$page.url.startsWith('/admin/dashboard') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <LayoutDashboard class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/dashboard') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Dashboard') }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/orders" :class="[$page.url.startsWith('/admin/orders') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <ShoppingCart class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/orders') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Orders') }}</span>
-                            <span v-if="$page.props.pendingOrdersCount > 0" class="ml-auto bg-orange-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">{{ $page.props.pendingOrdersCount }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/products" :class="[$page.url.startsWith('/admin/products') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <Package class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/products') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Products') }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/combos" :class="[$page.url.startsWith('/admin/combos') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <Zap class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/combos') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Combos') }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/reviews" :class="[$page.url.startsWith('/admin/reviews') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <Star class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/reviews') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Reviews') }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/categories" :class="[$page.url.startsWith('/admin/categories') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <Tags class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/categories') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Categories') }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/brands" :class="[$page.url.startsWith('/admin/brands') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <Award class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/brands') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Brands') }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/subcategories" :class="[$page.url.startsWith('/admin/subcategories') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <ListTree class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/subcategories') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Subcategories') }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/customers" :class="[$page.url.startsWith('/admin/customers') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <Users class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/customers') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Customers') }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/chat" :class="[$page.url.startsWith('/admin/chat') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <MessageSquare class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/chat') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Support Inbox') }}</span>
-                            <span v-if="$page.props.unreadChatCount > 0" class="ml-auto bg-orange-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">{{ $page.props.unreadChatCount }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/gallery" :class="[$page.url.startsWith('/admin/gallery') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <Image class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/gallery') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Media Gallery') }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/pages" :class="[$page.url.startsWith('/admin/pages') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <FileText class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/pages') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Dynamic Pages') }}</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin/settings" :class="[$page.url.startsWith('/admin/settings') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
-                            <Settings class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/settings') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
-                            <span class="font-bold text-sm">{{ $t('Site Settings') }}</span>
-                        </Link>
-                    </li>
-                </ul>
+       <nav class="flex-1 overflow-y-auto py-6 px-3 custom-scrollbar">
+    <!-- ==================== CORE METRICS ==================== -->
+    <div class="mb-3 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ $t('Core') }}</div>
+    <ul class="mb-6 space-y-1">
+        <li>
+            <Link href="/admin/dashboard" :class="[$page.url.startsWith('/admin/dashboard') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <LayoutDashboard class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/dashboard') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Dashboard') }}</span>
+            </Link>
+        </li>
+    </ul>
 
-                <div class="mt-8 mb-3 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ $t('Storefront') }}</div>
-                <ul class="space-y-1">
-                    <li>
-                        <Link href="/" class="flex items-center px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors group">
-                            <ExternalLink class="w-5 h-5 mr-3 text-slate-400 group-hover:text-white" />
-                            <span class="font-bold text-sm">{{ $t('View Store') }}</span>
-                        </Link>
-                    </li>
-                </ul>
-            </nav>
+    <!-- ==================== SALES & ORDERS ==================== -->
+    <div class="mb-3 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ $t('Sales') }}</div>
+    <ul class="mb-6 space-y-1">
+        <li>
+            <Link href="/admin/orders" :class="[$page.url.startsWith('/admin/orders') && !$page.url.startsWith('/admin/orders/courier') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <ShoppingCart class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/orders') && !$page.url.startsWith('/admin/orders/courier') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Orders') }}</span>
+                <span v-if="$page.props.pendingOrdersCount > 0" class="ml-auto bg-orange-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">{{ $page.props.pendingOrdersCount }}</span>
+            </Link>
+        </li>
+        <li>
+            <Link :href="route('admin.orders.courier')" :class="[$page.url.startsWith('/admin/orders/courier') ? 'bg-[#FF6600] text-white shadow-lg shadow-orange-500/20' : 'text-slate-600 hover:bg-slate-50 hover:text-[#003366]']" class="flex items-center px-6 py-4 rounded-2xl transition-all group border border-transparent hover:border-slate-100">
+                <Truck class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/orders/courier') ? 'text-white' : 'text-slate-400 group-hover:text-[#003366]']" />
+                <span class="font-black text-xs uppercase tracking-widest">{{ $t('Steadfast Status') }}</span>
+            </Link>
+        </li>
+    </ul>
+
+    <!-- ==================== INVENTORY & CATALOG ==================== -->
+    <div class="mb-3 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ $t('Catalog') }}</div>
+    <ul class="mb-6 space-y-1">
+        <li>
+            <Link href="/admin/products" :class="[$page.url.startsWith('/admin/products') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <Package class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/products') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Products') }}</span>
+            </Link>
+        </li>
+        <li>
+            <Link href="/admin/combos" :class="[$page.url.startsWith('/admin/combos') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <Zap class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/combos') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Combos') }}</span>
+            </Link>
+        </li>
+        <li>
+            <Link href="/admin/categories" :class="[$page.url.startsWith('/admin/categories') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <Tags class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/categories') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Categories') }}</span>
+            </Link>
+        </li>
+        <li>
+            <Link href="/admin/subcategories" :class="[$page.url.startsWith('/admin/subcategories') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <ListTree class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/subcategories') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Subcategories') }}</span>
+            </Link>
+        </li>
+        <li>
+            <Link href="/admin/brands" :class="[$page.url.startsWith('/admin/brands') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <Award class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/brands') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Brands') }}</span>
+            </Link>
+        </li>
+    </ul>
+
+    <!-- ==================== CUSTOMER RELATIONSHIP ==================== -->
+    <div class="mb-3 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ $t('Customers') }}</div>
+    <ul class="mb-6 space-y-1">
+        <li>
+            <Link href="/admin/customers" :class="[$page.url.startsWith('/admin/customers') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <Users class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/customers') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Customers') }}</span>
+            </Link>
+        </li>
+        <li>
+            <Link href="/admin/chat" :class="[$page.url.startsWith('/admin/chat') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <MessageSquare class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/chat') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Support Inbox') }}</span>
+                <span v-if="$page.props.unreadChatCount > 0" class="ml-auto bg-orange-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">{{ $page.props.unreadChatCount }}</span>
+            </Link>
+        </li>
+        <li>
+            <Link href="/admin/reviews" :class="[$page.url.startsWith('/admin/reviews') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <Star class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/reviews') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Reviews') }}</span>
+            </Link>
+        </li>
+    </ul>
+
+    <!-- ==================== CONTENT & SITE MANAGEMENT ==================== -->
+    <div class="mb-3 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ $t('Content') }}</div>
+    <ul class="mb-6 space-y-1">
+        <li>
+            <Link href="/admin/pages" :class="[$page.url.startsWith('/admin/pages') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <FileText class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/pages') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Dynamic Pages') }}</span>
+            </Link>
+        </li>
+        <li>
+            <Link href="/admin/gallery" :class="[$page.url.startsWith('/admin/gallery') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <Image class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/gallery') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Media Gallery') }}</span>
+            </Link>
+        </li>
+    </ul>
+
+    <!-- ==================== SETTINGS & LIVE VIEW ==================== -->
+    <div class="mb-3 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ $t('System') }}</div>
+    <ul class="space-y-1">
+        <li>
+            <Link href="/admin/settings" :class="[$page.url.startsWith('/admin/settings') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white']" class="flex items-center px-3 py-2.5 rounded-lg transition-colors group">
+                <Settings class="w-5 h-5 mr-3" :class="[$page.url.startsWith('/admin/settings') ? 'text-white' : 'text-slate-400 group-hover:text-white']" />
+                <span class="font-bold text-sm">{{ $t('Site Settings') }}</span>
+            </Link>
+        </li>
+        <li>
+            <Link href="/" class="flex items-center px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors group">
+                <ExternalLink class="w-5 h-5 mr-3 text-slate-400 group-hover:text-white" />
+                <span class="font-bold text-sm">{{ $t('View Store') }}</span>
+            </Link>
+        </li>
+    </ul>
+</nav>
 
             <div class="p-4 border-t border-slate-800">
                 <Link href="/admin/logout" method="post" as="button" class="flex items-center w-full px-3 py-2.5 text-slate-400 hover:bg-red-500/10 hover:text-red-400 rounded-lg transition-colors font-bold text-sm group">
@@ -170,9 +198,9 @@
 <script setup>
 import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image, FileText, Award, MessageSquare } from 'lucide-vue-next';
+import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image, FileText, Award, MessageSquare, Truck } from 'lucide-vue-next';
 
-const isSidebarOpen = ref(false);
+const isSidebarOpen = ref(false); // Force rebuild
 </script>
 
 <style scoped>
