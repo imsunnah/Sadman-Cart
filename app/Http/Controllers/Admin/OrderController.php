@@ -23,7 +23,7 @@ class OrderController extends Controller
         $productId = $request->query('product_id');
         $comboId = $request->query('combo_id');
         
-        $query = Order::with(['items.product', 'items.combo']);
+        $query = Order::with(['items.product', 'items.combo'])->has('items');
         
         if ($status && $status !== 'all' && in_array($status, ['pending', 'processing', 'completed', 'cancelled'])) {
             $query->where('status', $status);

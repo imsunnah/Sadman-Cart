@@ -22,7 +22,11 @@ class StoreController extends Controller
         $discountedProducts = Product::with('category')->where('is_active', true)->whereNotNull('discount_type')->latest()->take(10)->get();
         $combos = \App\Models\Combo::with('products')->where('is_active', true)->latest()->take(6)->get();
         $featuredCategories = Category::withCount('products')->orderBy('products_count', 'desc')->take(8)->get();
-        $reviews = Review::where('is_active', true)->latest()->take(9)->get();
+        $reviews = Review::with('product')->where('is_active', true)
+            ->where(function ($q) {
+                $q->whereNull('product_id')->orWhereHas('product');
+            })
+            ->latest()->take(9)->get();
 
         $categorySections = Category::with([
             'products' => function ($query) {

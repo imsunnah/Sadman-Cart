@@ -11,7 +11,12 @@ class ReviewController extends Controller
 {
     public function index()
     {
-        $reviews = Review::with('product')->latest()->paginate(10);
+        $reviews = Review::with('product')
+            ->where(function ($q) {
+                $q->whereNull('product_id')->orWhereHas('product');
+            })
+            ->latest()
+            ->paginate(10);
         $products = \App\Models\Product::orderBy('name')->get();
         return Inertia::render('Admin/Reviews/Index', [
             'reviews' => $reviews,
