@@ -1,187 +1,73 @@
 <template>
     <AdminLayout>
-        <div class="mb-8 flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+        <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-[#003366]">Site Settings</h1>
-                <p class="text-sm text-slate-500">Update logo, sliders, and contact details</p>
+                <h1 class="text-2xl font-extrabold text-[#003366] tracking-tight">Site Settings</h1>
+                <p class="text-sm text-slate-500 mt-1">Manage your branding, sliders, and contact information.</p>
             </div>
-            <button @click="saveSettings" :disabled="form.processing" class="bg-[#FF6600] text-white px-6 py-2.5 rounded-lg hover:bg-orange-600 transition-all font-bold text-sm flex items-center shadow-md disabled:opacity-50">
+            <button @click="saveSettings" :disabled="form.processing" class="bg-[#FF6600] text-white px-6 py-2.5 rounded-xl hover:bg-[#e65c00] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-bold text-sm flex items-center justify-center shadow-md disabled:opacity-50 disabled:pointer-events-none disabled:transform-none">
                 <Save class="w-4 h-4 mr-2" /> {{ form.processing ? 'Saving...' : 'Save Changes' }}
             </button>
         </div>
 
-        <div v-if="$page.props.flash?.success" class="mb-6 bg-green-500 text-white p-4 rounded-lg shadow-md flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <CheckCircle class="w-5 h-5" />
-                <span class="text-sm font-bold">{{ $page.props.flash.success }}</span>
+        <div v-if="$page.props.flash?.success" class="mb-8 bg-emerald-50 border border-emerald-200 text-emerald-700 p-4 rounded-xl shadow-sm flex items-center justify-between animate-fade-in-down">
+            <div class="flex items-center space-x-3">
+                <CheckCircle class="w-5 h-5 text-emerald-500" />
+                <span class="text-sm font-semibold">{{ $page.props.flash.success }}</span>
             </div>
-            <button @click="$page.props.flash.success = null" class="opacity-50 hover:opacity-100"><X class="w-4 h-4" /></button>
+            <button @click="$page.props.flash.success = null" class="text-emerald-500 hover:text-emerald-700 transition-colors p-1"><X class="w-4 h-4" /></button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- General Settings -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8">
-                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
-                    <SettingsIcon class="w-5 h-5 text-[#003366]" />
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 pb-12">
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
+                <div class="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex items-center space-x-3">
+                    <div class="p-2 bg-[#003366]/10 rounded-lg text-[#003366]">
+                        <SettingsIcon class="w-5 h-5" />
+                    </div>
                     <h2 class="text-lg font-bold text-slate-900">General Branding</h2>
                 </div>
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Name (English)</label>
-                        <input v-model="form.site_name_en" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Name (Bangla)</label>
-                        <input v-model="form.site_name_bn" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Logo</label>
-                        <div class="flex flex-col gap-4">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border border-slate-200">
-                                    <img v-if="logoPreview || form.existing_site_logo" :src="logoPreview || form.existing_site_logo" class="h-full object-contain" />
-                                    <ImageIcon v-else class="w-6 h-6 text-slate-300" />
-                                </div>
-                                <input type="file" @input="handleLogoUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white" />
-                            </div>
-                            <button @click.prevent="openGallery('logo')" class="w-full py-2 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-black uppercase tracking-widest text-[#003366] hover:bg-[#003366] hover:text-white transition-all flex items-center justify-center gap-2">
-                                <ImageIcon class="w-3 h-3" /> Select From Gallery
-                            </button>
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[13px] font-semibold text-slate-700 mb-2">Site Name (English)</label>
+                            <input v-model="form.site_name_en" type="text" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none placeholder:text-slate-400">
+                        </div>
+                        <div>
+                            <label class="block text-[13px] font-semibold text-slate-700 mb-2">Site Name (Bangla)</label>
+                            <input v-model="form.site_name_bn" type="text" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none placeholder:text-slate-400">
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Site Favicon (Browser Tab Icon)</label>
-                        <div class="flex flex-col gap-4">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border border-slate-200">
-                                    <img v-if="faviconPreview || form.existing_site_favicon" :src="faviconPreview || form.existing_site_favicon" class="h-10 w-10 object-contain" />
-                                    <ImageIcon v-else class="w-6 h-6 text-slate-300" />
-                                </div>
-                                <input type="file" @input="handleFaviconUpload" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#003366] file:text-white" />
-                            </div>
-                            <button @click.prevent="openGallery('favicon')" class="w-full py-2 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-black uppercase tracking-widest text-[#003366] hover:bg-[#003366] hover:text-white transition-all flex items-center justify-center gap-2">
-                                <ImageIcon class="w-3 h-3" /> Select From Gallery
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slider Settings -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8">
-                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
-                    <ImageIcon class="w-5 h-5 text-[#003366]" />
-                    <h2 class="text-lg font-bold text-slate-900">Home Page Sliders</h2>
-                </div>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-slate-400 uppercase">Current Sliders</span>
-                        <div class="flex items-center gap-4">
-                            <button @click.prevent="openGallery('slider')" class="text-xs font-bold text-[#003366] uppercase hover:underline flex items-center gap-1">
-                                <ImageIcon class="w-3 h-3" /> Select From Gallery
-                            </button>
-                            <button @click.prevent="triggerSliderUpload" class="text-xs font-bold text-[#FF6600] uppercase hover:underline">Add New Image</button>
-                        </div>
-                    </div>
-                    <input type="file" multiple ref="sliderInput" @input="handleSliderUpload" class="hidden" />
                     
-                    <div class="grid grid-cols-3 gap-4">
-                        <div v-for="(img, index) in sliderImages" :key="index" class="relative group aspect-video rounded-lg overflow-hidden border border-slate-100">
-                            <img :src="img" class="w-full h-full object-cover">
-                            <button @click.prevent="removeSlider(index)" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Trash2 class="w-3 h-3" />
-                            </button>
-                        </div>
-                        <div v-if="sliderImages.length === 0" class="col-span-3 py-8 text-center border-2 border-dashed border-slate-100 rounded-xl text-slate-300 text-xs font-bold">
-                            No slider images uploaded
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Details -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:col-span-2">
-                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
-                    <Info class="w-5 h-5 text-[#003366]" />
-                    <h2 class="text-lg font-bold text-slate-900">Footer & Contact Details</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">About Description (English)</label>
-                            <textarea v-model="form.footer_about_en" rows="3" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">About Description (Bangla)</label>
-                            <textarea v-model="form.footer_about_bn" rows="3" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none"></textarea>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Office Address (English)</label>
-                        <input v-model="form.footer_address_en" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Office Address (Bangla)</label>
-                        <input v-model="form.footer_address_bn" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Phone Number</label>
-                        <input v-model="form.footer_phone" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
-                        <input v-model="form.footer_email" type="text" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hero Section Customization -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:col-span-2">
-                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
-                    <Layout class="w-5 h-5 text-[#003366]" />
-                    <h2 class="text-lg font-bold text-slate-900">Hero Section Configuration</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <!-- Slider Text Control -->
-                    <div class="space-y-6">
-                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-                            <div>
-                                <h3 class="text-sm font-bold text-[#003366]">Show Slider Text</h3>
-                                <p class="text-[10px] text-slate-500 font-medium">Toggle display of text over the hero slider</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" v-model="form.hero_slider_text_show" class="sr-only peer">
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF6600]"></div>
-                            </label>
-                        </div>
-                        
-                        <div v-if="form.hero_slider_text_show" class="grid grid-cols-1 gap-6">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Slider Overlay Text (English - HTML allowed)</label>
-                                <textarea v-model="form.hero_slider_text_en" rows="4" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none font-medium" placeholder="e.g. <h1>Fresh Organic</h1><p>Direct from farms</p>"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Slider Overlay Text (Bangla - HTML allowed)</label>
-                                <textarea v-model="form.hero_slider_text_bn" rows="4" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none font-medium" placeholder="e.g. <h1>সতেজ অর্গানিক</h1><p>সরাসরি খামার থেকে</p>"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Static Image Control -->
-                    <div class="space-y-4">
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Right-side Static Image</label>
-                        <div class="flex flex-col gap-4">
-                            <div class="w-full aspect-video bg-slate-50 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-dashed border-slate-200 group">
-                                <img v-if="heroStaticPreview || form.existing_hero_static_image" :src="heroStaticPreview || form.existing_hero_static_image" class="w-full h-full object-cover" />
-                                <div v-else class="flex flex-col items-center gap-2 opacity-30">
-                                    <ImageIcon class="w-8 h-8" />
-                                    <span class="text-[10px] font-black uppercase">Upload Static Cover</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                        <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
+                            <label class="block text-[13px] font-semibold text-slate-700 mb-3">Site Logo</label>
+                            <div class="flex flex-col gap-3">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-16 bg-white rounded-xl shadow-sm flex items-center justify-center overflow-hidden border border-slate-200 shrink-0">
+                                        <img v-if="logoPreview || form.existing_site_logo" :src="logoPreview || form.existing_site_logo" class="h-full w-full object-contain p-1" />
+                                        <ImageIcon v-else class="w-6 h-6 text-slate-300" />
+                                    </div>
+                                    <input type="file" @input="handleLogoUpload" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#003366] file:text-white hover:file:bg-[#002244] file:transition-colors file:cursor-pointer cursor-pointer" />
                                 </div>
+                                <button @click.prevent="openGallery('logo')" class="w-full py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#003366] hover:border-[#003366]/30 transition-all flex items-center justify-center gap-2">
+                                    <ImageIcon class="w-3.5 h-3.5" /> Browse Gallery
+                                </button>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <input type="file" @input="handleHeroStaticUpload" class="flex-grow text-xs text-slate-500 file:mr-4 file:py-2 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-[#003366] file:text-white cursor-pointer" />
-                                <button @click.prevent="openGallery('hero')" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-[#003366] hover:bg-[#003366] hover:text-white transition-all flex items-center justify-center gap-2">
-                                    <ImageIcon class="w-3 h-3" /> Gallery
+                        </div>
+
+                        <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
+                            <label class="block text-[13px] font-semibold text-slate-700 mb-3">Favicon</label>
+                            <div class="flex flex-col gap-3">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-16 bg-white rounded-xl shadow-sm flex items-center justify-center overflow-hidden border border-slate-200 shrink-0">
+                                        <img v-if="faviconPreview || form.existing_site_favicon" :src="faviconPreview || form.existing_site_favicon" class="h-8 w-8 object-contain" />
+                                        <ImageIcon v-else class="w-6 h-6 text-slate-300" />
+                                    </div>
+                                    <input type="file" @input="handleFaviconUpload" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#003366] file:text-white hover:file:bg-[#002244] file:transition-colors file:cursor-pointer cursor-pointer" />
+                                </div>
+                                <button @click.prevent="openGallery('favicon')" class="w-full py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#003366] hover:border-[#003366]/30 transition-all flex items-center justify-center gap-2">
+                                    <ImageIcon class="w-3.5 h-3.5" /> Browse Gallery
                                 </button>
                             </div>
                         </div>
@@ -189,55 +75,187 @@
                 </div>
             </div>
 
-            <!-- Delivery Settings -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:col-span-2">
-                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
-                    <Truck class="w-5 h-5 text-[#003366]" />
-                    <h2 class="text-lg font-bold text-slate-900">Delivery Settings</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Inside Dhaka Charge (৳)</label>
-                        <input v-model="form.delivery_charge_inside_dhaka" type="number" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden flex flex-col">
+                <div class="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex items-center space-x-3">
+                    <div class="p-2 bg-[#003366]/10 rounded-lg text-[#003366]">
+                        <ImageIcon class="w-5 h-5" />
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Outside Dhaka Charge (৳)</label>
-                        <input v-model="form.delivery_charge_outside_dhaka" type="number" class="w-full bg-slate-50 border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                    <h2 class="text-lg font-bold text-slate-900">Home Page Sliders</h2>
+                </div>
+                <div class="p-6 flex-grow flex flex-col space-y-4">
+                    <div class="flex flex-wrap justify-between items-center gap-4">
+                        <span class="text-[13px] font-semibold text-slate-700">Active Sliders</span>
+                        <div class="flex items-center gap-3">
+                            <button @click.prevent="openGallery('slider')" class="px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+                                <ImageIcon class="w-3.5 h-3.5" /> Gallery
+                            </button>
+                            <button @click.prevent="triggerSliderUpload" class="px-3 py-1.5 bg-[#FF6600]/10 text-[#FF6600] hover:bg-[#FF6600]/20 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5">
+                                <Plus class="w-3.5 h-3.5" /> Upload New
+                            </button>
+                        </div>
+                    </div>
+                    <input type="file" multiple ref="sliderInput" @input="handleSliderUpload" class="hidden" />
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2">
+                        <div v-for="(img, index) in sliderImages" :key="index" class="relative group aspect-video rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
+                            <img :src="img" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <button @click.prevent="removeSlider(index)" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transform scale-75 group-hover:scale-100 transition-all shadow-md">
+                                    <Trash2 class="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                        <div v-if="sliderImages.length === 0" class="col-span-full py-12 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+                            <ImageIcon class="w-8 h-8 text-slate-300 mb-2" />
+                            <span class="text-slate-400 text-sm font-medium">No slider images uploaded</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Social Media Settings -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:col-span-2">
-                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
-                    <Share2 class="w-5 h-5 text-[#003366]" />
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden xl:col-span-2">
+                <div class="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex items-center space-x-3">
+                    <div class="p-2 bg-[#003366]/10 rounded-lg text-[#003366]">
+                        <Layout class="w-5 h-5" />
+                    </div>
+                    <h2 class="text-lg font-bold text-slate-900">Hero Section Configuration</h2>
+                </div>
+                <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between p-5 bg-white border border-slate-200 shadow-sm rounded-xl">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800">Slider Overlay Text</h3>
+                                <p class="text-xs text-slate-500 font-medium mt-0.5">Toggle text display over the hero slider</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" v-model="form.hero_slider_text_show" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF6600]"></div>
+                            </label>
+                        </div>
+                        
+                        <div v-if="form.hero_slider_text_show" class="space-y-5 animate-fade-in-down">
+                            <div>
+                                <label class="block text-[13px] font-semibold text-slate-700 mb-2">Text (English) <span class="text-xs text-slate-400 font-normal ml-1">HTML Allowed</span></label>
+                                <textarea v-model="form.hero_slider_text_en" rows="3" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none font-mono text-slate-700" placeholder="e.g. <h1>Fresh Organic</h1>"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[13px] font-semibold text-slate-700 mb-2">Text (Bangla) <span class="text-xs text-slate-400 font-normal ml-1">HTML Allowed</span></label>
+                                <textarea v-model="form.hero_slider_text_bn" rows="3" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none font-mono text-slate-700" placeholder="e.g. <h1>সতেজ অর্গানিক</h1>"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[13px] font-semibold text-slate-700 mb-2">Right-side Static Image</label>
+                        <div class="flex flex-col gap-4 p-5 rounded-xl border border-slate-100 bg-slate-50/50 h-[calc(100%-28px)]">
+                            <div class="w-full flex-grow bg-white rounded-xl flex items-center justify-center overflow-hidden border-2 border-dashed border-slate-200 group min-h-[160px]">
+                                <img v-if="heroStaticPreview || form.existing_hero_static_image" :src="heroStaticPreview || form.existing_hero_static_image" class="w-full h-full object-cover" />
+                                <div v-else class="flex flex-col items-center gap-2 text-slate-400">
+                                    <ImageIcon class="w-8 h-8 opacity-50" />
+                                    <span class="text-xs font-semibold">Upload Cover Image</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 pt-2">
+                                <input type="file" @input="handleHeroStaticUpload" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#003366] file:text-white hover:file:bg-[#002244] file:transition-colors file:cursor-pointer cursor-pointer" />
+                                <button @click.prevent="openGallery('hero')" class="shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#003366] hover:border-[#003366]/30 transition-all flex items-center justify-center gap-2">
+                                    <ImageIcon class="w-3.5 h-3.5" /> Gallery
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden xl:col-span-2">
+                <div class="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex items-center space-x-3">
+                    <div class="p-2 bg-[#003366]/10 rounded-lg text-[#003366]">
+                        <Info class="w-5 h-5" />
+                    </div>
+                    <h2 class="text-lg font-bold text-slate-900">Footer & Contact Details</h2>
+                </div>
+                <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-6">
+                    <div class="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[13px] font-semibold text-slate-700 mb-2">About Description (English)</label>
+                            <textarea v-model="form.footer_about_en" rows="3" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none placeholder:text-slate-400"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[13px] font-semibold text-slate-700 mb-2">About Description (Bangla)</label>
+                            <textarea v-model="form.footer_about_bn" rows="3" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none placeholder:text-slate-400"></textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[13px] font-semibold text-slate-700 mb-2">Office Address (English)</label>
+                        <input v-model="form.footer_address_en" type="text" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none placeholder:text-slate-400">
+                    </div>
+                    <div>
+                        <label class="block text-[13px] font-semibold text-slate-700 mb-2">Office Address (Bangla)</label>
+                        <input v-model="form.footer_address_bn" type="text" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none placeholder:text-slate-400">
+                    </div>
+                    <div>
+                        <label class="block text-[13px] font-semibold text-slate-700 mb-2">Phone Number</label>
+                        <input v-model="form.footer_phone" type="text" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none placeholder:text-slate-400">
+                    </div>
+                    <div>
+                        <label class="block text-[13px] font-semibold text-slate-700 mb-2">Email Address</label>
+                        <input v-model="form.footer_email" type="email" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none placeholder:text-slate-400">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden xl:col-span-2">
+                <div class="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex items-center space-x-3">
+                    <div class="p-2 bg-[#003366]/10 rounded-lg text-[#003366]">
+                        <Truck class="w-5 h-5" />
+                    </div>
+                    <h2 class="text-lg font-bold text-slate-900">Delivery Settings</h2>
+                </div>
+                <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-[13px] font-semibold text-slate-700 mb-2">Inside Dhaka Charge</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500 font-medium select-none">৳</span>
+                            <input v-model="form.delivery_charge_inside_dhaka" type="number" class="w-full bg-white border border-slate-200 rounded-xl pl-8 pr-4 py-2.5 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none placeholder:text-slate-400">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[13px] font-semibold text-slate-700 mb-2">Outside Dhaka Charge</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500 font-medium select-none">৳</span>
+                            <input v-model="form.delivery_charge_outside_dhaka" type="number" class="w-full bg-white border border-slate-200 rounded-xl pl-8 pr-4 py-2.5 text-sm transition-all focus:border-[#003366] focus:ring-4 focus:ring-[#003366]/10 outline-none placeholder:text-slate-400">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden xl:col-span-2">
+                <div class="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex items-center space-x-3">
+                    <div class="p-2 bg-[#003366]/10 rounded-lg text-[#003366]">
+                        <Share2 class="w-5 h-5" />
+                    </div>
                     <h2 class="text-lg font-bold text-slate-900">Social Media Links</h2>
                 </div>
                 
-                <div class="space-y-4">
-                    <div v-for="(social, index) in form.social_media" :key="index" class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                            <div class="flex flex-col md:col-span-1">
-                                <span class="text-sm font-bold text-slate-700">{{ social.name }}</span>
-                                <span class="text-[10px] text-slate-400 uppercase">Platform</span>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div v-for="(social, index) in form.social_media" :key="index" class="p-4 bg-slate-50/50 border border-slate-200 rounded-xl hover:bg-white hover:border-[#003366]/20 transition-colors group">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-bold text-slate-800">{{ social.name }}</span>
                             </div>
-                            <div class="md:col-span-2">
-                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">URL</label>
-                                <input v-model="form.social_media[index].url" type="text" placeholder="https://..." class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
-                            </div>
-                            <div class="flex items-center justify-end md:col-span-1">
-                                <label class="flex items-center space-x-2 cursor-pointer pt-2">
-                                    <input type="checkbox" v-model="form.social_media[index].is_active" class="rounded w-5 h-5 text-[#FF6600] border-slate-300 focus:ring-[#FF6600]">
-                                    <span class="text-sm font-bold text-slate-600">Active</span>
-                                </label>
-                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" v-model="form.social_media[index].is_active" class="sr-only peer">
+                                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#003366]"></div>
+                                <span class="ml-2 text-xs font-semibold text-slate-500">{{ social.is_active ? 'Active' : 'Hidden' }}</span>
+                            </label>
+                        </div>
+                        <div>
+                            <input v-model="form.social_media[index].url" type="url" :disabled="!social.is_active" placeholder="https://..." class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm transition-all focus:border-[#003366] focus:ring-2 focus:ring-[#003366]/10 outline-none disabled:bg-slate-100 disabled:text-slate-400">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Media Gallery Modal -->
         <MediaPicker 
             :show="showGallery" 
             @close="showGallery = false" 
