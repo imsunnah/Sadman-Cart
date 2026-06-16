@@ -17,7 +17,7 @@ class ReviewController extends Controller
             })
             ->latest()
             ->paginate(10);
-        $products = \App\Models\Product::orderBy('name')->get();
+        $products = \App\Models\Product::orderBy('name_en')->get();
         return Inertia::render('Admin/Reviews/Index', [
             'reviews' => $reviews,
             'products' => $products
