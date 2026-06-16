@@ -65,7 +65,15 @@ class HandleInertiaRequests extends Middleware
                         ->groupBy('user_id');
                 })->where('is_from_admin', false)->count()
                 : 0,
-            'settings' => \App\Models\Setting::all()->pluck('value', 'key'),
+            'settings' => function() {
+                $settings = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
+                if (isset($settings['social_media'])) {
+                    $settings['social_media'] = json_decode($settings['social_media'], true) ?: [];
+                } else {
+                    $settings['social_media'] = [];
+                }
+                return $settings;
+            },
         ];
     }
 }

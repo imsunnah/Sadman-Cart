@@ -310,6 +310,14 @@ class StoreController extends Controller
             $cart->delete();
         }
 
+        // Send email to admin
+        $adminEmail = \App\Models\Setting::where('key', 'footer_email')->first()->value ?? 'admin@sadmancart.com';
+        try {
+            Mail::to($adminEmail)->send(new OrderCreated($order));
+        } catch (\Exception $e) {
+            \Log::error('Order Creation Email failed: ' . $e->getMessage());
+        }
+
         return redirect()->route('thank-you', $order->id);
     }
 

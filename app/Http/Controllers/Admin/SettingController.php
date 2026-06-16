@@ -102,6 +102,14 @@ class SettingController extends Controller
             }
         }
 
+        // Handle Social Media
+        if ($request->has('social_media')) {
+            Setting::updateOrCreate(
+                ['key' => 'social_media'],
+                ['value_en' => json_encode($request->get('social_media')), 'group' => 'social']
+            );
+        }
+
         // Handle Slider Deletion (if requested)
         if ($request->has('slider_images')) {
             Setting::where('key', 'slider_images')->update(['value_en' => json_encode($request->get('slider_images'))]);

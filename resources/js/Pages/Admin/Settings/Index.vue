@@ -206,6 +206,35 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Social Media Settings -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:col-span-2">
+                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
+                    <Share2 class="w-5 h-5 text-[#003366]" />
+                    <h2 class="text-lg font-bold text-slate-900">Social Media Links</h2>
+                </div>
+                
+                <div class="space-y-4">
+                    <div v-for="(social, index) in form.social_media" :key="index" class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <div class="flex flex-col md:col-span-1">
+                                <span class="text-sm font-bold text-slate-700">{{ social.name }}</span>
+                                <span class="text-[10px] text-slate-400 uppercase">Platform</span>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">URL</label>
+                                <input v-model="form.social_media[index].url" type="text" placeholder="https://..." class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#003366]/10 outline-none">
+                            </div>
+                            <div class="flex items-center justify-end md:col-span-1">
+                                <label class="flex items-center space-x-2 cursor-pointer pt-2">
+                                    <input type="checkbox" v-model="form.social_media[index].is_active" class="rounded w-5 h-5 text-[#FF6600] border-slate-300 focus:ring-[#FF6600]">
+                                    <span class="text-sm font-bold text-slate-600">Active</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Media Gallery Modal -->
@@ -222,7 +251,7 @@ import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import MediaPicker from '@/Components/MediaPicker.vue';
-import { Save, Settings as SettingsIcon, Image as ImageIcon, Info, Plus, Trash2, CheckCircle, X, Truck, Layout } from 'lucide-vue-next';
+import { Save, Settings as SettingsIcon, Image as ImageIcon, Info, Plus, Trash2, CheckCircle, X, Truck, Layout, Share2 } from 'lucide-vue-next';
 
 const props = defineProps({
     settings: Object
@@ -269,6 +298,31 @@ const form = useForm({
     hero_slider_text_show: getVal('hero_slider_text_show') == '1',
     hero_slider_text_en: getVal('hero_slider_text', 'en'),
     hero_slider_text_bn: getVal('hero_slider_text', 'bn'),
+    social_media: (() => {
+        const defaultSocialMedia = [
+            { name: 'Facebook', icon: 'Facebook', url: '', is_active: false },
+            { name: 'Instagram', icon: 'Instagram', url: '', is_active: false },
+            { name: 'Twitter', icon: 'Twitter', url: '', is_active: false },
+            { name: 'LinkedIn', icon: 'Linkedin', url: '', is_active: false },
+            { name: 'WhatsApp', icon: 'MessageCircle', url: '', is_active: false },
+            { name: 'Threads', icon: 'AtSign', url: '', is_active: false }
+        ];
+        
+        let existingSocialMedia = [];
+        if (props.settings && props.settings.social && props.settings.social.length > 0) {
+            const smSetting = props.settings.social.find(s => s.key === 'social_media');
+            if (smSetting && smSetting.value_en) {
+                try {
+                    existingSocialMedia = JSON.parse(smSetting.value_en);
+                } catch (e) {}
+            }
+        }
+        
+        return defaultSocialMedia.map(defaultItem => {
+            const existingItem = existingSocialMedia.find(item => item.name === defaultItem.name);
+            return existingItem ? { ...defaultItem, ...existingItem } : defaultItem;
+        });
+    })(),
 });
 
 const handleLogoUpload = (e) => {

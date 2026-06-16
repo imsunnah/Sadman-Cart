@@ -275,10 +275,10 @@
                                         class="text-xs font-black uppercase pl-3 pr-8 py-2.5 rounded-xl border outline-none cursor-pointer w-full text-center transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed" 
                                         :class="getStatusClass(order.status)"
                                     >
-                                        <option value="pending">{{ $t('Pending') }}</option>
-                                        <option value="processing">{{ $t('Processing') }}</option>
+                                        <option value="pending" :disabled="!!order.courier_tracking_code">{{ $t('Pending') }}</option>
+                                        <option value="processing" :disabled="!!order.courier_tracking_code">{{ $t('Processing') }}</option>
                                         <option value="completed">{{ $t('Completed') }}</option>
-                                        <option value="cancelled">{{ $t('Cancelled') }}</option>
+                                        <option value="cancelled" :disabled="!!order.courier_tracking_code">{{ $t('Cancelled') }}</option>
                                     </select>
                                     <ChevronDown class="absolute right-2.5 top-3.5 w-3.5 h-3.5 pointer-events-none opacity-60" />
                                 </div>
@@ -287,8 +287,9 @@
                                 <div class="flex flex-col gap-2">
                                     <button 
                                         v-if="!order.courier_tracking_code"
-                                        @click="initiateCourierSend(order)"
-                                        class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white hover:bg-orange-600 text-orange-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border border-orange-200 hover:border-orange-600 shadow-sm"
+                                        @click="order.status !== 'cancelled' ? initiateCourierSend(order) : null"
+                                        :disabled="order.status === 'cancelled'"
+                                        class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white hover:bg-orange-600 text-orange-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border border-orange-200 hover:border-orange-600 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-amber-500 disabled:hover:border-amber-200"
                                     >
                                         <Send class="w-3.5 h-3.5" /> {{ $t('Courier') }}
                                     </button>

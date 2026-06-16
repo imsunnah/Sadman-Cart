@@ -126,6 +126,11 @@ class OrderController extends Controller
         if ($request->has('status')) {
             $oldStatus = $order->status;
             $newStatus = $validated['status'];
+            
+            if (!empty($order->courier_tracking_code) && $newStatus !== 'completed') {
+                return redirect()->back()->with('error', 'Couriered orders cannot change status unless setting to completed.');
+            }
+
             $order->status = $newStatus;
 
             if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
@@ -160,6 +165,13 @@ class OrderController extends Controller
         }
 
         $order->save();
+
+        if ($request->has('status')) {
+            $newStatus = $validated['status'];
+            if ($newStatus === 'completed' && empty($order->courier_tracking_code)) {
+                $this->executeCourierSend($order);
+            }
+        }
 
         // Send Email to customer
         if ($order->customer_email) {
@@ -256,22 +268,29 @@ class OrderController extends Controller
 
     public function sendToCourier(Order $order)
     {
+        $result = $this->executeCourierSend($order);
+        if ($result['status'] === 'success') {
+            return redirect()->back()->with('success', $result['message']);
+        }
+        return redirect()->back()->with('error', $result['message']);
+    }
+
+    private function executeCourierSend(Order $order)
+    {
         // 1. Basic Validation
         if (empty($order->customer_phone) || empty($order->shipping_address) || empty($order->customer_name)) {
-            return redirect()->back()->with('error', 'Order must have a customer name, phone, and shipping address.');
+            return ['status' => 'error', 'message' => 'Order must have a customer name, phone, and shipping address.'];
         }
 
-        // 2. Sanitize phone number: remove any non-digit characters
+        // 2. Sanitize phone number
         $phone = preg_replace('/[^0-9]/', '', $order->customer_phone);
         
-        // If it starts with 880, remove the 88 (Steadfast prefers 01...)
         if (str_starts_with($phone, '880')) {
             $phone = substr($phone, 2);
         }
 
-        // Final check: if phone is still empty or too short, error out
         if (strlen($phone) < 6) {
-            return redirect()->back()->with('error', 'Steadfast requires a valid phone number. Your current phone number ("' . $order->customer_phone . '") is invalid or empty.');
+            return ['status' => 'error', 'message' => 'Steadfast requires a valid phone number.'];
         }
 
         $data = [
@@ -282,13 +301,11 @@ class OrderController extends Controller
             'cod_amount' => (int) $order->total_amount,
             'note' => $order->customer_remarks,
         ];
-        \Illuminate\Support\Facades\Log::info('Steadfast API Single Input:', $data);
+        
         try {
             $response = SteadfastCourier::placeOrder($data);
-            \Illuminate\Support\Facades\Log::info('Steadfast API Single Response:', (array) $response);
-            $result = json_decode(json_encode($response)); // Ensure object access
+            $result = json_decode(json_encode($response));
 
-            // Always save the latest response for debugging
             $order->update([
                 'courier_response' => json_encode($response),
             ]);
@@ -301,19 +318,18 @@ class OrderController extends Controller
                     'courier_status' => $result->consignment->status,
                 ]);
 
-                return redirect()->back()->with('success', 'Order sent to Steadfast successfully. Tracking: ' . $result->consignment->tracking_code);
+                return ['status' => 'success', 'message' => 'Order sent to Steadfast successfully. Tracking: ' . $result->consignment->tracking_code];
             }
 
-            // Handle validation errors or other failures
             $errorMsg = $result->message ?? 'Failed to send order to Steadfast.';
             if (isset($result->errors)) {
                 $errorMsg .= ' ' . collect($result->errors)->flatten()->implode(' ');
             }
 
-            return redirect()->back()->with('error', $errorMsg);
+            return ['status' => 'error', 'message' => $errorMsg];
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Steadfast API Exception: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Connection Error: Could not reach Steadfast. ' . $e->getMessage());
+            return ['status' => 'error', 'message' => 'Connection Error: Could not reach Steadfast.'];
         }
     }
 

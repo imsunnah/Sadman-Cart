@@ -328,15 +328,12 @@
                     </div>
 
                     <div class="flex items-center gap-4 pt-2">
-                        <a href="https://facebook.com/sadmancart" target="_blank" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-400 hover:bg-[#FF6600] hover:text-white transition-all">
-                            <Facebook class="w-4 h-4" />
-                        </a>
-                        <a href="https://instagram.com/sadmancart" target="_blank" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-400 hover:bg-[#FF6600] hover:text-white transition-all">
-                            <Instagram class="w-4 h-4" />
-                        </a>
-                        <a href="https://m.me/sadmancart" target="_blank" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-400 hover:bg-[#0084FF] hover:text-white transition-all">
-                            <MessageCircle class="w-4 h-4" />
-                        </a>
+                        <template v-if="$page.props.settings.social_media && $page.props.settings.social_media.length > 0">
+                            <a v-for="(social, index) in $page.props.settings.social_media.filter(s => s.is_active)" :key="index" :href="social.url" target="_blank" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-400 hover:bg-[#FF6600] hover:text-white transition-all">
+                                <component :is="getIcon(social.icon)" class="w-4 h-4" />
+                            </a>
+                        </template>
+                  
                     </div>
                 </div>
 
@@ -417,6 +414,11 @@ import {
     Facebook,
     Instagram,
     ShieldCheck,
+    Twitter,
+    Youtube,
+    Linkedin,
+    Globe,
+    AtSign
 } from "lucide-vue-next";
 import { useCart } from "@/Composables/useCart";
 import { useToast } from "@/Composables/useToast";
@@ -434,6 +436,20 @@ const handleSearch = () => {
     } else {
         router.visit("/shop");
     }
+};
+
+const getIcon = (iconName) => {
+    const icons = {
+        Facebook,
+        Instagram,
+        Twitter,
+        Youtube,
+        MessageCircle,
+        Linkedin,
+        Globe,
+        AtSign
+    };
+    return icons[iconName] || Globe;
 };
 </script>
 

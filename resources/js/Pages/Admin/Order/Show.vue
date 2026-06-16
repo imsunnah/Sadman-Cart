@@ -156,17 +156,18 @@
                                 class="w-full px-4 py-3 rounded-xl border outline-none font-bold text-sm uppercase transition-all cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" 
                                 :class="getStatusClass(order.status)"
                             >
-                                <option value="pending">{{ $t('Pending') }}</option>
-                                <option value="processing">{{ $t('Processing') }}</option>
+                                <option value="pending" :disabled="!!order.courier_tracking_code">{{ $t('Pending') }}</option>
+                                <option value="processing" :disabled="!!order.courier_tracking_code">{{ $t('Processing') }}</option>
                                 <option value="completed">{{ $t('Completed') }}</option>
-                                <option value="cancelled">{{ $t('Cancelled') }}</option>
+                                <option value="cancelled" :disabled="!!order.courier_tracking_code">{{ $t('Cancelled') }}</option>
                             </select>
                             <div class="mt-4" v-if="order.status !== 'completed' && order.status !== 'cancelled'">
                                 <!-- Courier Selection/Action -->
                                 <div v-if="!order.courier_tracking_code">
                                     <button 
-                                        @click="showCourierModal = true"
-                                        class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white hover:bg-orange-600 text-orange-600 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-orange-200 hover:border-orange-600 shadow-sm mb-3"
+                                        @click="order.status !== 'cancelled' ? showCourierModal = true : null"
+                                        :disabled="order.status === 'cancelled'"
+                                        class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white hover:bg-orange-600 text-orange-600 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-orange-200 hover:border-orange-600 shadow-sm mb-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-amber-500 disabled:hover:border-amber-200"
                                     >
                                         <Send class="w-4 h-4" /> {{ $t('Send to Steadfast') }}
                                     </button>
