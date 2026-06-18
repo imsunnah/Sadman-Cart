@@ -210,37 +210,4 @@ const submitReset = () => {
 }
 </style>
 
-<script setup>
-import { ref, computed } from 'vue';
-import { useForm, Link, usePage } from '@inertiajs/vue3';
-import { User, Lock, KeyRound } from 'lucide-vue-next';
 
-const page = usePage();
-const otpSent = ref(false);
-
-const flashSuccess = computed(() => page.props.flash?.success);
-
-const form = useForm({
-    identifier: '',
-});
-
-const resetForm = useForm({
-    otp: '',
-    password: '',
-    password_confirmation: '',
-});
-
-const submitIdentifier = () => {
-    form.post('/forgot-password', {
-        onSuccess: () => {
-            otpSent.value = true;
-        }
-    });
-};
-
-const submitReset = () => {
-    resetForm.post('/reset-password', {
-        onFinish: () => resetForm.reset('password', 'password_confirmation'),
-    });
-};
-</script>

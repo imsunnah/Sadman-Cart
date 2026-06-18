@@ -125,21 +125,4 @@ const submit = () => {
 };
 </script>
 
-<script setup>
-import { useForm, Link } from '@inertiajs/vue3';
-import { User, Mail, Lock, Phone } from 'lucide-vue-next';
 
-const form = useForm({
-    name: '',
-    email: '',
-    mobile: '',
-    password: '',
-    password_confirmation: '',
-});
-
-const submit = () => {
-    form.post('/register', {
-        onFinish: () => form.reset('password', 'password_confirmation'),
-    });
-};
-</script>

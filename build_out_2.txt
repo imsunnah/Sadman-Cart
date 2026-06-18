@@ -1,0 +1,21 @@
+
+> build
+> vite build
+
+[36mvite v7.3.2 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 34 modules transformed.
+[31m✗[39m Build failed in 1.07s
+[31merror during build:
+[31m[vite:vue] [plugin vite:vue] resources/js/Pages/Auth/ForgotPassword.vue: Single file component can contain only one <script setup> element[31m
+file: [36mF:/Practise/Project/Sadman-Cart/resources/js/Pages/Auth/ForgotPassword.vue[31m
+SyntaxError: [plugin vite:vue] resources/js/Pages/Auth/ForgotPassword.vue: Single file component can contain only one <script setup> element
+    at createDuplicateBlockError (F:\Practise\Project\Sadman-Cart\node_modules\@vue\compiler-sfc\dist\compiler-sfc.cjs.js:1954:15)
+    at F:\Practise\Project\Sadman-Cart\node_modules\@vue\compiler-sfc\dist\compiler-sfc.cjs.js:1874:21
+    at Array.forEach (<anonymous>)
+    at Object.parse$1 [as parse] (F:\Practise\Project\Sadman-Cart\node_modules\@vue\compiler-sfc\dist\compiler-sfc.cjs.js:1832:16)
+    at createDescriptor (file:///F:/Practise/Project/Sadman-Cart/node_modules/@vitejs/plugin-vue/dist/index.mjs:71:43)
+    at transformMain (file:///F:/Practise/Project/Sadman-Cart/node_modules/@vitejs/plugin-vue/dist/index.mjs:2421:34)
+    at Object.transform (file:///F:/Practise/Project/Sadman-Cart/node_modules/@vitejs/plugin-vue/dist/index.mjs:3053:16)
+    at Object.handler (file:///F:/Practise/Project/Sadman-Cart/node_modules/vite/dist/node/chunks/config.js:33734:13)
+    at file:///F:/Practise/Project/Sadman-Cart/node_modules/rollup/dist/es/shared/node-entry.js:22981:40[39m

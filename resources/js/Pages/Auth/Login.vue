@@ -100,19 +100,4 @@ const submit = () => {
 };
 </script>
 
-<script setup>
-import { useForm, Link } from '@inertiajs/vue3';
-import { Mail, Lock } from 'lucide-vue-next';
 
-const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
-});
-
-const submit = () => {
-    form.post('/login', {
-        onFinish: () => form.reset('password'),
-    });
-};
-</script>
