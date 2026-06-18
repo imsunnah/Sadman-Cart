@@ -7,7 +7,7 @@
 @source '../**/*.vue';
 
 @theme {
-    --font-sans: 'Inter', 'Hind Siliguri', 'Noto Sans Bangla', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', 'Noto Serif Bengali', 'Hind Siliguri', 'Noto Sans Bangla', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     
     --color-primary-50: #e0f2fe;
@@ -30,7 +30,7 @@
 
 @layer base {
     :lang(bn) {
-        font-family: 'Hind Siliguri', 'Noto Sans Bangla', sans-serif !important;
+        font-family: 'Noto Serif Bengali', 'Hind Siliguri', 'Noto Sans Bangla', sans-serif !important;
     }
 
     body {

@@ -33,9 +33,9 @@
                             </p>
 
                             <div class="bg-slate-50 rounded-2xl p-5 mb-8 space-y-3 border border-slate-100">
-                                <div class="flex items-center text-sm font-bold text-slate-700">
-                                    <MapPin class="w-4 h-4 text-[#003366] mr-3" />
-                                    {{ form.district }}, {{ form.upazila }}
+                                <div class="flex items-start text-sm font-bold text-slate-700">
+                                    <MapPin class="w-4 h-4 text-[#003366] mr-3 mt-1 flex-shrink-0" />
+                                    {{ form.shipping_address }}
                                 </div>
                                 <div class="flex items-center text-sm font-bold text-slate-700">
                                     <Phone class="w-4 h-4 text-[#003366] mr-3" />
@@ -60,7 +60,7 @@
                 <div class="mb-6 sm:mb-10">
                     <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center uppercase">
                         <ShoppingBag class="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-[#003366]" />
-                        {{ $t('Checkout') }}
+                        অর্ডার সম্পন্ন করুন
                     </h1>
                     <div class="h-1 w-20 bg-[#003366] mt-4 rounded-full"></div>
                 </div>
@@ -70,73 +70,32 @@
                     <div class="lg:col-span-7">
                         <div class="bg-white shadow-xl shadow-slate-200/50 rounded-3xl border border-slate-100 p-5 sm:p-10">
                             <form @submit.prevent="showConfirmModal = true">
-                                <!-- Section 1: Contact -->
+                                <!-- Section 1: Billing & Shipping -->
                                 <div class="mb-12">
-                                    <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
+                                    <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-8 flex items-center">
                                         <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">1</span>
-                                        {{ $t('Contact Information') }}
+                                         তথ্য
                                     </h2>
-                                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                                        <div class="sm:col-span-2">
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Full Name') }}</label>
-                                            <input v-model="form.customer_name" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" :placeholder="$t('e.g. John Doe')">
+                                    <div class="grid grid-cols-1 gap-8">
+                                        <div>
+                                            <label class="block text-xs font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">আপনার নাম</label>
+                                            <input v-model="form.customer_name" type="text" required class="block w-full rounded-2xl bg-slate-50 border border-slate-100 px-6 py-5 text-sm font-bold focus:ring-4 focus:ring-[#003366]/5 focus:bg-white focus:border-[#003366]/20 outline-none transition-all placeholder:text-slate-300" placeholder="আপনার নাম লিখুন">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Phone Number') }}</label>
-                                            <input v-model="form.customer_phone" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" :placeholder="$t('01XXXXXXXXX')">
+                                            <label class="block text-xs font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">মোবাইল নাম্বার</label>
+                                            <input v-model="form.customer_phone" type="text" required class="block w-full rounded-2xl bg-slate-50 border border-slate-100 px-6 py-5 text-sm font-bold focus:ring-4 focus:ring-[#003366]/5 focus:bg-white focus:border-[#003366]/20 outline-none transition-all placeholder:text-slate-300" placeholder="০১৭xxxxxxxx">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Email (Optional)') }}</label>
-                                            <input v-model="form.customer_email" type="email" class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" :placeholder="$t('john@example.com')">
+                                            <label class="block text-xs font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">পূর্ণ ঠিকানা</label>
+                                            <textarea v-model="form.shipping_address" rows="3" required class="block w-full rounded-2xl bg-slate-50 border border-slate-100 px-6 py-5 text-sm font-bold focus:ring-4 focus:ring-[#003366]/5 focus:bg-white focus:border-[#003366]/20 outline-none transition-all placeholder:text-slate-300" placeholder="আপনার বিস্তারিত ঠিকানা লিখুন (বাসা নং, রোড নং, এলাকা)"></textarea>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Section 2: Shipping -->
                                 <div class="mb-12">
                                     <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
                                         <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">2</span>
-                                        {{ $t('Shipping Address') }}
-                                    </h2>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                        <div class="relative">
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('District') }}</label>
-                                            <select v-model="form.district" @change="handleDistrictChange" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all appearance-none pr-10">
-                                                <option value="" disabled>{{ $t('Select District') }}</option>
-                                                <option v-for="d in districts" :key="d.district" :value="d.district">{{ d.district }}</option>
-                                            </select>
-                                            <ChevronDown class="absolute right-4 bottom-4 w-4 h-4 text-slate-400 pointer-events-none" />
-                                        </div>
-                                        <div class="relative">
-                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Area / Thana / Upazila') }}</label>
-                                            <div v-if="upazilas.length > 0" class="relative">
-                                                <select v-model="form.upazila" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all appearance-none pr-10">
-                                                    <option value="" disabled>{{ $t('Select Area') }}</option>
-                                                    <option v-for="u in upazilas" :key="u" :value="u">{{ u }}</option>
-                                                </select>
-                                                <ChevronDown class="absolute right-4 bottom-4 w-4 h-4 text-slate-400 pointer-events-none" />
-                                            </div>
-                                            <input 
-                                                v-else 
-                                                v-model="form.upazila" 
-                                                type="text" 
-                                                required 
-                                                :placeholder="loadingUpazilas ? $t('Loading areas...') : $t('Enter Thana / Upazila')"
-                                                class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Village / Area / House') }}</label>
-                                        <input v-model="form.village" type="text" required class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" :placeholder="$t('Detailed address details')">
-                                    </div>
-                                </div>
-
-                                <!-- Section 3: Delivery Location -->
-                                <div class="mb-12">
-                                    <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
-                                        <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">3</span>
-                                        {{ $t('Delivery Location') }}
+                                        ডেলিভারি এরিয়া
                                     </h2>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <label 
@@ -149,8 +108,8 @@
                                                     <div v-if="form.delivery_location === 'Inside Dhaka'" class="w-2.5 h-2.5 rounded-full bg-[#003366]"></div>
                                                 </div>
                                                 <div>
-                                                    <p class="text-sm font-black text-slate-900 uppercase">{{ $t('Inside Dhaka') }}</p>
-                                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">৳{{ delivery_charges.inside_dhaka }} {{ $t('Delivery Charge') }}</p>
+                                                    <p class="text-sm font-black text-slate-900 uppercase">ঢাকার ভিতরে</p>
+                                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">৳{{ delivery_charges.inside_dhaka }} ডেলিভারি চার্জ</p>
                                                 </div>
                                             </div>
                                         </label>
@@ -165,8 +124,8 @@
                                                     <div v-if="form.delivery_location === 'Outside Dhaka'" class="w-2.5 h-2.5 rounded-full bg-[#003366]"></div>
                                                 </div>
                                                 <div>
-                                                    <p class="text-sm font-black text-slate-900 uppercase">{{ $t('Outside Dhaka') }}</p>
-                                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">৳{{ delivery_charges.outside_dhaka }} {{ $t('Delivery Charge') }}</p>
+                                                    <p class="text-sm font-black text-slate-900 uppercase">ঢাকার বাইরে</p>
+                                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">৳{{ delivery_charges.outside_dhaka }} ডেলিভারি চার্জ</p>
                                                 </div>
                                             </div>
                                         </label>
@@ -175,20 +134,19 @@
 
                                 <!-- Section 4: Payment -->
                          
-                                <!-- Section 5: Customer Remarks -->
+                                <!-- Section 3: Remarks -->
                                 <div class="mb-12">
                                     <h2 class="text-sm font-black text-[#003366] uppercase tracking-[0.2em] mb-6 flex items-center">
-                                        <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">5</span>
-                                        {{ $t('Special Instructions / Remarks') }}
-                                    </h2>
+                                        <span class="w-8 h-8 rounded-lg bg-[#003366]/10 flex items-center justify-center mr-3 text-xs">3</span>
+নোট                                     </h2>
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{{ $t('Order Note / Customer Remarks') }}</label>
-                                        <textarea v-model="form.customer_remarks" rows="3" class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" :placeholder="$t('e.g. Any special instructions regarding delivery, product requests, packaging, etc.')"></textarea>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">অর্ডার নোট</label>
+                                        <textarea v-model="form.customer_remarks" rows="3" class="block w-full rounded-xl bg-slate-50 border border-slate-100 px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all placeholder:text-slate-300" placeholder="ডেলিভারি সম্পর্কে কোনো বিশেষ নির্দেশনা থাকলে এখানে লিখুন..."></textarea>
                                     </div>
                                 </div>
 
                                 <button type="submit" :disabled="form.processing" class="w-full bg-[#003366] py-5 rounded-2xl text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-[#003366]/20 hover:bg-slate-800 transition-all transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center">
-                                    {{ $t('Continue to Confirmation') }} <ArrowRight class="w-5 h-5 ml-3" />
+                                    অর্ডার নিশ্চিত করুন <ArrowRight class="w-5 h-5 ml-3" />
                                 </button>
                             </form>
                         </div>
@@ -288,7 +246,7 @@
 
                             <h3 class="text-2xl font-black text-slate-900 text-center mb-4 uppercase tracking-tight italic">{{ $t('Confirm Your Order') }}</h3>
                             <p class="text-sm font-bold text-slate-500 text-center mb-8 uppercase tracking-widest leading-relaxed">
-                                {{ $t('Are you sure?') }} <span class="text-[#003366]">৳{{ currentDeliveryCharge }}</span> {{ $t('delivery charge will be added for') }} <span class="text-[#003366]">{{ $t(form.delivery_location) }}</span> {{ $t('delivery.') }}
+                                {{ $t('Are you sure?') }} <span class="text-[#003366]">৳{{ currentDeliveryCharge }}</span> ডেলিভারি চার্জ যোগ করা হবে <span class="text-[#003366]">{{ form.delivery_location === 'Inside Dhaka' ? 'ঢাকার ভিতরে' : 'ঢাকার বাইরে' }}</span> ডেলিভারির জন্য।
                             </p>
 
                             <div class="bg-slate-50 rounded-2xl p-6 mb-8 border border-slate-100">
@@ -323,11 +281,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
 import { useCart } from '@/Composables/useCart';
-import { Lock, Package, ArrowRight, Banknote, Truck, X, ShoppingCart, MapPin, Phone, ShoppingBag, ChevronDown } from 'lucide-vue-next';
+import { Lock, Package, ArrowRight, Banknote, Truck, X, ShoppingCart, MapPin, Phone, ShoppingBag } from 'lucide-vue-next';
 
 const props = defineProps({
     cart: Object,
@@ -346,19 +304,11 @@ const form = useForm({
     district: '',
     upazila: '',
     village: '',
-    delivery_location: 'Inside Dhaka',
+    delivery_location: 'Outside Dhaka',
     delivery_charge: 0,
     selected_items: props.selectedItemIds ? props.selectedItemIds.join(',') : '',
     customer_remarks: ''
 });
-
-// Automatically sync the shipping_address value from village, upazila, and district
-watch(
-    () => [form.village, form.upazila, form.district],
-    ([village, upazila, district]) => {
-        form.shipping_address = [village, upazila, district].filter(Boolean).join(', ');
-    }
-);
 
 const currentDeliveryCharge = computed(() => {
     return form.delivery_location === 'Inside Dhaka' 
@@ -388,107 +338,7 @@ const total = computed(() => {
     return subtotal.value + currentDeliveryCharge.value;
 });
 
-const staticDistricts = [
-    { district: "Bagerhat" }, { district: "Bandarban" }, { district: "Barguna" }, 
-    { district: "Barishal" }, { district: "Bhola" }, { district: "Bogra" }, 
-    { district: "Brahmanbaria" }, { district: "Chandpur" }, { district: "Chattogram" }, 
-    { district: "Chuadanga" }, { district: "Comilla" }, { district: "Cox's Bazar" }, 
-    { district: "Dhaka" }, { district: "Dinajpur" }, { district: "Faridpur" }, 
-    { district: "Feni" }, { district: "Gaibandha" }, { district: "Gazipur" }, 
-    { district: "Gopalganj" }, { district: "Habiganj" }, { district: "Jamalpur" }, 
-    { district: "Jashore" }, { district: "Jhalokati" }, { district: "Jhenaidah" }, 
-    { district: "Joypurhat" }, { district: "Khagrachhari" }, { district: "Khulna" }, 
-    { district: "Kishoreganj" }, { district: "Kurigram" }, { district: "Kushtia" }, 
-    { district: "Lakshmipur" }, { district: "Lalmonirhat" }, { district: "Madaripur" }, 
-    { district: "Magura" }, { district: "Manikganj" }, { district: "Meherpur" }, 
-    { district: "Moulvibazar" }, { district: "Munshiganj" }, { district: "Mymensingh" }, 
-    { district: "Naogaon" }, { district: "Narail" }, { district: "Narayanganj" }, 
-    { district: "Narsingdi" }, { district: "Natore" }, { district: "Netrokona" }, 
-    { district: "Nilphamari" }, { district: "Noakhali" }, { district: "Pabna" }, 
-    { district: "Panchagarh" }, { district: "Patuakhali" }, { district: "Pirojpur" }, 
-    { district: "Rajbari" }, { district: "Rajshahi" }, { district: "Rangamati" }, 
-    { district: "Rangpur" }, { district: "Satkhira" }, { district: "Shariatpur" }, 
-    { district: "Sherpur" }, { district: "Sirajganj" }, { district: "Sunamganj" }, 
-    { district: "Sylhet" }, { district: "Tangail" }, { district: "Thakurgaon" }
-];
-
-const districts = ref(staticDistricts);
-const upazilas = ref([]);
-const loadingUpazilas = ref(false);
-
-const metropolitanThanas = {
-    'Dhaka': [
-        "Adabor", "Airport", "Badda", "Banani", "Bangshal", "Bhashantek", "Cantonment", 
-        "Chackbazar", "Dakshin Khan", "Darus-Salam", "Demra", "Dhanmondi", "Gandaria", 
-        "Gulshan", "Hatirjheel", "Hazaribagh", "Jattrabari", "Kadamtoli", "Kafrul", 
-        "Kalabagan", "Kamrangirchar", "Khilgaon", "Khilkhet", "Kotwali", "Lalbagh", 
-        "Mirpur Model", "Mohammadpur", "Motijheel", "Mugda", "New Market", "Pallabi", 
-        "Paltan Model", "Ramna Model", "Rampura", "Rupnagar", "Sabujbag", "Shah Ali", 
-        "Shahbag", "Shahjahanpur", "Sher e Bangla Nagar", "Shyampur", "Sutrapur", 
-        "Tejgaon", "Tejgaon Industrial", "Turag", "Uttar Khan", "Uttara East", 
-        "Uttara West", "Vatara", "Wari", "Dhamrai", "Dohar", "Keraniganj", "Nawabganj", "Savar"
-    ],
-    'Chattogram': [
-        "Kotwali", "Chandgaon", "Panchlaish", "Doublemooring", "Pahartali", "Bandar", 
-        "Baijid Bostami", "Hali Shohor", "Kornafuli", "Potenga", "Bakolia", "Akborsha",
-        "Anwara", "Banshkhali", "Boalkhali", "Chandanaish", "Fatikchhari", "Hathazari", 
-        "Lohagara", "Mirsharai", "Patiya", "Rangunia", "Raozan", "Sandwip", "Satkania", "Sitakunda"
-    ]
-};
-
-const fetchDistricts = async () => {
-    try {
-        const response = await fetch('https://bdapis.com/api/v1.2/districts');
-        const result = await response.json();
-        if (result && result.data) {
-            districts.value = result.data.sort((a, b) => a.district.localeCompare(b.district));
-        }
-    } catch (error) {
-        console.error('Error fetching districts:', error);
-    }
-};
-
-const handleDistrictChange = async () => {
-    form.upazila = '';
-    upazilas.value = [];
-    
-    // Auto-set delivery location
-    if (form.district === 'Dhaka') {
-        form.delivery_location = 'Inside Dhaka';
-    } else {
-        form.delivery_location = 'Outside Dhaka';
-    }
-
-    if (form.district) {
-        loadingUpazilas.value = true;
-        try {
-            const response = await fetch(`https://bdapis.com/api/v1.2/district/${form.district.toLowerCase()}`);
-            const result = await response.json();
-            
-            let apiUpazilas = [];
-            if (result.data && result.data[0]) {
-                apiUpazilas = result.data[0].upazillas || [];
-            }
-
-            // Merge with metropolitan thanas if available
-            const extraThanas = metropolitanThanas[form.district] || [];
-            const combined = [...new Set([...apiUpazilas, ...extraThanas])];
-            
-            upazilas.value = combined.sort();
-        } catch (error) {
-            console.error('Error fetching upazilas:', error);
-            // Fallback to only metropolitan if API fails
-            if (metropolitanThanas[form.district]) {
-                upazilas.value = metropolitanThanas[form.district].sort();
-            }
-        } finally {
-            loadingUpazilas.value = false;
-        }
-    }
-};
-
 onMounted(() => {
-    fetchDistricts();
     const page = usePage();
     if (page.props.auth?.user) {
         form.customer_name = page.props.auth.user.name || '';

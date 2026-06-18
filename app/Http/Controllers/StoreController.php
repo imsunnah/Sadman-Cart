@@ -214,9 +214,9 @@ class StoreController extends Controller
             'customer_email' => 'nullable|email|max:255',
             'customer_phone' => 'required|string|max:20',
             'shipping_address' => 'required|string',
-            'district' => 'required|string|max:255',
-            'upazila' => 'required|string|max:255',
-            'village' => 'required|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'upazila' => 'nullable|string|max:255',
+            'village' => 'nullable|string|max:255',
             'delivery_location' => 'required|string|in:Inside Dhaka,Outside Dhaka',
             'delivery_charge' => 'required|numeric',
             'selected_items' => 'nullable|string', // Added to filter items

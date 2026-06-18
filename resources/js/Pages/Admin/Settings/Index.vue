@@ -90,11 +90,14 @@
                                 <ImageIcon class="w-3.5 h-3.5" /> Gallery
                             </button>
                             <button @click.prevent="triggerSliderUpload" class="px-3 py-1.5 bg-[#FF6600]/10 text-[#FF6600] hover:bg-[#FF6600]/20 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5">
-                                <Plus class="w-3.5 h-3.5" /> Upload New
+                                <Plus class="w-3.5 h-3.5" /> Upload New (Max 3)
                             </button>
                         </div>
                     </div>
-                    <input type="file" multiple ref="sliderInput" @input="handleSliderUpload" class="hidden" />
+                    <div v-if="sliderError" class="px-6 py-2 bg-red-50 text-red-600 text-xs font-bold border-b border-red-100 flex items-center gap-2">
+                        <Info class="w-4 h-4" /> {{ sliderError }}
+                    </div>
+                    <input type="file" multiple ref="sliderInput" @input="handleSliderUpload" class="hidden" accept="image/*" />
                     
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2">
                         <div v-for="(img, index) in sliderImages" :key="index" class="relative group aspect-video rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
@@ -227,7 +230,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden xl:col-span-2">
                 <div class="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex items-center space-x-3">
                     <div class="p-2 bg-[#003366]/10 rounded-lg text-[#003366]">
@@ -291,6 +294,7 @@ const logoPreview = ref(null);
 const faviconPreview = ref(null);
 const heroStaticPreview = ref(null);
 const sliderInput = ref(null);
+const sliderError = ref('');
 const showGallery = ref(false);
 const galleryTarget = ref(''); // 'logo', 'favicon', 'slider', 'hero'
 
@@ -343,36 +347,15 @@ const form = useForm({
     })(),
 });
 
-const handleLogoUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        form.site_logo = file;
-        logoPreview.value = URL.createObjectURL(file);
-    }
-};
-
-const handleFaviconUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        form.site_favicon = file;
-        faviconPreview.value = URL.createObjectURL(file);
-    }
-};
-
-const handleHeroStaticUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        form.hero_static_image = file;
-        heroStaticPreview.value = URL.createObjectURL(file);
-    }
-};
-
-const triggerSliderUpload = () => {
-    sliderInput.value.click();
-};
-
 const handleSliderUpload = (e) => {
+    sliderError.value = '';
     const files = Array.from(e.target.files);
+    
+    if (files.length > 3) {
+        sliderError.value = 'You can only upload up to 3 images at a time.';
+        return;
+    }
+
     files.forEach(file => {
         form.slider_upload.push(file);
         sliderImages.value.push(URL.createObjectURL(file));

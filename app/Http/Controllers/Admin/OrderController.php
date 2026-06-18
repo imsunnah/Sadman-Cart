@@ -127,8 +127,9 @@ class OrderController extends Controller
             $oldStatus = $order->status;
             $newStatus = $validated['status'];
             
-            if (!empty($order->courier_tracking_code) && $newStatus !== 'completed') {
-                return redirect()->back()->with('error', 'Couriered orders cannot change status unless setting to completed.');
+            // Fix: Allow status change to processing, completed or cancelled even if couriered
+            if (!empty($order->courier_tracking_code) && !in_array($newStatus, ['processing', 'completed', 'cancelled'])) {
+                return redirect()->back()->with('error', 'Couriered orders cannot change status unless setting to completed, cancelled or keeping it in processing.');
             }
 
             $order->status = $newStatus;
@@ -169,7 +170,14 @@ class OrderController extends Controller
         if ($request->has('status')) {
             $newStatus = $validated['status'];
             if ($newStatus === 'completed' && empty($order->courier_tracking_code)) {
-                $this->executeCourierSend($order);
+                if ($request->boolean('send_to_courier')) {
+                    $result = $this->executeCourierSend($order);
+                    if ($result['status'] === 'success') {
+                        session()->flash('success', $result['message']);
+                    } else {
+                        session()->flash('error', $result['message']);
+                    }
+                }
             }
         }
 
@@ -183,6 +191,12 @@ class OrderController extends Controller
         }
 
         return redirect()->back()->with('success', 'Order status updated successfully.');
+    }
+
+    public function destroy(Order $order)
+    {
+        $order->delete();
+        return redirect()->route('admin.orders.index')->with('success', 'Order deleted successfully.');
     }
     public function create()
     {
@@ -312,6 +326,7 @@ class OrderController extends Controller
 
             if (isset($result->status) && $result->status == 200) {
                 $order->update([
+                    'status' => 'completed',
                     'courier_name' => 'Steadfast',
                     'courier_tracking_code' => $result->consignment->tracking_code,
                     'courier_consignment_id' => $result->consignment->consignment_id,
@@ -371,6 +386,7 @@ class OrderController extends Controller
                     $order = Order::find($res['invoice']);
                     if ($order) {
                         $order->update([
+                            'status' => 'completed',
                             'courier_name' => 'Steadfast',
                             'courier_tracking_code' => $res['tracking_code'],
                             'courier_consignment_id' => $res['consignment_id'],
@@ -396,5 +412,73 @@ class OrderController extends Controller
         return Inertia::render('Admin/Order/CourierIndex', [
             'orders' => $orders
         ]);
+    }
+
+    public function syncCourierStatus(Order $order)
+    {
+        if (empty($order->courier_tracking_code)) {
+            return redirect()->back()->with('error', 'This order has no courier tracking code.');
+        }
+
+        try {
+            $response = SteadfastCourier::checkDeliveryStatusByInvoiceId($order->id);
+            
+            if (isset($response['status']) && $response['status'] == 200) {
+                $courierStatus = $response['delivery_status'];
+                $this->updateOrderStatusFromCourier($order, $courierStatus, $response);
+                return redirect()->back()->with('success', "Order status synced: " . ucfirst($courierStatus));
+            }
+
+            return redirect()->back()->with('error', 'Could not sync status from Steadfast: ' . ($response['message'] ?? 'Unknown error'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error syncing status: ' . $e->getMessage());
+        }
+    }
+
+    public function getSteadfastBalance()
+    {
+        try {
+            $response = SteadfastCourier::getCurrentBalance();
+            return response()->json($response);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 500, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    private function updateOrderStatusFromCourier(Order $order, string $courierStatus, array $fullResponse)
+    {
+        $oldStatus = $order->status;
+        $newStatus = $order->status;
+
+        // Map Steadfast status to local status
+        // Mapping as per common Steadfast API statuses: delivered, cancelled, hold, partial_delivered, in_review, etc.
+        switch ($courierStatus) {
+            case 'delivered':
+                $newStatus = 'completed';
+                break;
+            case 'cancelled':
+                $newStatus = 'cancelled';
+                break;
+            // You can add more mappings if needed
+        }
+
+        $order->update([
+            'courier_status' => $courierStatus,
+            'courier_response' => json_encode($fullResponse),
+            'status' => $newStatus
+        ]);
+
+        // Handle stock if status changed to cancelled
+        if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+            foreach ($order->items as $item) {
+                if ($item->product_id) {
+                    $item->product?->increment('stock', $item->quantity);
+                } elseif ($item->combo_id) {
+                    foreach ($item->combo->products as $p) {
+                        $p->increment('stock', $item->quantity);
+                    }
+                }
+            }
+        }
     }
 }

@@ -46,19 +46,42 @@
                 </span>
             </div>
 
-            <Link
-                :href="`/combos/${combo.slug}`"
-                class="h-12 rounded-2xl bg-[#FF6600] text-white text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#003366] transition-all duration-300 shadow-lg shadow-orange-900/10 active:scale-95"
-            >
-                {{ $t('View Details') }}
-            </Link>
+            <div class="grid grid-cols-2 gap-2 mt-auto">
+                <Link
+                    :href="`/combos/${combo.slug}`"
+                    class="h-11 rounded-xl bg-[#003366] text-white text-[9px] font-black uppercase tracking-widest flex items-center justify-center hover:bg-[#002244] transition-all duration-300 active:scale-95 shadow-lg shadow-blue-900/10"
+                >
+                    {{ $t('Details') }}
+                </Link>
+                <button
+                    @click="buyNow"
+                    class="h-11 rounded-xl bg-[#FF6600] text-white text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#003366] transition-all duration-300 shadow-lg shadow-orange-900/10 active:scale-95"
+                >
+                    {{ $t('Buy Now') }}
+                </button>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import { Layers, Eye } from 'lucide-vue-next';
+import { useCart } from '@/Composables/useCart';
 
-defineProps({ combo: Object });
+const props = defineProps({ combo: Object });
+const { addItem } = useCart();
+
+const buyNow = async () => {
+    try {
+        await addItem({
+            id: props.combo.id,
+            type: 'combo',
+            quantity: 1
+        });
+        router.visit(route('checkout'));
+    } catch (error) {
+        console.error('Error adding combo to cart:', error);
+    }
+};
 </script>

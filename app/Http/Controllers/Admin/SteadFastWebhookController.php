@@ -49,18 +49,45 @@ class SteadFastWebhookController extends Controller
     private function processPayload($payload)
     {
         $invoice = $payload['invoice'];
-        $orderStatus = $payload['status'];
+        $courierStatus = $payload['status'];
 
         // Find the order by invoice (order id)
         $order = Order::find($invoice);
         
         if ($order) {
+            $oldStatus = $order->status;
+            $newStatus = $order->status;
+
+            // Map Steadfast status to local status
+            switch ($courierStatus) {
+                case 'delivered':
+                    $newStatus = 'completed';
+                    break;
+                case 'cancelled':
+                    $newStatus = 'cancelled';
+                    break;
+            }
+
             $order->update([
-                'courier_status' => $orderStatus,
-                'courier_response' => json_encode($payload) // Update the response log too
+                'courier_status' => $courierStatus,
+                'courier_response' => json_encode($payload),
+                'status' => $newStatus
             ]);
+
+            // Handle stock if status changed to cancelled
+            if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+                foreach ($order->items as $item) {
+                    if ($item->product_id) {
+                        $item->product?->increment('stock', $item->quantity);
+                    } elseif ($item->combo_id) {
+                        foreach ($item->combo->products as $p) {
+                            $p->increment('stock', $item->quantity);
+                        }
+                    }
+                }
+            }
             
-            Log::info("Steadfast Webhook: Order #{$invoice} status updated to {$orderStatus}");
+            Log::info("Steadfast Webhook: Order #{$invoice} status updated to {$courierStatus} (Internal: {$newStatus})");
         }
     }
 }

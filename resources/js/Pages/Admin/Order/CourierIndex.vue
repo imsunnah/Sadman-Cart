@@ -51,6 +51,13 @@
                             </td>
                             <td class="py-5 px-6 text-right">
                                 <div class="flex items-center justify-end gap-2">
+                                    <button 
+                                        @click="syncStatus(order.id)" 
+                                        class="p-2 text-slate-400 hover:text-[#FF6600] hover:bg-orange-50 rounded-lg transition-all"
+                                        :title="$t('Sync Courier Status')"
+                                    >
+                                        <RefreshCw class="w-4 h-4" />
+                                    </button>
                                     <button @click="viewResponse(order)" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="View API Response">
                                         <Code2 class="w-4 h-4" />
                                     </button>
@@ -115,9 +122,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Truck, Eye, Code2, X } from 'lucide-vue-next';
+import { Truck, Eye, Code2, X, RefreshCw, XCircle } from 'lucide-vue-next';
 
 const props = defineProps({
     orders: Object
@@ -129,6 +136,12 @@ const selectedOrder = ref(null);
 const viewResponse = (order) => {
     selectedOrder.value = order;
     showModal.value = true;
+};
+
+const syncStatus = (id) => {
+    router.post(route('admin.orders.sync-courier-status', id), {}, {
+        preserveScroll: true
+    });
 };
 
 const formatJson = (jsonStr) => {

@@ -44,8 +44,12 @@ class SettingController extends Controller
 
         // Handle Slider Images (Appending new ones)
         if ($request->hasFile('slider_upload')) {
+            $files = $request->file('slider_upload');
+            if (count($files) > 3) {
+                return redirect()->back()->with('error', 'You can only upload up to 3 images at a time.');
+            }
             $currentSliders = json_decode(Setting::where('key', 'slider_images')->first()->value_en ?? '[]', true);
-            foreach ($request->file('slider_upload') as $file) {
+            foreach ($files as $file) {
                 $path = $file->store('uploads/gallery', 'public');
                 $currentSliders[] = '/storage/' . $path;
             }

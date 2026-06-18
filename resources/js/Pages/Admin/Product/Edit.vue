@@ -168,7 +168,7 @@
                                             <Library class="w-3 h-3" /> Add from Gallery
                                         </button>
                                     </div>
-                                    <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">{{ form.keep_gallery_images.length + galleryPreviews.length }} Images Total</span>
+                                    <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">{{ form.keep_gallery_images.length + galleryPreviews.length }}/3 Images Total</span>
                                 </div>
                                 
                                 <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
@@ -193,7 +193,11 @@
                                         <div class="absolute top-1 left-1 bg-[#FF6600] text-white text-[6px] font-black uppercase px-1.5 py-0.5 rounded-full">New</div>
                                     </div>
                                     
-                                    <button @click.prevent="triggerGalleryUpload" class="aspect-square rounded-2xl bg-white border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 hover:border-[#FF6600]/30 hover:bg-orange-50 transition-all group">
+                                    <button 
+                                        v-if="(form.keep_gallery_images.length + galleryPreviews.length) < 3"
+                                        @click.prevent="triggerGalleryUpload" 
+                                        class="aspect-square rounded-2xl bg-white border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 hover:border-[#FF6600]/30 hover:bg-orange-50 transition-all group"
+                                    >
                                         <Plus class="w-5 h-5 text-slate-300 group-hover:text-[#FF6600]" />
                                         <span class="text-[8px] font-black text-slate-300 group-hover:text-[#FF6600] uppercase tracking-widest">Add More</span>
                                     </button>
@@ -295,14 +299,20 @@ const handleMainGallerySelect = (item) => {
 const handleGalleryImages = (e) => {
     const files = Array.from(e.target.files);
     files.forEach(file => {
-        form.gallery_images.push(file);
-        galleryPreviews.value.push(URL.createObjectURL(file));
+        if ((form.keep_gallery_images.length + galleryPreviews.value.length) < 3) {
+            form.gallery_images.push(file);
+            galleryPreviews.value.push(URL.createObjectURL(file));
+        }
     });
 };
 
 const handleGalleryItemsSelect = (item) => {
-    form.gallery_images.push(item.url);
-    galleryPreviews.value.push(item.url);
+    if ((form.keep_gallery_images.length + galleryPreviews.value.length) < 3) {
+        form.gallery_images.push(item.url);
+        galleryPreviews.value.push(item.url);
+    } else {
+        alert('You can only have up to 3 gallery images.');
+    }
 };
 
 const triggerGalleryUpload = () => {

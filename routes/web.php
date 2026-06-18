@@ -253,7 +253,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/orders/courier/status', [\App\Http\Controllers\Admin\OrderController::class, 'courierOrders'])->name('orders.courier');
     Route::put('/orders/{order}/toggle-active', [\App\Http\Controllers\Admin\OrderController::class, 'toggleActive'])->name('orders.toggle-active');
     Route::post('/orders/{order}/send-to-courier', [\App\Http\Controllers\Admin\OrderController::class, 'sendToCourier'])->name('orders.send-to-courier');
+    Route::post('/orders/{order}/sync-courier-status', [\App\Http\Controllers\Admin\OrderController::class, 'syncCourierStatus'])->name('orders.sync-courier-status');
     Route::post('/orders/bulk-send-to-courier', [\App\Http\Controllers\Admin\OrderController::class, 'bulkSendToCourier'])->name('orders.bulk-send-to-courier');
+    Route::get('/steadfast-balance', [\App\Http\Controllers\Admin\OrderController::class, 'getSteadfastBalance'])->name('steadfast-balance');
 
     Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class)->except(['show', 'edit', 'create']);
     Route::put('/reviews/{review}/toggle-active', [\App\Http\Controllers\Admin\ReviewController::class, 'toggleActive'])->name('reviews.toggle-active');

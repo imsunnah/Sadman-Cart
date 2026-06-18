@@ -130,7 +130,7 @@
             </Link>
         </li>
         <li>
-            <Link href="/" class="flex items-center px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors group">
+            <Link href="/" target="_blank" class="flex items-center px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors group">
                 <ExternalLink class="w-5 h-5 mr-3 text-slate-400 group-hover:text-white" />
                 <span class="font-bold text-sm">{{ $t('View Store') }}</span>
             </Link>
@@ -164,6 +164,15 @@
                 </div>
                 
                 <div class="flex items-center space-x-5">
+                    <!-- Steadfast Balance Badge -->
+                    <div v-if="steadfastBalance !== null" class="hidden sm:flex items-center gap-2 px-3 py-2 bg-orange-50 border border-orange-100 rounded-lg text-[#FF6600] transition-all hover:bg-orange-100 group" title="Steadfast Account Balance">
+                        <Truck class="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform" />
+                        <div class="flex flex-col leading-none">
+                            <span class="text-[8px] font-black uppercase tracking-widest opacity-60">Balance</span>
+                            <span class="text-xs font-black tracking-tight">৳{{ parseFloat(steadfastBalance).toLocaleString() }}</span>
+                        </div>
+                    </div>
+
                     <Link href="/admin/chat" class="flex items-center gap-2 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 rounded-lg text-indigo-700 transition-colors text-xs font-black uppercase tracking-wider relative" title="Support Inbox">
                         <MessageSquare class="w-4 h-4 text-indigo-600" />
                         <span>Support Chat</span>
@@ -174,18 +183,85 @@
                         <span class="text-slate-300">|</span>
                         <a href="/language/bn" :class="$page.props.locale === 'bn' ? 'bg-indigo-100 text-indigo-700' : 'text-slate-500 hover:bg-slate-100'" class="px-2 py-1 rounded text-xs font-bold transition-colors">BN</a>
                     </div>
-                    <div class="flex flex-col text-right hidden sm:flex">
-                        <span class="text-sm font-extrabold text-slate-900 leading-none">{{ $page.props.auth?.user?.name || 'Administrator' }}</span>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Super Admin</span>
-                    </div>
-                    <div class="relative cursor-pointer">
-                        <div class="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-extrabold shadow-sm border border-indigo-700">
-                            {{ $page.props.auth?.user?.name ? $page.props.auth.user.name.charAt(0) : 'A' }}
+                    <div class="relative">
+                        <div @click="isProfileOpen = !isProfileOpen" class="flex items-center space-x-3 cursor-pointer group">
+                            <div class="flex flex-col text-right hidden sm:flex">
+                                <span class="text-sm font-extrabold text-slate-900 leading-none group-hover:text-indigo-600 transition-colors">{{ $page.props.auth?.user?.name || 'Administrator' }}</span>
+                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Super Admin</span>
+                            </div>
+                            <div class="relative">
+                                <div class="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-extrabold shadow-sm border border-indigo-700 active:scale-95 transition-transform">
+                                    {{ $page.props.auth?.user?.name ? $page.props.auth.user.name.charAt(0) : 'A' }}
+                                </div>
+                                <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
+                            </div>
                         </div>
-                        <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
+
+                        <!-- Profile Dropdown -->
+                        <transition name="fade">
+                            <div v-if="isProfileOpen" class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-3 z-[100]">
+                                <div class="px-4 py-2 border-b border-slate-50 mb-2">
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Account</p>
+                                </div>
+                                <button @click="showPassModal = true; isProfileOpen = false" class="w-full px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-3 transition-colors">
+                                    <Lock class="w-4 h-4 text-slate-400" /> Change Password
+                                </button>
+                                <Link href="/admin/logout" method="post" as="button" class="w-full px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors">
+                                    <LogOut class="w-4 h-4 text-red-400" /> Logout
+                                </Link>
+                            </div>
+                        </transition>
                     </div>
                 </div>
             </header>
+
+            <!-- Password Change Modal -->
+            <transition name="fade">
+                <div v-if="showPassModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative overflow-hidden border border-slate-100">
+                        <button @click="showPassModal = false" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors">
+                            <X class="w-5 h-5" />
+                        </button>
+                        
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="p-2.5 bg-indigo-50 rounded-xl text-indigo-600">
+                                <Lock class="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-slate-900 leading-none">Security Settings</h3>
+                                <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1.5">Update your password</p>
+                            </div>
+                        </div>
+
+                        <div v-if="passwordForm.wasSuccessful" class="mb-6 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-700 text-xs font-bold flex items-center gap-3 animate-fade-in-down">
+                            <CheckCircle class="w-5 h-5" /> Password updated successfully!
+                        </div>
+
+                        <form @submit.prevent="updatePassword" class="space-y-5">
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">Current Password</label>
+                                <input v-model="passwordForm.current_password" type="password" required class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold focus:ring-4 focus:ring-indigo-500/5 focus:bg-white focus:border-indigo-500/20 outline-none transition-all" placeholder="••••••••">
+                                <p v-if="passwordForm.errors.current_password" class="text-[10px] text-red-500 mt-1.5 font-bold ml-1">{{ passwordForm.errors.current_password }}</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">New Password</label>
+                                <input v-model="passwordForm.password" type="password" required class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold focus:ring-4 focus:ring-indigo-500/5 focus:bg-white focus:border-indigo-500/20 outline-none transition-all" placeholder="••••••••">
+                                <p v-if="passwordForm.errors.password" class="text-[10px] text-red-500 mt-1.5 font-bold ml-1">{{ passwordForm.errors.password }}</p>
+                            </div>
+
+                            <div class="pb-2">
+                                <label class="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">Confirm New Password</label>
+                                <input v-model="passwordForm.password_confirmation" type="password" required class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold focus:ring-4 focus:ring-indigo-500/5 focus:bg-white focus:border-indigo-500/20 outline-none transition-all" placeholder="••••••••">
+                            </div>
+
+                            <button :disabled="passwordForm.processing" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-indigo-600/20 hover:bg-slate-900 transition-all transform active:scale-[0.98] disabled:opacity-50">
+                                {{ passwordForm.processing ? 'Updating...' : 'Update Password' }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </transition>
 
             <!-- Page Content -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8 custom-scrollbar">
@@ -196,11 +272,49 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
-import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image, FileText, Award, MessageSquare, Truck } from 'lucide-vue-next';
+import { ref, onMounted } from 'vue';
+import { Link, useForm } from '@inertiajs/vue3';
+import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image, FileText, Award, MessageSquare, Truck, Lock, X, CheckCircle } from 'lucide-vue-next';
+import axios from 'axios';
 
-const isSidebarOpen = ref(false); // Force rebuild
+const isSidebarOpen = ref(false); 
+const isProfileOpen = ref(false);
+const showPassModal = ref(false);
+const steadfastBalance = ref(null);
+
+const fetchBalance = async () => {
+    try {
+        const response = await axios.get(route('admin.steadfast-balance'));
+        if (response.data && response.data.status == 200) {
+            steadfastBalance.value = response.data.current_balance;
+        }
+    } catch (error) {
+        console.error('Error fetching Steadfast balance:', error);
+    }
+};
+
+onMounted(() => {
+    fetchBalance();
+});
+
+const passwordForm = useForm({
+    current_password: '',
+    password: '',
+    password_confirmation: '',
+});
+
+const updatePassword = () => {
+    passwordForm.post(route('password.change'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            passwordForm.reset();
+            setTimeout(() => {
+                showPassModal.value = false;
+                passwordForm.wasSuccessful = false;
+            }, 2000);
+        }
+    });
+};
 </script>
 
 <style scoped>
@@ -216,5 +330,29 @@ const isSidebarOpen = ref(false); // Force rebuild
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+}
+
+/* Animations */
+.fade-enter-active, .fade-leave-active {
+    transition: all 0.2s ease;
+}
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+@keyframes fade-in-down {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-down {
+    animation: fade-in-down 0.3s ease-out;
 }
 </style>

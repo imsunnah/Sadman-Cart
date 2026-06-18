@@ -253,23 +253,50 @@
                         </div>
                     </div>
                 </div>
+                <button @click="confirmDeleteOrder" class="w-full mt-6 py-4 rounded-xl bg-red-50 text-red-600 font-black uppercase text-[10px] tracking-widest hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2 border border-red-100">
+                    <Trash2 class="w-4 h-4" /> {{ $t('Delete Order') }}
+                </button>
             </div>
         </div>
 
-        <!-- Confirm Status Modal -->
+        <!-- Courier Prompt Modal (when completing order) -->
         <transition enter-active-class="transition duration-300 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-200 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-            <div v-if="showStatusModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-                <div class="bg-white rounded-[2rem] p-10 max-w-sm w-full shadow-2xl text-center">
-                    <div class="w-20 h-20 bg-blue-50 text-[#003366] rounded-3xl flex items-center justify-center mx-auto mb-6">
-                        <AlertTriangle class="w-10 h-10" />
+            <div v-if="showCourierPromptModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center border border-slate-100">
+                    <div class="w-20 h-20 bg-orange-50 text-[#FF6600] rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Truck class="w-10 h-10" />
                     </div>
-                    <h3 class="text-2xl font-black text-slate-900 mb-4 uppercase tracking-tighter italic">{{ $t('Confirm Status?') }}</h3>
-                    <p class="text-sm text-slate-500 mb-10 font-medium">
-                        {{ $t('Are you sure you want to change order status to') }} <span class="font-black text-[#003366] uppercase">{{ $t(newStatus) }}</span>?
+                    <h3 class="text-2xl font-black text-slate-900 mb-4 uppercase tracking-tighter italic">{{ $t('Courier Dispatch') }}</h3>
+                    <p class="text-sm text-slate-500 mb-10 font-bold uppercase tracking-widest leading-relaxed">
+                        আপনি কি এই অর্ডারের তথ্য <span class="text-[#FF6600]">Steadfast Courier</span>-এ পাঠাতে চান?
                     </p>
+                    <div class="flex flex-col gap-3">
+                        <button @click="completeWithCourier(true)" class="w-full px-6 py-4 rounded-xl bg-[#003366] text-white font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all shadow-lg">
+                            হ্যাঁ, কুরিয়ারে পাঠান
+                        </button>
+                        <button @click="completeWithCourier(false)" class="w-full px-6 py-4 rounded-xl border-2 border-slate-100 text-slate-600 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 transition-all">
+                            না, অলরেডি পাঠানো হয়েছে
+                        </button>
+                        <button @click="showCourierPromptModal = false" class="w-full px-6 py-4 rounded-xl bg-slate-100 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all">
+                            বাতিল করুন
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Delete Order Confirmation Modal -->
+        <transition enter-active-class="transition duration-300 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-200 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+            <div v-if="showDeleteOrderModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center border border-slate-100">
+                    <div class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Trash2 class="w-8 h-8" />
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-4">{{ $t('Delete Order?') }}</h3>
+                    <p class="text-sm text-slate-500 mb-8">{{ $t('Are you sure you want to permanently delete this order? This action cannot be undone.') }}</p>
                     <div class="grid grid-cols-2 gap-4">
-                        <button @click="showStatusModal = false" class="px-6 py-4 rounded-2xl border-2 border-slate-100 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 transition-all">{{ $t('Cancel') }}</button>
-                        <button @click="confirmStatusUpdate" class="px-6 py-4 rounded-2xl bg-[#003366] text-white font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all shadow-xl shadow-blue-900/20">{{ $t('Confirm') }}</button>
+                        <button @click="showDeleteOrderModal = false" class="px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-all">{{ $t('Cancel') }}</button>
+                        <button @click="deleteOrder" class="px-4 py-3 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-600/20">{{ $t('Delete') }}</button>
                     </div>
                 </div>
             </div>
@@ -384,25 +411,57 @@ const showStatusModal = ref(false);
 const showLocationModal = ref(false);
 const showCourierModal = ref(false);
 const showResponseModal = ref(false);
+const showCourierPromptModal = ref(false);
 const showSuccessModal = ref(false);
 const successModalMessage = ref('');
 const newStatus = ref('');
 const newLocation = ref('');
 
 
-
 const initiateStatusUpdate = (status, event) => {
     event.target.value = props.order.status; // Revert visually
     newStatus.value = status;
-    showStatusModal.value = true;
+    
+    // If updating to completed and no courier tracking exists, show courier prompt immediately
+    if (status === 'completed' && !props.order.courier_tracking_code) {
+        showCourierPromptModal.value = true;
+    } else {
+        showStatusModal.value = true;
+    }
+};
+
+const showDeleteOrderModal = ref(false);
+
+const confirmDeleteOrder = () => {
+    showDeleteOrderModal.value = true;
+};
+
+const deleteOrder = () => {
+    router.delete(`/admin/orders/${props.order.id}`, {
+        onSuccess: () => {
+            showDeleteOrderModal.value = false;
+        }
+    });
 };
 
 const confirmStatusUpdate = () => {
+    submitStatusUpdate(false);
+};
+
+const completeWithCourier = (sendToCourier) => {
+    showCourierPromptModal.value = false;
+    submitStatusUpdate(sendToCourier);
+};
+
+const submitStatusUpdate = (sendToCourier) => {
     router.put(`/admin/orders/${props.order.id}`, {
-        status: newStatus.value
+        status: newStatus.value,
+        send_to_courier: sendToCourier
     }, {
         preserveScroll: true,
-        onSuccess: () => showStatusModal.value = false
+        onSuccess: () => {
+            showStatusModal.value = false;
+        }
     });
 };
 

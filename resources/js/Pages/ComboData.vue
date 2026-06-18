@@ -87,16 +87,6 @@
                                 </button>
                             </div>
 
-                            <!-- Support Action Buttons -->
-                            <div class="w-full">
-                                <a 
-                                    :href="`https://wa.me/${$page.props.settings.footer_phone}?text=Hi, I want to order ${combo.name}`"
-                                    target="_blank"
-                                    class="h-12 bg-[#25D366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#128C7E] transition-all active:scale-95 flex items-center justify-center gap-3 w-full"
-                                >
-                                    <MessageSquare class="w-4 h-4" /> Order On WhatsApp
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>
