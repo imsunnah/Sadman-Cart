@@ -290,7 +290,7 @@
             target="_blank" 
             class="fixed bottom-8 right-8 z-[90] flex items-center gap-3 bg-white pl-5 pr-2 py-2 rounded-full shadow-[0_15px_40px_-10px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all group border border-slate-100"
         >
-            <div class="flex flex-col items-end">
+            <div class="hidden md:flex flex-col items-end">
                 <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{{ $t('Online Support') }}</span>
                 <span class="text-[10px] font-black text-[#003366] uppercase tracking-wider leading-none group-hover:text-[#FF6600] transition-colors">{{ $t('chat with us') }}</span>
             </div>
