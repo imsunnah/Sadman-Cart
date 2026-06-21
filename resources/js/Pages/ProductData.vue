@@ -307,6 +307,7 @@ const props = defineProps({
 });
 
 const { addToCart } = useCart();
+const { trackAddToCart } = usePixel();
 const quantity = ref(1);
 const activeTab = ref('description');
 const showLightbox = ref(false);
