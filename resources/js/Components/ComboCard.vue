@@ -79,7 +79,7 @@
 
 <script setup>
 import { Link, router } from '@inertiajs/vue3';
-import { Layers, Eye } from 'lucide-vue-next';
+import { Layers, Eye, Zap } from 'lucide-vue-next';
 import { useCart } from '@/Composables/useCart';
 import { usePixel } from '@/Composables/usePixel';
 
