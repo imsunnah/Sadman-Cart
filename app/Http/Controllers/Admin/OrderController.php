@@ -97,6 +97,10 @@ class OrderController extends Controller
             'status' => 'nullable|in:pending,processing,completed,cancelled',
             'delivery_charge' => 'nullable|numeric|min:0',
             'delivery_location' => 'nullable|string|in:Inside Dhaka,Outside Dhaka',
+            'customer_name' => 'nullable|string|max:255',
+            'customer_phone' => 'nullable|string|max:255',
+            'shipping_address' => 'nullable|string',
+            'total_amount' => 'nullable|numeric|min:0',
         ]);
 
         if ($request->has('delivery_location')) {
@@ -115,6 +119,22 @@ class OrderController extends Controller
             $order->total_amount = $itemsTotal + $charge;
         }
 
+        if ($request->has('shipping_address')) {
+            $order->shipping_address = $validated['shipping_address'];
+        }
+
+        if ($request->has('customer_name')) {
+            $order->customer_name = $validated['customer_name'];
+        }
+
+        if ($request->has('customer_phone')) {
+            $order->customer_phone = $validated['customer_phone'];
+        }
+
+        if ($request->has('total_amount')) {
+            $order->total_amount = $validated['total_amount'];
+        }
+
         if ($request->has('delivery_charge')) {
             $itemsTotal = $order->items->sum(function($item) {
                 return $item->price * $item->quantity;
@@ -127,9 +147,9 @@ class OrderController extends Controller
             $oldStatus = $order->status;
             $newStatus = $validated['status'];
             
-            // Fix: Allow status change to processing, completed or cancelled even if couriered
-            if (!empty($order->courier_tracking_code) && !in_array($newStatus, ['processing', 'completed', 'cancelled'])) {
-                return redirect()->back()->with('error', 'Couriered orders cannot change status unless setting to completed, cancelled or keeping it in processing.');
+            // Fix: Allow status change to pending, processing, completed or cancelled even if couriered
+            if (!empty($order->courier_tracking_code) && !in_array($newStatus, ['pending', 'processing', 'completed', 'cancelled'])) {
+                return redirect()->back()->with('error', 'Couriered orders cannot change status unless setting to completed, cancelled, pending or keeping it in processing.');
             }
 
             $order->status = $newStatus;
@@ -167,37 +187,27 @@ class OrderController extends Controller
 
         $order->save();
 
-        if ($request->has('status')) {
-            $newStatus = $validated['status'];
-            if ($newStatus === 'completed' && empty($order->courier_tracking_code)) {
-                if ($request->boolean('send_to_courier')) {
-                    $result = $this->executeCourierSend($order);
-                    if ($result['status'] === 'success') {
-                        session()->flash('success', $result['message']);
-                    } else {
-                        session()->flash('error', $result['message']);
-                    }
-                }
-            }
-        }
-
         // Send Email to customer
         if ($order->customer_email) {
             try {
                 \Illuminate\Support\Facades\Mail::to($order->customer_email)->send(new \App\Mail\OrderStatusUpdated($order));
             } catch (\Exception $e) {
-                // Silently fail or log
+                // Ignore mail errors
             }
         }
 
-        return redirect()->back()->with('success', 'Order status updated successfully.');
+        return redirect()->route('admin.orders.index', ['status' => $request->query('status', $order->status)])
+            ->with('success', 'Order updated successfully.');
     }
 
-    public function destroy(Order $order)
+    public function destroy(Order $order, Request $request)
     {
+        $status = $request->query('status', 'all');
         $order->delete();
-        return redirect()->route('admin.orders.index')->with('success', 'Order deleted successfully.');
+        return redirect()->route('admin.orders.index', ['status' => $status])
+            ->with('success', 'Order deleted successfully.');
     }
+
     public function create()
     {
         return Inertia::render('Admin/Order/Create', [

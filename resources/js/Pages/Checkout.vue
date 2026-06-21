@@ -77,10 +77,21 @@
                                          তথ্য
                                     </h2>
                                     <div class="grid grid-cols-1 gap-8">
-                                        <div>
-                                            <label class="block text-xs font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">আপনার নাম</label>
-                                            <input v-model="form.customer_name" type="text" required class="block w-full rounded-2xl bg-slate-50 border border-slate-100 px-6 py-5 text-sm font-bold focus:ring-4 focus:ring-[#003366]/5 focus:bg-white focus:border-[#003366]/20 outline-none transition-all placeholder:text-slate-300" placeholder="আপনার নাম লিখুন">
-                                            <div v-if="form.errors.customer_name" class="mt-2 text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{{ form.errors.customer_name }}</div>
+                                        <div class="space-y-4">
+                                            <div class="group">
+                                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-[#003366] transition-colors">আপনার নাম <span class="text-rose-500">*</span></label>
+                                                <div class="relative">
+                                                    <input 
+                                                        v-model="form.customer_name" 
+                                                        type="text" 
+                                                        @input="form.customer_name = form.customer_name.replace(/[0-9]/g, '')"
+                                                        placeholder="আপনার সঠিক নাম লিখুন" 
+                                                        class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 outline-none focus:border-[#003366] focus:bg-white focus:ring-4 focus:ring-[#003366]/5 transition-all"
+                                                        :class="{ 'border-rose-100 bg-rose-50/30': form.errors.customer_name }"
+                                                    >
+                                                </div>
+                                                <p v-if="form.errors.customer_name" class="mt-2 text-[10px] font-bold text-rose-500 uppercase tracking-widest ml-1">{{ form.errors.customer_name }}</p>
+                                            </div>
                                         </div>
                                         <div>
                                             <label class="block text-xs font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">মোবাইল নাম্বার</label>

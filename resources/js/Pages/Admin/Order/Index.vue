@@ -229,7 +229,12 @@
                                     </div>
                                     <div class="pt-1.5 border-t border-slate-200 flex items-center justify-between">
                                         <span class="text-xs font-black text-slate-900">মোট পেয়েবল:</span>
-                                        <span class="text-xs font-black text-[#003366]">৳{{ parseFloat(order.total_amount).toLocaleString() }}</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-black text-[#003366]">৳{{ parseFloat(order.total_amount).toLocaleString() }}</span>
+                                            <button @click="openEditModal(order)" class="p-1 hover:bg-[#003366] hover:text-white rounded transition-colors" title="এডিট করুন">
+                                                <Edit2 class="w-3 h-3 text-slate-400 group-hover:text-white" />
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="text-[8px] font-black text-white bg-[#003366] rounded px-1.5 py-0.5 inline-block uppercase text-center w-full tracking-widest mt-1">
                                         {{ order.payment_method }}
@@ -262,8 +267,17 @@
                                     <ChevronDown class="absolute right-2.5 top-3.5 w-3.5 h-3.5 pointer-events-none opacity-60" />
                                 </div>
                                 <!-- Finalized state badge -->
-                                <span v-else class="inline-block text-xs font-black uppercase px-3 py-2 rounded-xl border" :class="getStatusClass(order.status)">
-                                    {{ order.status === 'completed' ? 'ডেলিভারি' : (order.status === 'cancelled' ? 'বাতিল' : order.status) }}
+                                <span v-else class="flex flex-col items-center gap-2">
+                                    <span class="inline-block text-xs font-black uppercase px-3 py-2 rounded-xl border" :class="getStatusClass(order.status)">
+                                        {{ order.status === 'completed' ? 'ডেলিভারি' : (order.status === 'cancelled' ? 'বাতিল' : order.status) }}
+                                    </span>
+                                    <button 
+                                        v-if="order.status === 'cancelled'"
+                                        @click="initiateStatusUpdate(order, 'pending', $event)"
+                                        class="text-[9px] font-black text-[#003366] uppercase tracking-widest hover:underline"
+                                    >
+                                        পেন্ডিং এ পাঠান
+                                    </button>
                                 </span>
                             </td>
 
@@ -284,7 +298,7 @@
                                             <button @click="syncStatus(order.id)" class="p-1.5 bg-slate-100 hover:bg-[#003366] text-slate-400 hover:text-white rounded-lg transition-all" title="কুরিয়ার স্ট্যাটাস সিঙ্ক করুন">
                                                 <RefreshCw class="w-3.5 h-3.5" />
                                             </button>
-                                            <button v-if="currentStatus === 'cancelled'" @click="confirmDeleteOrder(order.id)" class="p-1.5 bg-slate-100 hover:bg-red-600 text-slate-400 hover:text-white rounded-lg transition-all" title="অর্ডার ডিলিট করুন">
+                                            <button v-if="currentStatus === 'cancelled' || order.status === 'cancelled'" @click="confirmDeleteOrder(order.id)" class="p-1.5 bg-slate-100 hover:bg-red-600 text-slate-400 hover:text-white rounded-lg transition-all" title="অর্ডার ডিলিট করুন">
                                                 <Trash2 class="w-3.5 h-3.5" />
                                             </button>
                                         </div>
@@ -454,14 +468,69 @@
                 </div>
             </div>
         </transition>
+
+        <!-- Edit Order Modal -->
+        <transition enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-150 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+            <div v-if="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                <div class="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl relative overflow-hidden">
+                    <button @click="showEditModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                        <XCircle class="w-6 h-6" />
+                    </button>
+                    
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="p-2.5 bg-blue-50 rounded-xl text-[#003366]">
+                            <Edit2 class="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-slate-900 leading-none uppercase">অর্ডার এডিট করুন</h3>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5">অর্ডার #{{ String(orderToEdit?.id ?? 0).padStart(5, '0') }}</p>
+                        </div>
+                    </div>
+
+                    <form @submit.prevent="submitOrderEdit" class="space-y-5">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">কাস্টমার নাম</label>
+                                <input v-model="editForm.customer_name" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">মোবাইল নাম্বার</label>
+                                <input v-model="editForm.customer_phone" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">শিপিং ঠিকানা</label>
+                            <textarea v-model="editForm.shipping_address" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">মোট অ্যামাউন্ট</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-400">৳</span>
+                                <input v-model.number="editForm.total_amount" type="number" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-4 py-3 text-xs font-black focus:ring-2 focus:ring-[#003366]/10 focus:bg-white outline-none transition-all text-[#003366]">
+                            </div>
+                            <p class="text-[9px] font-bold text-orange-500 mt-1 uppercase tracking-widest leading-tight">* এটি ডেলিভারি চার্জ সহ সর্বমোট অ্যামাউন্ট।</p>
+                        </div>
+
+                        <div class="pt-4 flex gap-3">
+                            <button type="button" @click="showEditModal = false" class="flex-1 py-4 rounded-xl border border-slate-200 text-slate-500 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-all">বাতিল</button>
+                            <button type="submit" :disabled="editForm.processing" class="flex-[2] py-4 bg-[#003366] text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-black shadow-xl shadow-blue-900/10 transition-all disabled:opacity-50">
+                                {{ editForm.processing ? 'আপডেট হচ্ছে...' : 'অর্ডার আপডেট করুন' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </transition>
     </AdminLayout>
 </template>
 
 <script setup>
 import { ref, reactive, computed } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import { Link, router, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Eye, CheckCircle, XCircle, ShoppingBag, Phone, MapPin, Truck, AlertTriangle, Package, Plus, ChevronDown, Send, ShieldCheck, RefreshCw, Trash2 } from 'lucide-vue-next';
+import { Eye, CheckCircle, XCircle, ShoppingBag, Phone, MapPin, Truck, AlertTriangle, Package, Plus, ChevronDown, Send, ShieldCheck, RefreshCw, Trash2, Edit2 } from 'lucide-vue-next';
 
 const props = defineProps({
     orders: Object,
@@ -529,9 +598,36 @@ const successModalMessage = ref('');
 
 const orderToUpdate = ref(null);
 const orderToCourier = ref(null);
+const orderToEdit = ref(null);
 const orderToDelete = ref(null);
 const newStatus = ref('');
 const newLocation = ref('');
+
+const showEditModal = ref(false);
+const editForm = useForm({
+    customer_name: '',
+    customer_phone: '',
+    shipping_address: '',
+    total_amount: 0
+});
+
+const openEditModal = (order) => {
+    orderToEdit.value = order;
+    editForm.customer_name = order.customer_name;
+    editForm.customer_phone = order.customer_phone;
+    editForm.shipping_address = order.shipping_address;
+    editForm.total_amount = order.total_amount;
+    showEditModal.value = true;
+};
+
+const submitOrderEdit = () => {
+    editForm.put(`/admin/orders/${orderToEdit.value.id}?status=${props.currentStatus}`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            showEditModal.value = false;
+        }
+    });
+};
 
 // Selection
 const selectedOrders = ref([]);
@@ -584,7 +680,7 @@ const completeWithCourier = (sendToCourier) => {
 };
 
 const submitStatusUpdate = (sendToCourier) => {
-    router.put(`/admin/orders/${orderToUpdate.value.id}`, {
+    router.put(`/admin/orders/${orderToUpdate.value.id}?status=${props.currentStatus}`, {
         status: newStatus.value,
         send_to_courier: sendToCourier
     }, {
@@ -625,7 +721,7 @@ const confirmBulkCourierSend = () => {
 // Delete
 const confirmDeleteOrder = (id) => { orderToDelete.value = id; showDeleteOrderModal.value = true; };
 const deleteOrder = () => {
-    router.delete(`/admin/orders/${orderToDelete.value}`, {
+    router.delete(`/admin/orders/${orderToDelete.value}?status=${props.currentStatus}`, {
         onSuccess: () => { showDeleteOrderModal.value = false; }
     });
 };
@@ -638,7 +734,7 @@ const initiateLocationUpdate = (order, location, event) => {
     showLocationModal.value = true;
 };
 const confirmLocationUpdate = () => {
-    router.put(`/admin/orders/${orderToUpdate.value.id}`, { delivery_location: newLocation.value }, {
+    router.put(`/admin/orders/${orderToUpdate.value.id}?status=${props.currentStatus}`, { delivery_location: newLocation.value }, {
         preserveScroll: true,
         onSuccess: () => { showLocationModal.value = false; }
     });
@@ -646,7 +742,7 @@ const confirmLocationUpdate = () => {
 
 const updateDeliveryCharge = (order, charge) => {
     if (parseFloat(charge) === parseFloat(order.delivery_charge)) return;
-    router.put(`/admin/orders/${order.id}`, { delivery_charge: charge }, { preserveScroll: true });
+    router.put(`/admin/orders/${order.id}?status=${props.currentStatus}`, { delivery_charge: charge }, { preserveScroll: true });
 };
 
 const syncStatus = (id) => {
