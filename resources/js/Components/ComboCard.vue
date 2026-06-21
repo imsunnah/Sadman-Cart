@@ -65,11 +65,12 @@
 
             <!-- Mobile View -->
             <div class="grid grid-cols-1 md:hidden mt-auto">
-                <button
+             
+                  <button
                     @click="buyNow"
-                    class="h-14 rounded-xl bg-[#FF6600] text-white text-base font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#003366] transition-all duration-300 shadow-xl shadow-orange-900/20 active:scale-95"
+                    class="h-12 w-full bg-[#FF6600] text-white active:bg-[#003366] transition-all duration-300 text-[13px] font-black uppercase tracking-[0.1em] rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20 font-sans cursor-pointer active:scale-[0.97]"
                 >
-                    <Zap class="w-5 h-5" /> অর্ডার করুন
+                    <Zap class="w-4 h-4 fill-current" /> অর্ডার করুন
                 </button>
             </div>
         </div>

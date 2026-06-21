@@ -90,7 +90,8 @@
 
                             <!-- Mobile View (Elite & Bold) -->
                             <div class="grid grid-cols-1 md:hidden gap-4">
-                                <button 
+                                
+                                       <button 
                                     @click="handleBuyNow"
                                     :disabled="combo.stock <= 0"
                                     class="h-16 bg-[#FF6600] text-white rounded-2xl font-black text-xl uppercase tracking-[0.2em] hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-4 shadow-[0_15px_35px_rgba(255,102,0,0.3)] font-sans cursor-pointer relative overflow-hidden animate-pulse-subtle"
