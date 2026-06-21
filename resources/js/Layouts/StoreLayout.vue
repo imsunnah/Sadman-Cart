@@ -283,25 +283,24 @@
         </button>
 
         <CartDrawer :isOpen="isCartOpen" @close="isCartOpen = false" />
-
-        <!-- Elite Floating Chat (Messenger Style) -->
-        <a 
-            href="https://m.me/61588509596175"
-            target="_blank" 
-            class="fixed bottom-8 right-8 z-[90] flex items-center gap-3 bg-white pl-5 pr-2 py-2 rounded-full shadow-[0_15px_40px_-10px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all group border border-slate-100"
-        >
-            <div class="hidden md:flex flex-col items-end">
-                <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{{ $t('Online Support') }}</span>
-                <span class="text-[10px] font-black text-[#003366] uppercase tracking-wider leading-none group-hover:text-[#FF6600] transition-colors">{{ $t('chat with us') }}</span>
-            </div>
-            <div class="w-12 h-12 bg-[#0084FF] text-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-105 transition-all">
-                <MessageCircle class="w-6 h-6 fill-current" />
-                <span class="absolute -top-1 -left-1 flex h-3 w-3">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500 border-2 border-white"></span>
-                </span>
-            </div>
-        </a>
+<!-- Elite Floating Chat (Messenger Style) -->
+<a 
+    href="https://m.me/61588509596175"
+    target="_blank" 
+    class="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[90] flex items-center gap-3 bg-white max-md:bg-transparent max-md:border-0 max-md:shadow-none md:pl-5 md:pr-2 md:py-2 rounded-full shadow-[0_15px_40px_-10px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all group border border-slate-100 max-md:border-0"
+>
+    <div class="hidden md:flex flex-col items-end">
+        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{{ $t('Online Support') }}</span>
+        <span class="text-[10px] font-black text-[#003366] uppercase tracking-wider leading-none group-hover:text-[#FF6600] transition-colors">{{ $t('chat with us') }}</span>
+    </div>
+    <div class="relative w-14 h-14 md:w-12 md:h-12 bg-gradient-to-br from-[#00C6FF] via-[#0084FF] to-[#0066D6] text-white rounded-full flex items-center justify-center shadow-[0_8px_24px_-4px_rgba(0,132,255,0.5)] group-hover:scale-110 group-active:scale-95 transition-all ring-4 ring-white">
+        <MessageCircle class="w-6 h-6 fill-current drop-shadow-sm" />
+        <span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-green-500 border-2 border-white"></span>
+        </span>
+    </div>
+</a>
 
         <!-- Premium Mobile Menu Overlay -->
         <Transition
