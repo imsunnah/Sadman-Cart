@@ -2,11 +2,18 @@ import './bootstrap';
 import '../css/app.css';
 
 import { createApp, h } from 'vue';
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3'; // <-- Added router here
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 const appName = 'Sadman Cart';
+
+// Track page views on every Inertia navigation transition
+router.on('navigate', (event) => {
+    if (typeof window.fbq === 'function') {
+        window.fbq('track', 'PageView');
+    }
+});
 
 createInertiaApp({
     title: (title) => title ? `${title} - ${appName}` : appName,

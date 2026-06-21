@@ -78,7 +78,7 @@ class StoreController extends Controller
             });
         }
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
                 $q->where('name_en', 'like', '%' . $request->search . '%')
                   ->orWhere('name_bn', 'like', '%' . $request->search . '%');
@@ -155,7 +155,7 @@ class StoreController extends Controller
             'customer_name' => $validated['customer_name'],
             'comment' => $validated['comment'],
             'rating' => $validated['rating'],
-            'is_active' => true,
+            'is_active' => false,
         ]);
 
         return back()->with('success', 'Thank you! Your remark/review has been submitted.');

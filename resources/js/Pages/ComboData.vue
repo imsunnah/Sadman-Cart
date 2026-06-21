@@ -72,7 +72,8 @@
                             </div>
 
                             <!-- Action Buttons -->
-                            <div class="grid grid-cols-2 gap-4">
+                            <!-- Desktop View -->
+                            <div class="hidden md:grid grid-cols-2 gap-4">
                                 <button 
                                     @click="handleAddToCart"
                                     class="h-14 bg-[#003366] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0f172a] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-900/10 font-sans cursor-pointer"
@@ -83,7 +84,17 @@
                                     @click="handleBuyNow"
                                     class="h-14 bg-[#FF6600] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-orange-950/15 font-sans cursor-pointer"
                                 >
-                                    <Zap class="w-4 h-4" /> Buy Now
+                                    <Zap class="w-4 h-4" /> {{ $t('Buy Now') }}
+                                </button>
+                            </div>
+
+                            <!-- Mobile View -->
+                            <div class="grid grid-cols-1 md:hidden gap-4">
+                                <button 
+                                    @click="handleBuyNow"
+                                    class="h-14 bg-[#FF6600] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-4 shadow-xl shadow-orange-950/20 font-sans cursor-pointer"
+                                >
+                                    <Zap class="w-5 h-5" /> অর্ডার করুন
                                 </button>
                             </div>
 

@@ -62,7 +62,8 @@
             </div>
 
             <!-- Add to Cart & Buy Now Buttons -->
-            <div class="grid grid-cols-2 gap-2 mt-auto">
+            <!-- Desktop View -->
+            <div class="hidden md:grid grid-cols-2 gap-2 mt-auto">
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleAddToCart"
@@ -76,6 +77,16 @@
                     class="py-2.5 px-1 bg-[#FF6600] text-white hover:bg-[#003366] transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm font-sans cursor-pointer active:scale-95"
                 >
                     <Zap class="w-3 h-3" /> {{ $t('Buy Now') }}
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:hidden mt-auto">
+                <button
+                    :disabled="product.stock <= 0"
+                    @click.prevent="handleBuyNow"
+                    class="py-3 px-1 bg-[#FF6600] text-white hover:bg-[#003366] transition-all duration-300 text-[10px] font-black uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-md font-sans cursor-pointer active:scale-95"
+                >
+                    <Zap class="w-4 h-4" /> অর্ডার করুন
                 </button>
             </div>
         </div>

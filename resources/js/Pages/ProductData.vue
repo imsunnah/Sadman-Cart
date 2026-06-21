@@ -86,7 +86,8 @@
                             </div>
 
                             <!-- Main Action Buttons -->
-                            <div class="grid grid-cols-2 gap-4">
+                            <!-- Desktop View -->
+                            <div class="hidden md:grid grid-cols-2 gap-4">
                                 <button 
                                     @click="handleAddToCart"
                                     :disabled="product.stock <= 0"
@@ -100,6 +101,17 @@
                                     class="h-14 bg-[#FF6600] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-orange-950/15 font-sans cursor-pointer"
                                 >
                                     <Zap class="w-4 h-4" /> {{ $t('Buy Now') }}
+                                </button>
+                            </div>
+
+                            <!-- Mobile View -->
+                            <div class="grid grid-cols-1 md:hidden gap-4">
+                                <button 
+                                    @click="handleBuyNow"
+                                    :disabled="product.stock <= 0"
+                                    class="h-14 bg-[#FF6600] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-4 shadow-xl shadow-orange-950/20 font-sans cursor-pointer"
+                                >
+                                    <Zap class="w-5 h-5" /> অর্ডার করুন
                                 </button>
                             </div>
 

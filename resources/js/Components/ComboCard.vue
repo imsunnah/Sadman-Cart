@@ -46,7 +46,9 @@
                 </span>
             </div>
 
-            <div class="grid grid-cols-2 gap-2 mt-auto">
+            <!-- Action Buttons -->
+            <!-- Desktop View -->
+            <div class="hidden md:grid grid-cols-2 gap-2 mt-auto">
                 <Link
                     :href="`/combos/${combo.slug}`"
                     class="h-11 rounded-xl bg-[#003366] text-white text-[9px] font-black uppercase tracking-widest flex items-center justify-center hover:bg-[#002244] transition-all duration-300 active:scale-95 shadow-lg shadow-blue-900/10"
@@ -57,7 +59,17 @@
                     @click="buyNow"
                     class="h-11 rounded-xl bg-[#FF6600] text-white text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#003366] transition-all duration-300 shadow-lg shadow-orange-900/10 active:scale-95"
                 >
-                    {{ $t('Buy Now') }}
+                    <Zap class="w-3 h-3" /> {{ $t('Buy Now') }}
+                </button>
+            </div>
+
+            <!-- Mobile View -->
+            <div class="grid grid-cols-1 md:hidden mt-auto">
+                <button
+                    @click="buyNow"
+                    class="h-12 rounded-xl bg-[#FF6600] text-white text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#003366] transition-all duration-300 shadow-xl shadow-orange-900/20 active:scale-95"
+                >
+                    <Zap class="w-4 h-4" /> অর্ডার করুন
                 </button>
             </div>
         </div>
