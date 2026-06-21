@@ -61,7 +61,7 @@
                 </span>
             </div>
 
-            <!-- Add to Cart & Buy Now Buttons -->
+            <!-- Add to Cart & Order Now Buttons -->
             <!-- Desktop View -->
             <div class="hidden md:grid grid-cols-2 gap-2 mt-auto">
                 <button
@@ -76,7 +76,7 @@
                     @click.prevent="handleBuyNow"
                     class="py-2.5 px-1 bg-[#FF6600] text-white hover:bg-[#003366] transition-all duration-300 text-[9px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm font-sans cursor-pointer active:scale-95"
                 >
-                    <Zap class="w-3 h-3" /> {{ $t('Buy Now') }}
+                    <Zap class="w-3 h-3" /> {{ $t('Order Now') }}
                 </button>
             </div>
 
@@ -84,9 +84,9 @@
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleBuyNow"
-                    class="py-3 px-1 bg-[#FF6600] text-white hover:bg-[#003366] transition-all duration-300 text-[10px] font-black uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-md font-sans cursor-pointer active:scale-95"
+                    class="h-14 px-1 bg-[#FF6600] text-white hover:bg-[#003366] transition-all duration-300 text-base font-black uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-md font-sans cursor-pointer active:scale-95"
                 >
-                    <Zap class="w-4 h-4" /> অর্ডার করুন
+                    <Zap class="w-5 h-5" /> অর্ডার করুন
                 </button>
             </div>
         </div>
@@ -98,6 +98,7 @@ import { computed } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import { ShoppingCart, Package, Eye, Zap } from 'lucide-vue-next';
 import { useCart } from '@/Composables/useCart';
+import { usePixel } from '@/Composables/usePixel';
 
 const props = defineProps({
     product: Object,
@@ -106,6 +107,7 @@ const props = defineProps({
 defineEmits(['view-image']);
 
 const { addToCart } = useCart();
+const { trackAddToCart } = usePixel();
 
 const discountedPrice = computed(() => {
     if (!props.product.discount_type) return props.product.price;
@@ -116,10 +118,12 @@ const discountedPrice = computed(() => {
 });
 
 const handleAddToCart = async () => {
+    trackAddToCart(props.product, 1);
     await addToCart(props.product, 1);
 };
 
 const handleBuyNow = async () => {
+    trackAddToCart(props.product, 1);
     await addToCart(props.product, 1);
     router.visit('/checkout');
 };

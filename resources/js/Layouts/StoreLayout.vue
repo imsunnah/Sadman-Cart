@@ -58,10 +58,54 @@
                         <input
                             v-model="searchQuery"
                             type="text"
+                            @input="handleLiveSearch"
+                            @focus="showSuggestions = true"
                             :placeholder="$t('Find your selection...')"
-                            class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:bg-white focus:border-[#003366]/20 focus:ring-0 outline-none transition-all shadow-sm"
+                            class="w-full pl-12 pr-12 py-4 bg-white border-2 border-slate-100 rounded-2xl text-sm font-bold focus:border-[#FF6600] focus:ring-4 focus:ring-[#FF6600]/5 outline-none transition-all shadow-sm group-focus-within:shadow-xl"
                         />
-                        <Search class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#003366] transition-colors" />
+                        <Search class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#FF6600] transition-colors" />
+                        
+                        <!-- Search Icon at Right (matching user image) -->
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#FF6600]">
+                            <Search class="w-5 h-5" />
+                        </div>
+
+                        <!-- Unified Search Suggestions Dropdown -->
+                        <div v-if="showSuggestions && searchQuery.length >= 2" 
+                             class="absolute top-full left-0 right-0 mt-3 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300 ring-1 ring-slate-100">
+                            
+                            <div class="divide-y divide-slate-50">
+                                <!-- All results (Products & Combos merged for unified look) -->
+                                <Link 
+                                    v-for="item in [...suggestions.products, ...suggestions.combos]" 
+                                    :key="item.type + '-' + item.id" 
+                                    :href="item.type === 'product' ? `/products/${item.slug}` : `/combos/${item.slug}`"
+                                    @click="showSuggestions = false"
+                                    class="flex items-center gap-4 p-4 hover:bg-slate-50 transition-all group"
+                                >
+                                    <div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-50 flex-shrink-0 border border-slate-100">
+                                        <img :src="item.image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                    </div>
+                                    <div class="flex-grow min-w-0">
+                                        <p class="text-[13px] font-bold text-slate-800 truncate mb-0.5 group-hover:text-[#FF6600] transition-colors">
+                                            {{ page.props.locale === 'bn' ? item.name_bn : item.name_en }}
+                                        </p>
+                                        <div class="flex flex-col">
+                                            <span class="text-[12px] font-black text-[#FF6600]">৳{{ item.discounted_price }}</span>
+                                            <span v-if="item.brand_name" class="text-[10px] font-medium text-slate-400 mt-0.5">{{ item.brand_name }}</span>
+                                        </div>
+                                    </div>
+                                </Link>
+
+                                <!-- No Results Logic -->
+                                <div v-if="suggestions.products.length === 0 && suggestions.combos.length === 0" class="p-8 text-center bg-slate-50/30">
+                                    <Search class="w-10 h-10 text-slate-200 mx-auto mb-3" />
+                                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                        {{ page.props.locale === 'bn' ? 'দুঃখিত, কোনো পণ্য পাওয়া যায়নি' : 'Sorry, No Products Found' }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
 
@@ -85,16 +129,88 @@
                     <input
                         v-model="searchQuery"
                         type="text"
+                        @input="handleLiveSearch"
+                        @focus="showSuggestions = true"
                         :placeholder="$t('Search...')"
                         class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none"
                     />
                     <Search class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+
+                    <!-- Mobile Search Suggestions Dropdown -->
+                    <div v-if="showSuggestions && searchQuery.length >= 2" 
+                         class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300">
+                        
+                        <!-- Products Section -->
+                        <div v-if="suggestions.products.length > 0" class="p-2">
+                            <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest px-4 py-2">{{ $t('Products') }}</p>
+                            <div class="space-y-1">
+                                <Link 
+                                    v-for="item in suggestions.products" 
+                                    :key="'mp-'+item.id" 
+                                    :href="`/products/${item.slug}`"
+                                    @click="showSuggestions = false"
+                                    class="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-colors group"
+                                >
+                                    <div class="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-100">
+                                        <img :src="item.image" class="w-full h-full object-cover" />
+                                    </div>
+                                    <div class="flex-grow min-w-0">
+                                        <p class="text-[11px] font-bold text-slate-700 truncate">
+                                            {{ page.props.locale === 'bn' ? item.name_bn : item.name_en }}
+                                        </p>
+                                        <p class="text-[10px] font-black text-[#FF6600]">৳{{ item.discounted_price }}</p>
+                                    </div>
+                                </Link>
+                            </div>
+                        </div>
+
+                        <!-- Combos Section -->
+                        <div v-if="suggestions.combos.length > 0" class="p-2 border-t border-slate-50">
+                            <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest px-4 py-2">{{ $t('Combos') }}</p>
+                            <div class="space-y-1">
+                                <Link 
+                                    v-for="item in suggestions.combos" 
+                                    :key="'mc-'+item.id" 
+                                    :href="`/combos/${item.slug}`"
+                                    @click="showSuggestions = false"
+                                    class="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-colors group"
+                                >
+                                    <div class="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-100">
+                                        <img :src="item.image" class="w-full h-full object-cover" />
+                                    </div>
+                                    <div class="flex-grow min-w-0">
+                                        <p class="text-[11px] font-bold text-slate-700 truncate">
+                                            {{ page.props.locale === 'bn' ? item.name_bn : item.name_en }}
+                                        </p>
+                                        <p class="text-[10px] font-black text-[#FF6600]">৳{{ item.discounted_price }}</p>
+                                    </div>
+                                </Link>
+                            </div>
+                        </div>
+
+                        <!-- No Results for Mobile -->
+                        <div v-if="suggestions.products.length === 0 && suggestions.combos.length === 0" class="p-6 text-center border-t border-slate-50">
+                            <Search class="w-8 h-8 text-slate-200 mx-auto mb-2" />
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ page.props.locale === 'bn' ? 'কোন ফলাফল পাওয়া যায়নি' : 'No results found' }}
+                            </p>
+                        </div>
+                    </div>
                 </form>
             </div>
 
             <!-- Desktop Nav (Bold & Prominent) -->
             <nav class="bg-[#003366] hidden md:block border-y border-white/5">
                 <div class="max-w-[1550px] mx-auto px-4 py-5 flex justify-center items-center gap-12">
+                    <!-- Shop Link (Always First) -->
+                    <Link 
+                        href="/shop"
+                        :class="[$page.url === '/shop' ? 'text-[#FF6600]' : 'text-white hover:text-[#FF6600]']"
+                        class="text-[11px] font-black uppercase tracking-[0.3em] transition-all drop-shadow-sm"
+                    >
+                        {{ $page.props.locale === 'bn' ? 'শপ' : 'Shop' }}
+                    </Link>
+
                     <!-- Standard listing (up to 5 categories) -->
                     <template v-if="($page.props.categories || []).length <= 5">
                         <Link 
@@ -210,7 +326,7 @@
 
                     <div class="flex-grow space-y-2 overflow-y-auto">
                         <Link href="/" @click="isMobileMenuOpen = false" class="block py-4 text-2xl font-black italic uppercase tracking-tighter text-[#003366] border-b border-slate-50">{{ $t('Home') }}</Link>
-                        <Link href="/shop" @click="isMobileMenuOpen = false" class="block py-4 text-2xl font-black italic uppercase tracking-tighter text-[#003366] border-b border-slate-50">{{ $t('Shop Catalog') }}</Link>
+                        <Link href="/shop" @click="isMobileMenuOpen = false" class="block py-4 text-2xl font-black italic uppercase tracking-tighter text-[#003366] border-b border-slate-50">{{ $page.props.locale === 'bn' ? 'শপ' : 'Shop' }}</Link>
                         
                         <div class="py-6">
                             <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-6">{{ $t('Collections') }}</p>
@@ -397,7 +513,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { Link, router } from "@inertiajs/vue3";
+import { Link, router, usePage } from "@inertiajs/vue3";
 import {
     ShoppingCart,
     Search,
@@ -426,16 +542,72 @@ import CartDrawer from "@/Components/CartDrawer.vue";
 
 const { cartCount, cartTotal } = useCart();
 const { toasts, removeToast } = useToast();
+const page = usePage();
 const isMobileMenuOpen = ref(false);
 const isCartOpen = ref(false);
 const searchQuery = ref("");
+const showSuggestions = ref(false);
+const suggestions = ref({ products: [], combos: [] });
+
+import axios from "axios";
+import { onMounted, onUnmounted } from "vue";
+
+const fetchSuggestions = async () => {
+    if (searchQuery.value.length < 2) {
+        suggestions.value = { products: [], combos: [] };
+        return;
+    }
+    try {
+        const response = await axios.get('/api/search-suggestions', { params: { search: searchQuery.value } });
+        suggestions.value = response.data;
+    } catch (error) {
+        console.error("Search fetch failed", error);
+    }
+}
+
+const handleClickOutside = (e) => {
+    if (!e.target.closest('.group')) {
+        showSuggestions.value = false;
+    }
+}
+
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
 
 const handleSearch = () => {
     if (searchQuery.value.trim()) {
-        router.visit(`/shop?search=${searchQuery.value}`);
+        router.visit(`/shop?search=${encodeURIComponent(searchQuery.value)}`);
     } else {
         router.visit("/shop");
     }
+};
+
+let liveSearchTimeout = null;
+const handleLiveSearch = () => {
+    // Instant suggestion fetch - no debounce
+    fetchSuggestions();
+    showSuggestions.value = true;
+
+    // Keep debounce only for the heavier shop-page filter request
+    if (liveSearchTimeout) clearTimeout(liveSearchTimeout);
+    liveSearchTimeout = setTimeout(() => {
+        if (page.url.startsWith('/shop')) {
+            const currentFilters = page.props.filters || {};
+            router.get('/shop', {
+                ...currentFilters,
+                search: searchQuery.value
+            }, {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['products', 'filters']
+            });
+        }
+    }, 300);
 };
 
 const getIcon = (iconName) => {

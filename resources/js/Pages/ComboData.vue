@@ -84,7 +84,7 @@
                                     @click="handleBuyNow"
                                     class="h-14 bg-[#FF6600] text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-orange-950/15 font-sans cursor-pointer"
                                 >
-                                    <Zap class="w-4 h-4" /> {{ $t('Buy Now') }}
+                                    <Zap class="w-4 h-4" /> {{ $t('Order Now') }}
                                 </button>
                             </div>
 
@@ -92,9 +92,10 @@
                             <div class="grid grid-cols-1 md:hidden gap-4">
                                 <button 
                                     @click="handleBuyNow"
-                                    class="h-14 bg-[#FF6600] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-4 shadow-xl shadow-orange-950/20 font-sans cursor-pointer"
+                                    :disabled="combo.stock <= 0"
+                                    class="h-16 bg-[#FF6600] text-white rounded-2xl font-black text-xl uppercase tracking-widest hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-4 shadow-xl shadow-orange-950/20 font-sans cursor-pointer"
                                 >
-                                    <Zap class="w-5 h-5" /> অর্ডার করুন
+                                    <Zap class="w-6 h-6" /> অর্ডার করুন
                                 </button>
                             </div>
 
@@ -123,6 +124,7 @@ import { Link, router } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
 import ProductCard from '@/Components/ProductCard.vue';
 import { useCart } from '@/Composables/useCart';
+import { usePixel } from '@/Composables/usePixel';
 import { Plus, Minus, ShoppingCart, ChevronRight, Zap, MessageSquare, Phone, Package, ExternalLink } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -131,13 +133,16 @@ const props = defineProps({
 });
 
 const { addToCart } = useCart();
+const { trackAddToCart } = usePixel();
 const quantity = ref(1);
 
 const handleAddToCart = async () => {
+    trackAddToCart(props.combo, quantity.value);
     await addToCart(props.combo, quantity.value);
 };
 
 const handleBuyNow = async () => {
+    trackAddToCart(props.combo, quantity.value);
     await addToCart(props.combo, quantity.value);
     router.visit('/checkout');
 };

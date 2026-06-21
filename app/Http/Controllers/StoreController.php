@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
+use App\Models\Combo;   // <-- add this
 use App\Mail\OrderCreated;
 use Illuminate\Support\Facades\Mail;
 
@@ -79,9 +80,28 @@ class StoreController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('name_en', 'like', '%' . $request->search . '%')
-                  ->orWhere('name_bn', 'like', '%' . $request->search . '%');
+            $searchTerm = $request->search;
+            // Split by space, hyphen, underscore, or dot
+            $keywords = array_filter(preg_split('/[\s\-_.]+/', $searchTerm));
+            
+            $query->where(function($q) use ($keywords, $searchTerm) {
+                // Also match full term as is (handles exact hyphenated terms)
+                $fullMatch = '%' . $searchTerm . '%';
+                $q->where('name_en', 'like', $fullMatch)
+                  ->orWhere('name_bn', 'like', $fullMatch)
+                  ->orWhere('sku', 'like', $fullMatch)
+                  ->orWhere('slug', 'like', $fullMatch);
+
+                foreach ($keywords as $keyword) {
+                    $q->orWhere(function($sq) use ($keyword) {
+                        $keywordMatch = '%' . $keyword . '%';
+                        $sq->where('name_en', 'like', $keywordMatch)
+                          ->orWhere('name_bn', 'like', $keywordMatch)
+                          ->orWhere('sku', 'like', $keywordMatch)
+                          ->orWhere('description_en', 'like', $keywordMatch)
+                          ->orWhere('description_bn', 'like', $keywordMatch);
+                    });
+                }
             });
         }
 
@@ -210,17 +230,28 @@ class StoreController extends Controller
     public function processCheckout(Request $request)
     {
         $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
+            'customer_name' => [
+                'required', 'string', 'min:3', 'max:255',
+                function ($attribute, $value, $fail) {
+                    if (preg_match('/^\.+$/', $value)) {
+                        $fail('নাম সঠিক হতে হবে।');
+                    }
+                }
+            ],
             'customer_email' => 'nullable|email|max:255',
-            'customer_phone' => 'required|string|max:20',
-            'shipping_address' => 'required|string',
+            'customer_phone' => 'required|string|size:11',
+            'shipping_address' => 'required|string|min:7',
             'district' => 'nullable|string|max:255',
             'upazila' => 'nullable|string|max:255',
             'village' => 'nullable|string|max:255',
             'delivery_location' => 'required|string|in:Inside Dhaka,Outside Dhaka',
             'delivery_charge' => 'required|numeric',
-            'selected_items' => 'nullable|string', // Added to filter items
+            'selected_items' => 'nullable|string',
             'customer_remarks' => 'nullable|string|max:1000',
+        ], [
+            'customer_name.min' => 'নাম অন্তত ৩ অক্ষরের হতে হবে।',
+            'customer_phone.size' => 'মোবাইল নাম্বার ১১ ডিজিটের হতে হবে।',
+            'shipping_address.min' => 'ঠিকানা অন্তত ৭ অক্ষরের হতে হবে।',
         ]);
 
         $cart = $this->getCart();
@@ -388,5 +419,75 @@ class StoreController extends Controller
 
         $sessionId = Session::getId();
         return Cart::where('session_id', $sessionId)->whereNull('user_id')->with(['items.product', 'items.combo.products'])->first();
+    }
+
+    public function searchSuggestions(Request $request)
+    {
+        $searchTerm = $request->search;
+        if (!$searchTerm || strlen($searchTerm) < 2) {
+            return response()->json([
+                'products' => [],
+                'combos' => []
+            ]);
+        }
+
+        $keywords = array_filter(preg_split('/[\s\-_.]+/', $searchTerm));
+
+        $products = Product::with('brand')->where(function($q) use ($keywords, $searchTerm) {
+            $fullMatch = '%' . $searchTerm . '%';
+            $q->where('name_en', 'like', $fullMatch)
+              ->orWhere('name_bn', 'like', $fullMatch);
+
+            foreach ($keywords as $keyword) {
+                $q->orWhere('name_en', 'like', '%' . $keyword . '%')
+                  ->orWhere('name_bn', 'like', '%' . $keyword . '%');
+            }
+        })
+        ->limit(6)
+        ->get();
+
+        $products = $products->map(function($product) {
+            return [
+                'id' => $product->id,
+                'name_en' => $product->name_en,
+                'name_bn' => $product->name_bn,
+                'discounted_price' => $product->discounted_price,
+                'image' => $product->image,
+                'slug' => $product->slug,
+                'brand_name' => $product->brand ? $product->brand->name : null,
+                'type' => 'product'
+            ];
+        });
+
+        $combos = Combo::where(function($q) use ($keywords, $searchTerm) {
+            $fullMatch = '%' . $searchTerm . '%';
+            $q->where('name_en', 'like', $fullMatch)
+              ->orWhere('name_bn', 'like', $fullMatch);
+
+            foreach ($keywords as $keyword) {
+                $q->orWhere('name_en', 'like', '%' . $keyword . '%')
+                  ->orWhere('name_bn', 'like', '%' . $keyword . '%');
+            }
+        })
+        ->limit(3)
+        ->get();
+
+        $combos = $combos->map(function($combo) {
+            return [
+                'id' => $combo->id,
+                'name_en' => $combo->name_en,
+                'name_bn' => $combo->name_bn,
+                'discounted_price' => $combo->price,
+                'image' => $combo->image,
+                'slug' => $combo->slug,
+                'brand_name' => 'Combo Offer',
+                'type' => 'combo'
+            ];
+        });
+
+        return response()->json([
+            'products' => $products,
+            'combos' => $combos
+        ]);
     }
 }

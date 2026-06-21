@@ -26,6 +26,23 @@
                     <div class="w-full lg:w-72 flex-shrink-0">
                         <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-8 sticky top-24">
                             
+                            <!-- Search In Shop -->
+                            <div class="mb-8">
+                                <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
+                                    {{ appLocalizer('Search Product', 'পণ্য খুঁজুন') }}
+                                </h3>
+                                <div class="relative">
+                                    <input 
+                                        type="text" 
+                                        v-model="localSearch" 
+                                        @input="handleLocalSearchInput"
+                                        :placeholder="appLocalizer('Search...', 'খুঁজুন...')"
+                                        class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:bg-white focus:border-[#003366]/20 outline-none transition-all shadow-sm"
+                                    >
+                                    <Search class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                </div>
+                            </div>
+
                             <!-- Filter By Category -->
                             <div>
                                 <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
@@ -206,9 +223,9 @@
                             <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                                 <Package class="w-8 h-8 text-slate-300" />
                             </div>
-                            <h2 class="text-lg font-black text-slate-800 uppercase tracking-tight">{{ $t('No Products Match Filters') }}</h2>
-                            <p class="mt-1 text-slate-400 font-bold uppercase tracking-[0.2em] text-[8px]">{{ $t('Try resetting your sidebar checkboxes or slide price limit higher') }}</p>
-                            <button @click="resetFilters" class="mt-6 px-6 py-3 bg-[#003366] text-white rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-black transition-all">{{ $t('Reset Filters') }}</button>
+                            <h2 class="text-lg font-black text-slate-800 uppercase tracking-tight">{{ appLocalizer('Product Not Available', 'এই মুহূর্তে পণ্যটি আমাদের স্টকে নেই') }}</h2>
+                            <p class="mt-1 text-slate-400 font-bold uppercase tracking-[0.2em] text-[8px]">{{ appLocalizer('We will collect it for you soon. Stay tuned!', 'আমরা শীঘ্রই এটি সংগ্রহ করব। আমাদের সাথেই থাকুন!') }}</p>
+                            <button @click="resetFilters" class="mt-6 px-6 py-3 bg-[#003366] text-white rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-black transition-all">{{ appLocalizer('Reset Filters', 'ফিল্টার রিসেট করুন') }}</button>
                         </div>
 
                         <!-- Pagination -->
@@ -235,11 +252,13 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
 import ProductCard from '@/Components/ProductCard.vue';
 import ImageLightbox from '@/Components/ImageLightbox.vue';
 import { Package } from 'lucide-vue-next';
+
+const page = usePage();
 
 const props = defineProps({
     products: Object,
@@ -247,6 +266,15 @@ const props = defineProps({
     categories: Array,
     brands: Array
 });
+
+const localSearch = ref(props.filters.search || "");
+let localSearchTimeout = null;
+const handleLocalSearchInput = () => {
+    if (localSearchTimeout) clearTimeout(localSearchTimeout);
+    localSearchTimeout = setTimeout(() => {
+        triggerSearch();
+    }, 500);
+};
 
 const showLightbox = ref(false);
 const lightboxProduct = ref(null);
@@ -274,16 +302,24 @@ const handleMaxPriceInput = () => {
 };
 
 const activeCategoryName = computed(() => {
-    if (selectedCategories.value.length > 0) {
+    if (props.filters?.search) {
+        return `${appLocalizer('Search Results for', 'অনুসন্ধান ফলাফল')}: "${props.filters.search}"`;
+    }
+    if ((selectedCategories.value || []).length > 0) {
         return selectedCategories.value.map(slug => {
             const found = props.categories?.find(c => c.slug === slug);
             return found ? found.name : slug;
         }).join(', ');
     }
-    return $t('All Products');
+    return appLocalizer('All Products', 'সকল পণ্য');
 });
 
+const appLocalizer = (en, bn) => {
+    return page.props.locale === 'bn' ? bn : en;
+};
+
 const filteredProducts = computed(() => {
+    if (!props.products || !props.products.data) return [];
     let result = [...props.products.data];
 
     // 1. Category Filter
@@ -341,7 +377,7 @@ const triggerSearch = () => {
             max_price: maxPrice.value,
             sort: sortBy.value,
             brand: selectedBrands.value.join(','),
-            search: props.filters.search || ''
+            search: localSearch.value
         }, {
             preserveState: true,
             preserveScroll: true,

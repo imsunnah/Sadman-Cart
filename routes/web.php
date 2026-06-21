@@ -104,6 +104,7 @@ Route::get('/cart', function () {
 Route::get('/api/cart', [\App\Http\Controllers\CartController::class, 'getCart']);
 Route::post('/api/cart/add', [\App\Http\Controllers\CartController::class, 'addItem']);
 Route::put('/api/cart/update/{itemId}', [\App\Http\Controllers\CartController::class, 'updateItem']);
+Route::get('/api/search-suggestions', [StoreController::class, 'searchSuggestions'])->name('search.suggestions');
 Route::delete('/api/cart/remove/{itemId}', [\App\Http\Controllers\CartController::class, 'removeItem']);
 
 // Auth Routes

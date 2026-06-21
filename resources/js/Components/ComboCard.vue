@@ -59,7 +59,7 @@
                     @click="buyNow"
                     class="h-11 rounded-xl bg-[#FF6600] text-white text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#003366] transition-all duration-300 shadow-lg shadow-orange-900/10 active:scale-95"
                 >
-                    <Zap class="w-3 h-3" /> {{ $t('Buy Now') }}
+                    <Zap class="w-3 h-3" /> {{ $t('Order Now') }}
                 </button>
             </div>
 
@@ -67,9 +67,9 @@
             <div class="grid grid-cols-1 md:hidden mt-auto">
                 <button
                     @click="buyNow"
-                    class="h-12 rounded-xl bg-[#FF6600] text-white text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#003366] transition-all duration-300 shadow-xl shadow-orange-900/20 active:scale-95"
+                    class="h-14 rounded-xl bg-[#FF6600] text-white text-base font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#003366] transition-all duration-300 shadow-xl shadow-orange-900/20 active:scale-95"
                 >
-                    <Zap class="w-4 h-4" /> অর্ডার করুন
+                    <Zap class="w-5 h-5" /> অর্ডার করুন
                 </button>
             </div>
         </div>
@@ -80,18 +80,17 @@
 import { Link, router } from '@inertiajs/vue3';
 import { Layers, Eye } from 'lucide-vue-next';
 import { useCart } from '@/Composables/useCart';
+import { usePixel } from '@/Composables/usePixel';
 
 const props = defineProps({ combo: Object });
-const { addItem } = useCart();
+const { addToCart } = useCart();
+const { trackAddToCart } = usePixel();
 
 const buyNow = async () => {
     try {
-        await addItem({
-            id: props.combo.id,
-            type: 'combo',
-            quantity: 1
-        });
-        router.visit(route('checkout'));
+        trackAddToCart(props.combo, 1);
+        await addToCart(props.combo, 1);
+        router.visit('/checkout');
     } catch (error) {
         console.error('Error adding combo to cart:', error);
     }
