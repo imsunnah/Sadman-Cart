@@ -85,9 +85,9 @@
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleBuyNow"
-                    class="h-12 w-full bg-[#FF6600] text-white active:bg-[#003366] transition-all duration-300 text-[13px] font-black uppercase tracking-[0.1em] rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20 font-sans cursor-pointer active:scale-[0.97]"
+                    class="h-14 w-full bg-[#FF6600] text-white active:bg-[#003366] transition-all duration-300 text-[14px] font-black uppercase tracking-[0.1em] rounded-2xl flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_10px_25px_rgba(255,102,0,0.3)] font-sans cursor-pointer active:scale-[0.97]"
                 >
-                    <Zap class="w-4 h-4 fill-current" /> অর্ডার করুন
+                    <Zap class="w-5 h-5 fill-current" /> অর্ডার করুন
                 </button>
             </div>
         </div>
