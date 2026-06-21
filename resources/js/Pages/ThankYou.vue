@@ -9,9 +9,9 @@
                         <Truck class="w-5 h-5" />
                     </div>
                     <div>
-                        <h4 class="text-sm font-black text-amber-900 uppercase tracking-wider mb-0.5">Verification Required</h4>
+                        <h4 class="text-sm font-black text-amber-900 uppercase tracking-wider mb-0.5">{{ $t('Verification Required') }}</h4>
                         <p class="text-xs text-amber-800 font-medium leading-relaxed">
-                            To prevent spam and ensure accurate logistics, our customer care team will call you at <span class="font-bold text-amber-950 underline decoration-amber-500/50 decoration-2">{{ order.customer_phone }}</span> to confirm your details. <span class="font-bold">Your items will only be dispatched after this verbal verification.</span>
+                            {{ $t('To prevent spam and ensure accurate logistics, our customer care team will call you at') }} <span class="font-bold text-amber-950 underline decoration-amber-500/50 decoration-2">{{ order.customer_phone }}</span> {{ $t('to confirm your details.') }} <span class="font-bold">{{ $t('Your items will only be dispatched after this verbal verification.') }}</span>
                         </p>
                     </div>
                 </div>
@@ -23,12 +23,12 @@
                         <CheckCircle class="h-12 w-12 text-[#FF6600]" />
                     </div>
                     
-                    <h1 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3 uppercase">Order Received</h1>
+                    <h1 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3 uppercase">{{ $t('Order Received') }}</h1>
                     <p class="text-base sm:text-lg text-slate-600 mb-4 font-medium max-w-md mx-auto">
-                        Thank you for your order, <span class="text-slate-900 font-bold">{{ order.customer_name }}</span>. We've queued your request into our processing queue.
+                        {{ $t('Thank you for your order,') }} <span class="text-slate-900 font-bold">{{ order.customer_name }}</span>. {{ $t("We've queued your request into our processing queue.") }}
                     </p>
                     <div class="inline-flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Order ID:</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ $t('Order ID:') }}</span>
                         <span class="text-xs font-black text-[#003366] tracking-widest">#{{ String(order.id).padStart(6, '0') }}</span>
                     </div>
                 </div>
@@ -37,16 +37,16 @@
                 <div v-if="!$page.props.auth.user" class="bg-orange-50/70 border border-orange-100/80 p-6 sm:p-8 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 transition-all hover:bg-orange-50">
                     <div class="text-center sm:text-left">
                         <h2 class="text-lg font-black text-slate-900 mb-1 flex items-center justify-center sm:justify-start uppercase tracking-tight">
-                            <UserPlus class="w-5 h-5 mr-2 text-[#FF6600]"/> Save Your Progress
+                            <UserPlus class="w-5 h-5 mr-2 text-[#FF6600]"/> {{ $t('Save Your Progress') }}
                         </h2>
-                        <p class="text-xs font-semibold text-slate-500 leading-relaxed max-w-sm">Track order status pipelines in real-time, manage multiple addresses, and unlock exclusive rewards.</p>
+                        <p class="text-xs font-semibold text-slate-500 leading-relaxed max-w-sm">{{ $t('Track order status pipelines in real-time, manage multiple addresses, and unlock exclusive rewards.') }}</p>
                     </div>
                     <div class="flex-shrink-0 w-full sm:w-auto text-center sm:text-right">
                         <Link href="/register" class="block w-full sm:inline-block bg-[#FF6600] text-white font-black py-3 px-6 rounded-xl shadow-lg shadow-orange-500/20 hover:bg-orange-600 hover:shadow-orange-600/20 active:scale-[0.98] transition-all uppercase tracking-widest text-xs">
-                            Register Account
+                            {{ $t('Register Account') }}
                         </Link>
                         <p class="text-xs mt-3 text-slate-500 font-medium">
-                            Already have access? <Link href="/login" class="text-[#003366] font-bold hover:underline">Log In</Link>
+                            {{ $t('Already have access?') }} <Link href="/login" class="text-[#003366] font-bold hover:underline">{{ $t('Log In') }}</Link>
                         </p>
                     </div>
                 </div>
@@ -55,9 +55,9 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="p-5 sm:p-6 border-b border-gray-100 bg-slate-50/70 flex items-center justify-between">
                         <h3 class="font-black text-xs text-slate-700 flex items-center uppercase tracking-widest">
-                            <ShoppingBag class="w-4 h-4 mr-2 text-slate-400" /> Manifest Summary
+                            <ShoppingBag class="w-4 h-4 mr-2 text-slate-400" /> {{ $t('Manifest Summary') }}
                         </h3>
-                        <span class="text-xs font-bold text-slate-400">{{ order.items.length }} Item(s)</span>
+                        <span class="text-xs font-bold text-slate-400">{{ order.items.length }} {{ $t('Item(s)') }}</span>
                     </div>
                     
                     <div class="p-6 sm:p-8">
@@ -73,15 +73,15 @@
 
                         <div class="mt-6 pt-6 border-t border-gray-100 space-y-3">
                             <div class="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                <p>Subtotal</p>
+                                <p>{{ $t('Subtotal') }}</p>
                                 <p class="text-slate-900 font-black">৳ {{ (order.total_amount - order.delivery_charge).toLocaleString() }}</p>
                             </div>
                             <div class="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                <p>Delivery ({{ order.delivery_location }})</p>
+                                <p>{{ $t('Delivery') }} ({{ order.delivery_location }})</p>
                                 <p class="text-[#FF6600] font-black">৳ {{ parseFloat(order.delivery_charge).toLocaleString() }}</p>
                             </div>
                             <div class="flex justify-between items-center border-t border-dashed border-gray-200 pt-5 mt-4">
-                                <p class="text-base font-black text-slate-900 uppercase tracking-tight">Total Amount</p>
+                                <p class="text-base font-black text-slate-900 uppercase tracking-tight">{{ $t('Total Amount') }}</p>
                                 <p class="text-2xl font-black text-[#003366]">৳ {{ parseFloat(order.total_amount).toLocaleString() }}</p>
                             </div>
                         </div>
@@ -91,11 +91,11 @@
                 <!-- Footer Operations & Navigation -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 text-center text-xs text-slate-500 font-semibold uppercase tracking-wider">
                     <p class="leading-relaxed max-w-xl mx-auto">
-                        Settlement Mode: <strong class="text-slate-900">Cash on Delivery</strong>. Our delivery courier will arrive at your destination after the initial phone verification is secured.
+                        {{ $t('Settlement Mode:') }} <strong class="text-slate-900">{{ $t('Cash on Delivery') }}</strong>. {{ $t('Our delivery courier will arrive at your destination after the initial phone verification is secured.') }}
                     </p>
                     <div class="mt-8">
                         <Link href="/" class="inline-flex items-center justify-center rounded-xl border-2 border-slate-200 bg-white py-3.5 px-8 text-xs font-black text-[#003366] shadow-sm hover:bg-slate-50 hover:border-slate-300 active:scale-[0.99] transition-all uppercase tracking-widest">
-                            <ArrowLeft class="w-4 h-4 mr-2" /> Continue Shopping
+                            <ArrowLeft class="w-4 h-4 mr-2" /> {{ $t('Continue Shopping') }}
                         </Link>
                     </div>
                 </div>
