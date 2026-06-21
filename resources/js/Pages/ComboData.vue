@@ -88,14 +88,14 @@
                                 </button>
                             </div>
 
-                            <!-- Mobile View -->
+                            <!-- Mobile View (Elite & Bold) -->
                             <div class="grid grid-cols-1 md:hidden gap-4">
                                 <button 
                                     @click="handleBuyNow"
                                     :disabled="combo.stock <= 0"
-                                    class="h-16 bg-[#FF6600] text-white rounded-2xl font-black text-xl uppercase tracking-widest hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-4 shadow-xl shadow-orange-950/20 font-sans cursor-pointer"
+                                    class="h-16 bg-[#FF6600] text-white rounded-2xl font-black text-xl uppercase tracking-[0.2em] hover:bg-[#e55c00] transition-all active:scale-95 flex items-center justify-center gap-4 shadow-[0_15px_35px_rgba(255,102,0,0.3)] font-sans cursor-pointer relative overflow-hidden animate-pulse-subtle"
                                 >
-                                    <Zap class="w-6 h-6" /> অর্ডার করুন
+                                    <Zap class="w-7 h-7 fill-current" /> অর্ডার করুন
                                 </button>
                             </div>
 
@@ -147,3 +147,14 @@ const handleBuyNow = async () => {
     router.visit('/checkout');
 };
 </script>
+
+<style scoped>
+@keyframes pulse-subtle {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+.animate-pulse-subtle {
+    animation: pulse-subtle 3s infinite ease-in-out;
+}
+</style>

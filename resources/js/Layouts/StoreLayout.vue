@@ -266,18 +266,18 @@
         <!-- Floating Cart Card (Right Side) - Matching Image Design Exactly -->
         <button 
             @click="isCartOpen = true"
-            class="fixed right-0 top-1/2 -translate-y-1/2 z-[100] flex flex-col items-center w-16 bg-white shadow-[-5px_0_20px_rgba(0,0,0,0.1)] rounded-l-lg overflow-hidden group transition-all active:scale-95 border-l border-y border-slate-100"
+            class="fixed right-0 top-1/2 -translate-y-1/2 z-[100] flex flex-col items-center w-14 md:w-16 bg-white shadow-[-5px_0_20px_rgba(0,0,0,0.1)] rounded-l-xl overflow-hidden group transition-all active:scale-95 border-l border-y border-slate-100"
         >
             <!-- Top Section (Orange) -->
-            <div class="w-full bg-[#FF6600] pt-4 pb-3 flex flex-col items-center justify-center">
-                <ShoppingBag class="w-6 h-6 text-white mb-1" />
-                <span class="text-[9px] font-black text-white uppercase tracking-tight leading-none">{{ cartCount }} {{ $t('Items') }}</span>
+            <div class="w-full bg-[#FF6600] pt-3 pb-2 md:pt-4 md:pb-3 flex flex-col items-center justify-center">
+                <ShoppingBag class="w-5 h-5 md:w-6 md:h-6 text-white mb-1" />
+                <span class="text-[8px] md:text-[9px] font-black text-white uppercase tracking-tight leading-none">{{ cartCount }} {{ $t('Items') }}</span>
             </div>
             
             <!-- Bottom Section (White) -->
-            <div class="w-full bg-white py-3 flex items-center justify-center">
-                <span class="text-[11px] font-black text-[#FF6600] flex items-center gap-0.5">
-                    <span class="text-xs">৳</span>{{ cartTotal.toLocaleString() }}
+            <div class="w-full bg-white py-2 md:py-3 flex items-center justify-center">
+                <span class="text-[10px] md:text-[11px] font-black text-[#FF6600] flex items-center gap-0.5">
+                    <span class="text-[10px] md:text-xs">৳</span>{{ cartTotal.toLocaleString() }}
                 </span>
             </div>
         </button>

@@ -61,7 +61,7 @@
                 </span>
             </div>
 
-            <!-- Add to Cart & Order Now Buttons -->
+            <!-- Add to Cart & Order Now Buttons (Improved Mobile UI) -->
             <!-- Desktop View -->
             <div class="hidden md:grid grid-cols-2 gap-2 mt-auto">
                 <button
@@ -80,13 +80,14 @@
                 </button>
             </div>
 
+            <!-- Mobile View (Bold & Full Width) -->
             <div class="grid grid-cols-1 md:hidden mt-auto">
                 <button
                     :disabled="product.stock <= 0"
                     @click.prevent="handleBuyNow"
-                    class="h-14 px-1 bg-[#FF6600] text-white hover:bg-[#003366] transition-all duration-300 text-base font-black uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-md font-sans cursor-pointer active:scale-95"
+                    class="h-12 w-full bg-[#FF6600] text-white active:bg-[#003366] transition-all duration-300 text-[13px] font-black uppercase tracking-[0.1em] rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20 font-sans cursor-pointer active:scale-[0.97]"
                 >
-                    <Zap class="w-5 h-5" /> অর্ডার করুন
+                    <Zap class="w-4 h-4 fill-current" /> অর্ডার করুন
                 </button>
             </div>
         </div>

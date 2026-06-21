@@ -164,8 +164,8 @@
                                     </div>
                                 </div>
 
-                                <button type="submit" :disabled="form.processing" class="w-full bg-[#003366] py-5 rounded-2xl text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-[#003366]/20 hover:bg-slate-800 transition-all transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center">
-                                    অর্ডার নিশ্চিত করুন <ArrowRight class="w-5 h-5 ml-3" />
+                                <button type="submit" :disabled="form.processing" class="w-full bg-[#003366] py-6 sm:py-5 rounded-2xl text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-[#003366]/20 hover:bg-slate-800 transition-all transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center text-sm sm:text-base">
+                                    অর্ডার নিশ্চিত করুন <ArrowRight class="w-6 h-6 ml-3" />
                                 </button>
                             </form>
                         </div>
