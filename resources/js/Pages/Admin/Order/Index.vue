@@ -566,13 +566,13 @@ const tabs = [
 
 const getFilterParams = (overrides = {}) => {
     const params = {
-        status: props.currentStatus === 'all' ? null : props.currentStatus,
+        status: props.currentStatus === 'all' ? 'all' : props.currentStatus,
         category_id: filterForm.category_id === 'all' ? null : filterForm.category_id,
         product_id: filterForm.product_id === 'all' ? null : filterForm.product_id,
         combo_id: filterForm.combo_id === 'all' ? null : filterForm.combo_id,
         ...overrides
     };
-    Object.keys(params).forEach(key => { if (params[key] === 'all' || params[key] === null) delete params[key]; });
+    Object.keys(params).forEach(key => { if (params[key] === 'all' && key !== 'status' || params[key] === null) delete params[key]; });
     return params;
 };
 

@@ -17,7 +17,7 @@ class OrderController extends Controller
     {
         $status = $request->query('status');
         if ($status === null) {
-            $status = 'pending';
+            $status = 'all';
         }
         $categoryId = $request->query('category_id');
         $productId = $request->query('product_id');
