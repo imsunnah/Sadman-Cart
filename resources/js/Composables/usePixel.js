@@ -23,10 +23,11 @@ export function usePixel() {
      */
     const trackAddToCart = (item, quantity = 1) => {
         trackEvent('AddToCart', {
-            content_name: item.name,
-            content_ids: [item.id],
+            content_name: item.name_en || item.name,
+            content_category: item.category?.name || 'Shop',
+            content_ids: [String(item.id)],
             content_type: 'product',
-            value: parseFloat(item.price) * quantity,
+            value: parseFloat(item.discounted_price || item.price),
             currency: 'BDT'
         });
     };
@@ -52,11 +53,12 @@ export function usePixel() {
      */
     const trackPurchase = (order) => {
         trackEvent('Purchase', {
-            content_ids: order.items?.map(i => i.product_id || i.combo_id) || [],
+            content_ids: order.items?.map(i => String(i.product_id || i.combo_id)) || [],
             content_type: 'product',
             value: parseFloat(order.total_amount),
             currency: 'BDT',
-            transaction_id: order.id
+            transaction_id: order.id,
+            num_items: order.items?.reduce((sum, i) => sum + i.quantity, 0) || 0
         });
     };
 

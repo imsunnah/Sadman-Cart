@@ -1,5 +1,6 @@
 <template>
     <div class="min-h-screen flex flex-col font-sans bg-white text-slate-800">
+        <SmartLoader />
         <!-- Header -->
         <header class="bg-white sticky top-0 z-50 shadow-sm">
             <!-- Top bar -->
@@ -514,6 +515,7 @@
 <script setup>
 import { ref } from "vue";
 import { Link, router, usePage } from "@inertiajs/vue3";
+import SmartLoader from '@/Components/SmartLoader.vue';
 import {
     ShoppingCart,
     Search,

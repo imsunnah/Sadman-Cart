@@ -1,5 +1,6 @@
 <template>
     <div class="flex h-screen bg-[#f8fafc] text-slate-900 font-sans relative">
+        <SmartLoader />
         <!-- Sidebar -->
         <aside :class="['w-64 bg-[#0f172a] text-white flex flex-col transition-transform duration-300 z-[60] flex-shrink-0 fixed inset-y-0 left-0 md:relative', isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0']">
             <div class="h-20 flex items-center px-6 border-b border-slate-800">
@@ -274,6 +275,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
+import SmartLoader from '@/Components/SmartLoader.vue';
 import { LayoutDashboard, ShoppingCart, Package, Tags, LogOut, Search, ExternalLink, ListTree, Users, Settings, Menu, Zap, Star, Image, FileText, Award, MessageSquare, Truck, Lock, X, CheckCircle } from 'lucide-vue-next';
 import axios from 'axios';
 
