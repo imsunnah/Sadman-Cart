@@ -3,7 +3,7 @@
         <div class="bg-slate-50 min-h-screen py-16 font-sans relative">
             <!-- Processing Overlay -->
             <Transition name="fade">
-                <div v-if="form.processing" class="fixed inset-0 z-[100] bg-white/90 backdrop-blur-xl flex flex-col items-center justify-center text-slate-900">
+                                <div v-if="form.processing" class="fixed inset-0 z-[100] bg-white/90 backdrop-blur-xl flex flex-col items-center justify-center text-slate-900">
                     <div class="relative w-24 h-24 mb-6">
                         <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
                         <div class="absolute inset-0 border-4 border-[#003366] rounded-full animate-spin border-t-transparent shadow-lg"></div>
@@ -11,8 +11,8 @@
                             <Lock class="w-8 h-8 text-[#003366]" />
                         </div>
                     </div>
-                    <h2 class="text-2xl font-black uppercase tracking-tight mb-2">অর্ডার প্রসেসিং হচ্ছে</h2>
-                    <p class="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">দয়া করে অপেক্ষা করুন, আপনার কেনাকাটা সুরক্ষিত করা হচ্ছে</p>
+                    <h2 class="text-2xl font-black uppercase tracking-tight mb-2">{{ $t('Order is being processed') }}</h2>
+                    <p class="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">{{ $t('Please wait, your purchase is being secured') }}</p>
                 </div>
             </Transition>
 
@@ -60,7 +60,7 @@
                 <div class="mb-6 sm:mb-10">
                     <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center uppercase">
                         <ShoppingBag class="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-[#003366]" />
-                        অর্ডার সম্পন্ন করুন
+                        {{ $t('Secure Checkout') }}
                     </h1>
                     <div class="h-1 w-20 bg-[#003366] mt-4 rounded-full"></div>
                 </div>
@@ -176,8 +176,8 @@
                         <div class="lg:sticky lg:top-24 space-y-6">
                             <div class="bg-white shadow-xl shadow-slate-200/50 rounded-3xl border border-slate-100 overflow-hidden">
                                 <div class="p-6 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                                    <h2 class="text-[11px] font-black text-[#003366] uppercase tracking-[0.2em]">অর্ডার সারাংশ</h2>
-                                    <span class="px-3 py-1 bg-white rounded-full text-[10px] font-black text-slate-500 border border-slate-100">{{ cart.items.length }} আইটেম</span>
+                                    <h2 class="text-[11px] font-black text-[#003366] uppercase tracking-[0.2em]">{{ $t('Order Summary') }}</h2>
+                                    <span class="px-3 py-1 bg-white rounded-full text-[10px] font-black text-slate-500 border border-slate-100">{{ cart.items.length }} {{ $t('Items') }}</span>
                                 </div>
                                 <div class="p-6">
                                     <ul role="list" class="divide-y divide-slate-100 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
@@ -205,15 +205,15 @@
 
                                     <div class="border-t border-slate-100 pt-6 mt-4 space-y-3">
                                         <div class="flex justify-between text-[11px] font-bold text-slate-500">
-                                            <p>সাবটোটাল</p>
+                                            <p>{{ $t('Subtotal') }}</p>
                                             <p>৳{{ subtotal.toLocaleString() }}</p>
                                         </div>
                                         <div class="flex justify-between text-[11px] font-bold text-slate-500">
-                                            <p>ডেলিভারি চার্জ ({{ form.delivery_location === 'Inside Dhaka' ? 'ঢাকার ভিতরে' : 'ঢাকার বাইরে' }})</p>
+                                            <p>{{ $t('Delivery Charge') }} ({{ form.delivery_location === 'Inside Dhaka' ? $t('Inside Dhaka') : $t('Outside Dhaka') }})</p>
                                             <p>৳{{ currentDeliveryCharge.toLocaleString() }}</p>
                                         </div>
                                         <div class="flex justify-between border-t border-slate-100 pt-5 mt-3">
-                                            <p class="text-sm font-black text-slate-900 uppercase italic">সর্বমোট</p>
+                                            <p class="text-sm font-black text-slate-900 uppercase italic">{{ $t('Total Payable') }}</p>
                                             <p class="text-2xl font-black text-[#003366]">৳{{ total.toLocaleString() }}</p>
                                         </div>
                                     </div>

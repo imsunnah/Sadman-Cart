@@ -322,5 +322,10 @@
     "Combos": "কম্বো",
     "Content": "কন্টেন্ট",
     "System": "সিস্টেম",
+    "Secure Checkout": "সুরক্ষিত চেকআউট",
+    "Total Payable": "সর্বমোট প্রদেয়",
+    "Order Summary": "অর্ডার সারাংশ",
+    "Order is being processed": "অর্ডার প্রসেসিং হচ্ছে",
+    "Please wait, your purchase is being secured": "দয়া করে অপেক্ষা করুন, আপনার কেনাকাটা সুরক্ষিত করা হচ্ছে",
     "Order Now": "অর্ডার করুন"
 }
